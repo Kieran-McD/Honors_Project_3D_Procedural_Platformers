@@ -31,6 +31,7 @@ public class SimpleProceduralMesh : MonoBehaviour
         collider = GetComponent<MeshCollider>();
     }
 
+   
 
 
     private void ApplyPerlinNoise()
@@ -120,7 +121,10 @@ public class SimpleProceduralMesh : MonoBehaviour
         //TestingCreationProceduralMesh();
         planeResolution = Mathf.Clamp(planeResolution, 1, 100);
         GeneratePlane(planeSize, planeResolution);
+        ApplyPerlinNoise();
+        //SinWaveAnimation(Time.time * WaveSpeed);
         AssignMesh();
+        collider.sharedMesh = myMesh;
         
     }
 
