@@ -14,6 +14,10 @@ public class PerlinNoise : MonoBehaviour
 
     public float scale = 20;
 
+    public int octaves;
+    public float persistance;
+    public float lacunarity;
+
     public Texture2D perlinTexture;
 
     private void Start()
@@ -37,27 +41,63 @@ public class PerlinNoise : MonoBehaviour
     {
         Texture2D texture = new Texture2D(width, height);
 
+        float maxNoiseHeight = float.MinValue;
+        float minNoiseHeight = float.MaxValue;
+
+        float[,] noiseMap = new float[width, height];
+
+        if(scale <= 0)
+        {
+            scale = 0.0001f;
+        }
+
+
         for (int x = 0; x < width; x++)
         {
             for(int y = 0; y < height; y++)
             {
-                Color color = CalculateColour(x, y);
-                texture.SetPixel(x, y, color);
+
+                float amplitude = 1;
+                float frequency = 1;
+                float noiseHeight = 0;
+
+                for (int i = 0; i < octaves; i++)
+                {
+                    float sampleX = x / scale * frequency;
+                    float sampleY = y / scale * frequency;
+
+                    float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
+                    noiseHeight += perlinValue * amplitude;
+
+                    amplitude *= persistance;
+                    frequency *= lacunarity;
+                }
+
+                if (noiseHeight > maxNoiseHeight) maxNoiseHeight = noiseHeight;
+                if (noiseHeight < minNoiseHeight) minNoiseHeight = noiseHeight;
+
+                noiseMap[x,y] = noiseHeight;
+                texture.SetPixel(x, y, CalculateColour(noiseHeight));
             }
         }
 
-        texture.Apply();
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                texture.SetPixel(x, y, CalculateColour(Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x,y])));
+            }
+        }
+                texture.Apply();
 
         return texture;
     }
 
-    Color CalculateColour(int x, int y)
-    {
-        float xCoords = (float)x / width * scale + offSetX;
-        float yCoords = (float)y / height * scale + offSetY;
+    
 
-        float sample = Mathf.PerlinNoise(xCoords, yCoords);
-        return new Color(sample, sample, sample);
+    Color CalculateColour(float colourValue)
+    {;
+        return new Color(colourValue, colourValue, colourValue);
 
     }
 }

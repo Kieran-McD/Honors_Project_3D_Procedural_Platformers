@@ -48,11 +48,13 @@ public class SimpleProceduralMesh : MonoBehaviour
 
             float yPos = perlinNoise.perlinTexture.GetPixel((int)uvPos.x, (int)uvPos.y).r;
             float finalValue = 0;
-            for(float j = 0; j < yPos; j += 0.2f)
-            {
-                finalValue += 0.2f;
-            }
-            vertex.y = finalValue * noiseScale;
+            //for(float j = 0; j < yPos; j += 0.2f)
+            //{
+            //    finalValue += 0.2f;
+            //}
+
+            vertex.y = yPos * noiseScale;
+            //vertex.y = finalValue * noiseScale;
             vertices[i] = vertex;
         }
     }
