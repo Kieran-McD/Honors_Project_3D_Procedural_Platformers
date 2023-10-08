@@ -26,7 +26,7 @@ public class PerlinWorm : MonoBehaviour
 			speed = Random.Range( 2.0f, 5.0f);
 			heading = Random.Range( 0.0f, 360.0f);
 			turnyness = Random.Range( 1450.0f, 2600.0f);
-			frames = Random.Range( 10, 100);
+			frames = Random.Range( 50, 100);
 		}
 	}
 

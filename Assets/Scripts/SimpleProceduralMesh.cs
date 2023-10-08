@@ -43,10 +43,10 @@ public class SimpleProceduralMesh : MonoBehaviour
             Vector3 vertex = vertices[i];
 
             Vector2 uvPos;
-            uvPos.x = uvS[i].x * perlinNoise.perlinTexture.width;
-            uvPos.y = uvS[i].y * perlinNoise.perlinTexture.height;
+            uvPos.x = uvS[i].x;
+            uvPos.y = uvS[i].y;
 
-            float yPos = perlinNoise.perlinTexture.GetPixel((int)uvPos.x, (int)uvPos.y).r;
+            float yPos = perlinNoise.perlinTexture.GetPixelBilinear(uvPos.x , uvPos.y).r;
             float finalValue = 0;
             //for(float j = 0; j < yPos; j += 0.2f)
             //{

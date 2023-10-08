@@ -15,7 +15,7 @@ public class TestPerlinWorms : MonoBehaviour
 
 		OneWorm.gameObject.SetActive(false);
 
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < 1; i++)
 		{
 			var dupe = Instantiate<LineRenderer>( OneWorm);
 			var worm = dupe.gameObject.AddComponent<PerlinWorm>();
