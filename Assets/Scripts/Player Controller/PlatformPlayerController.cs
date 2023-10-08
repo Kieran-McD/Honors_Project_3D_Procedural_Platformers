@@ -55,6 +55,8 @@ namespace GaRo
 
         public bool     UseUnityGravity = true;
         public float    CustomGravity = -19.82f;
+
+        public LayerMask grounds;
         public PlayerState GetStateInfo
         {
             get { return StateInfo; }
@@ -110,7 +112,7 @@ namespace GaRo
             float halfHeight = CharController.height * 0.5f;
 
             //Check to see if we are above a solid surface
-			if (Physics.Raycast(transform.position, Vector3.down, out HitInfo, MaxShadowDistance))
+			if (Physics.Raycast(transform.position, Vector3.down, out HitInfo, MaxShadowDistance, grounds))
 			{
                 StateInfo.ShadowPosition = HitInfo.point;
             }
@@ -125,7 +127,7 @@ namespace GaRo
             //Check to see if we're grounded
             //We use a SphereCast to avoid any weird capsule collider issues
             if (Physics.SphereCast(transform.position, CharController.radius, Vector3.down, 
-                out HitInfo, halfHeight + heightCheckDistance - CharController.radius))
+                out HitInfo, halfHeight + heightCheckDistance - CharController.radius, grounds))
             {
                 GroundNormal = HitInfo.normal;
                 StateInfo.ContactPosition = HitInfo.point;
