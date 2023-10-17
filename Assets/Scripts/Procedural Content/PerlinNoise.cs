@@ -20,6 +20,7 @@ public class PerlinNoise : MonoBehaviour
 
     public Texture2D perlinTexture;
 
+
     private void Start()
     {
         renderer = GetComponent<Renderer>();

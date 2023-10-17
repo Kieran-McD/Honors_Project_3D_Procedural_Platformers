@@ -19,6 +19,7 @@ public class SimpleProceduralMesh : MonoBehaviour
     List<int> triangles;
 
     PerlinNoise perlinNoise;
+    public AnimationCurve perlinSlope;
 
     MeshCollider collider;
 
@@ -47,6 +48,7 @@ public class SimpleProceduralMesh : MonoBehaviour
             uvPos.y = uvS[i].y;
 
             float yPos = perlinNoise.perlinTexture.GetPixelBilinear(uvPos.x , uvPos.y).r;
+            yPos = perlinSlope.Evaluate(yPos);
             float finalValue = 0;
             //for(float j = 0; j < yPos; j += 0.2f)
             //{
