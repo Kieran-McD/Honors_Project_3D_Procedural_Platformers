@@ -13,6 +13,7 @@ public class PerlinWorm : MonoBehaviour
 	public bool roll = true;
 	public bool pitch = true;
 
+
 	Vector3[] positions;
 	LineRenderer lr;
 	public float freq = 0.1f;
@@ -22,6 +23,9 @@ public class PerlinWorm : MonoBehaviour
 
 	static public float min = 0.0f;
 	static public float max = 0.0f;
+
+
+
 
 	public Vector2 GetMinMax()
     {
@@ -61,51 +65,59 @@ public class PerlinWorm : MonoBehaviour
 
 		DrivePositions();
 	}
-	void Update ()
+	protected void Update ()
 	{
+		PerlinWormLogic();
+	}
 
-		float x = transform.position.x;
-		float y = transform.position.y;
-		float z = transform.position.z;
-		
-		double noise = ImprovedNoise.noise((x * freq) + randA, (y * freq) + randA, (z * freq) + randA);// Mathf.PerlinNoise( x, y);
-		double noise2 = ImprovedNoise.noise((x * freq) + randB, (y * freq) + randB, (z * freq) + randB);// Mathf.PerlinNoise( x, y);
-		
-		/*noise *= 2.0f;
+	void PerlinWormLogic()
+	{
+        float x = transform.position.x;
+        float y = transform.position.y;
+        float z = transform.position.z;
+
+        double noise = ImprovedNoise.noise((x * freq) + randA, (y * freq) + randA, (z * freq) + randA);// Mathf.PerlinNoise( x, y);
+        double noise2 = ImprovedNoise.noise((x * freq) + randB, (y * freq) + randB, (z * freq) + randB);// Mathf.PerlinNoise( x, y);
+
+        /*noise *= 2.0f;
 		noise2 *= 2.0f;*/
 
-		if (noise < min)
+        if (noise < min)
+        {
+            min = (float)noise;
+        }
+        if (noise > max)
+        {
+            max = (float)noise;
+        }
+
+        float turn = (float)noise * 360.0f;
+        float turn2 = (float)noise2 * 45.0f;
+
+        transform.rotation = Quaternion.identity;
+        if (roll)
 		{
-			min = (float)noise;
-		}
-		if (noise > max)
-		{
-			max = (float)noise;
-		}
+            //transform.rotation = Quaternion.AngleAxis(turn, transform.forward);
+            transform.rotation = Quaternion.Euler(0,turn,0);
+        }
+           
 
-		float turn = (float)noise * 360.0f;
-		float turn2 = (float)noise2 * 360.0f;
+        if (pitch)
+            transform.rotation *= Quaternion.AngleAxis(turn2, transform.right);
+        // (0, 0, turn);// = Quaternion.AngleAxis(heading, transform.forward);// Quaternion.Euler (0, 0, heading) * direction;
+        //transform.Rotate(heading2, 0, 0);
+        transform.position += transform.forward * (speed * Time.deltaTime);
 
-		transform.rotation = Quaternion.identity;
-		if (roll)
-			transform.rotation = Quaternion.AngleAxis(turn, transform.forward) ;
-        
-		if(pitch)
-			transform.rotation *= Quaternion.AngleAxis(turn2, transform.right) ;
-		// (0, 0, turn);// = Quaternion.AngleAxis(heading, transform.forward);// Quaternion.Euler (0, 0, heading) * direction;
-		//transform.Rotate(heading2, 0, 0);
-		transform.position += transform.forward * (speed * Time.deltaTime);
+        for (int i = 0; i < positions.Length - 1; i++)
+        {
+            positions[i] = positions[i + 1];
+        }
+        positions[positions.Length - 1] = transform.position;
 
-		for (int i = 0; i < positions.Length - 1; i++)
-		{
-			positions[i] = positions[ i + 1];
-		}
-		positions[positions.Length - 1] = transform.position;
+        //CheckOffscreen();
 
-		CheckOffscreen();
-
-		DrivePositions();
-	}
+        DrivePositions();
+    }
 
 	void DrivePositions()
 	{
