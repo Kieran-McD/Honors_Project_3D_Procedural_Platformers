@@ -149,9 +149,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3311e799b0220994395603f56cb43bca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  speed: 20
   frames: 10
   roll: 1
   pitch: 1
   freq: 0.1
-  noise: 0
+  turnValue: 0

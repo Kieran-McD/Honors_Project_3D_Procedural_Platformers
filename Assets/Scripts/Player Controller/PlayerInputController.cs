@@ -15,6 +15,7 @@ namespace GaRo
     public class PlayerInputController : MonoBehaviour
     {
         PlatformPlayerController Player;
+        public SpawnPlayer spawn;
         private void Awake()
         {
             Player = GetComponent<PlatformPlayerController>();
@@ -43,6 +44,14 @@ namespace GaRo
             Time.timeScale = 1.0f - context.ReadValue<float>();
             if (context.phase == InputActionPhase.Canceled)
                 Time.timeScale = 1.0f;
+        }
+
+        public void OnInputReset(InputAction.CallbackContext context)
+        {
+            if(context.phase == InputActionPhase.Started)
+            {
+                spawn.Spawn();
+            }
         }
 #else
         void Update(){

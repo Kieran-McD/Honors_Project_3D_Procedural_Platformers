@@ -5,16 +5,25 @@ using UnityEngine;
 public class SpawnPlayer : MonoBehaviour
 {
     public GameObject player;
-
+    bool spawn;
     // Start is called before the first frame update
     void Start()
     {
-        player.transform.position = transform.position;
+        Spawn();
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        
+        if (spawn)
+        {
+            spawn = false;
+            player.transform.position = transform.position;
+        }
+    }
+
+    public void Spawn()
+    {
+        spawn = true;
     }
 }

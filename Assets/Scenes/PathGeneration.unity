@@ -226,7 +226,7 @@ MonoBehaviour:
   - {fileID: 9155157574543609349, guid: 96dcbe0082b3147419006f3583b77ba4, type: 3}
   - {fileID: 1763585132587578619, guid: af379b1dad2d4a343a2db508ea220664, type: 3}
   - {fileID: 7483632760982237943, guid: fae050df5bd38684e958189d48afe268, type: 3}
-  totalPointsForPath: 5
+  totalPointsForPath: 50
 --- !u!4 &765286723
 Transform:
   m_ObjectHideFlags: 0
@@ -700,6 +700,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b2eeb3a9a1a7e84e96d27c8507a47db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawn: {fileID: 1440013136}
 --- !u!114 &1850803608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -833,6 +834,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 9122cd42-a9d2-4e93-acbb-48b33c7024e0
     m_ActionName: 'Player/Slow[/XInputControllerWindows/leftTrigger]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1850803607}
+        m_TargetAssemblyTypeName: GaRo.PlayerInputController, Assembly-CSharp
+        m_MethodName: OnInputReset
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 1430d1a6-5807-4566-9624-761d2be39d73
+    m_ActionName: 'Player/Reset[/DualShock4GamepadHID/start]'
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: Gamepad
   m_DefaultActionMap: Player
