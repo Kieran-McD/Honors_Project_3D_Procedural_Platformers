@@ -4,6 +4,7 @@
 /// Written by Gaz Robinson, 2023
 /// </summary>
 
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace GaRo
@@ -79,6 +80,10 @@ namespace GaRo
         private CharacterController CharController = null;
         private Camera PlayerCamera = null;
 
+        //Check for current platform
+        private Vector3 previousPlatformPosition;
+        private Transform currentPlatform;
+
         public void SetInputDirection(Vector2 inputDirection)
         {
             InputDirection = inputDirection;
@@ -88,6 +93,14 @@ namespace GaRo
         {
             JumpTrigger |= jumpState;
             JumpHeld = jumpState;
+
+             if (IsGrounded && JumpTrigger)
+            {
+                foreach (FlipPlatform flip in FindObjectsOfType<FlipPlatform>())
+                {
+                    flip.Flip();
+                }
+            }
         }
 
         void Awake()
@@ -134,11 +147,17 @@ namespace GaRo
 
                 //Only become grounded if we're falling.
                 //This avoids becoming grounded when jumping over a ledge
+
+
+                var currentPosition = HitInfo.transform.position;
+
+
+               
                 if (Velocity.y <= 0)
 				{
 					//Move the character to the ground.
 					//This allows the character to stay attached to a downward slope
-					CharController.Move(((HitInfo.distance + CharController.radius) - halfHeight) * Vector3.down);
+					//CharController.Move(((HitInfo.distance + CharController.radius) - halfHeight) * Vector3.down);
 					
                     //If the ground is steep, make us slide and set grounded to false
                     //Otherwise, we're grounded!
@@ -154,6 +173,13 @@ namespace GaRo
                         IsSliding = true;
                     }
                 }
+                if (currentPosition != previousPlatformPosition && currentPlatform == HitInfo.transform)
+                {
+                    CharController.Move((currentPosition - previousPlatformPosition));
+                }
+                currentPlatform = HitInfo.transform;
+                previousPlatformPosition = HitInfo.transform.position;
+
             }
             else
             {
@@ -161,6 +187,8 @@ namespace GaRo
                 IsGrounded = false;
                 IsSliding = false;
             }
+
+           
 
             //Vertical resolution
             //Apply gravity if we're in the air or sliding and check for a jump if we're grounded
@@ -256,15 +284,15 @@ namespace GaRo
             //Apply our lateral velocity to our velocity for this frame     
             if (IsGrounded)
             {
-                desiredVelocity.x = LateralVelocity.x;
+                desiredVelocity.x += LateralVelocity.x;
                 if (!IsSliding)
                 {
                     //Right now, we cannot be sliding if we're grounded, so this is always true
                     //Left in for anyone who wants to change the behaviour
-                    desiredVelocity.y = LateralVelocity.y;
+                    desiredVelocity.y += LateralVelocity.y;
                 }
-                desiredVelocity.z = LateralVelocity.z;
-			}
+                desiredVelocity.z += LateralVelocity.z;
+            }
 			else
             {
                 desiredVelocity.x = LateralVelocity.x;
@@ -308,7 +336,7 @@ namespace GaRo
             ForwardVelocity *= 1.0f - ForwardVelocityJumpInfluence;
 
             //Fire the OnJump action for anything that cares about it
-            if(OnJump != null)
+            if (OnJump != null)
                 OnJump();
         }
 	}

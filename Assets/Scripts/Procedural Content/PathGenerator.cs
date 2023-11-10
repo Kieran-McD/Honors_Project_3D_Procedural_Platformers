@@ -24,6 +24,7 @@ public class PathGenerator : MonoBehaviour
     float pathWidth = 4f;
     public bool isFinished;
 
+    private int pointsInPath;
 
     // Start is called before the first frame update
     void Start()
@@ -33,16 +34,17 @@ public class PathGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (currentWorm.IsUnityNull()) return;
+        if (currentWorm.IsUnityNull() || isFinished == true) return;
         tick += Time.deltaTime;
+        tick += 1 * Mathf.Abs(((float)currentWorm.GetComponent<PerlinWormPath>().turnValue)) * Time.deltaTime * 20f;
 
-        if(tick > pointSpawnRate)
+        if (tick > pointSpawnRate)
         {
             pathPointTransforms.Add(Instantiate<GameObject>(pathPointPrefab, currentWorm.position, currentWorm.rotation, transform).transform);
             tick = 0;
         }
 
-        if(pathPointTransforms.Count > 20)
+        if(pathPointTransforms.Count > pointsInPath)
         {
             Destroy(currentWorm.gameObject);
             BuildPath();
@@ -113,6 +115,11 @@ public class PathGenerator : MonoBehaviour
 
     public void StartPathGenerator(Vector3 pos, Quaternion rot)
     {
+        StartPathGenerator(pos, rot, 20);
+    }
+
+    public void StartPathGenerator(Vector3 pos, Quaternion rot, int pathPoints)
+    {
         isFinished = false;
         tick = 0;
         currentWorm = null;
@@ -120,8 +127,8 @@ public class PathGenerator : MonoBehaviour
         pathPointTransforms.Clear();
         pathPointTransforms.Add(Instantiate<GameObject>(pathPointPrefab, pos, rot, transform).transform);
         pointSpawnRate = currentWorm.GetComponent<PerlinWormPath>().speed / (currentWorm.GetComponent<PerlinWormPath>().speed * currentWorm.GetComponent<PerlinWormPath>().speed) * 2;
+        pointsInPath = pathPoints;
     }
-
     public GameObject GetCurrentPath()
     {
         return currentPath;

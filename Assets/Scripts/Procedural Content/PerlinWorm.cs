@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using JetBrains.Annotations;
+using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 // @kurtdekker - perlin worms...
@@ -24,10 +26,10 @@ public class PerlinWorm : MonoBehaviour
 	static public float min = 0.0f;
 	static public float max = 0.0f;
 
+	public float turnValue = 0;
 
 
-
-	public Vector2 GetMinMax()
+    public Vector2 GetMinMax()
     {
 		return new Vector2(min, max);
 	}
@@ -92,13 +94,17 @@ public class PerlinWorm : MonoBehaviour
         }
 
         float turn = (float)noise * 360.0f;
+
         float turn2 = (float)noise2 * 45.0f;
 
         transform.rotation = Quaternion.identity;
         if (roll)
 		{
+			turnValue = Mathf.Abs(turn)/360f;
+			Debug.Log(turnValue);
             //transform.rotation = Quaternion.AngleAxis(turn, transform.forward);
-            transform.rotation = Quaternion.Euler(0,turn,0);
+            //transform.rotation = Quaternion.Euler(0,turn,0);
+            transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y + turn, 0);
         }
            
 

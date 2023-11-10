@@ -7,10 +7,13 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField]
     PathGenerator planeGenerator;
     [SerializeField]
-    GameObject obstacle;
+    List<GameObject> obstacle;
 
     int totalPaths = 5;
     int amountPaths = 0;
+
+    [SerializeField]
+    int totalPointsForPath = 20;
 
     bool isFinished = false;
     
@@ -18,7 +21,7 @@ public class LevelGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        planeGenerator.StartPathGenerator(planeGenerator.transform.position, planeGenerator.transform.rotation);
+        planeGenerator.StartPathGenerator(planeGenerator.transform.position, planeGenerator.transform.rotation, totalPointsForPath);
     }
 
     // Update is called once per frame
@@ -33,12 +36,15 @@ public class LevelGenerator : MonoBehaviour
 
         if (planeGenerator.isFinished)
         {
+             
+            //LOOK INTO BETTER METHOD FOR SPAWNING OBSTABVLES IN
             Transform exit = planeGenerator.GetCurrentPath().GetComponent<Path>().exit.transform;
-            GameObject ob = Instantiate<GameObject>(obstacle);
-            ob.transform.position = exit.position;
+            GameObject ob = Instantiate<GameObject>(obstacle[Random.Range(0, obstacle.Count)]);
+            //ob.transform.position = exit.position + exit.forward * ob.GetComponent<Obstacle>().exit.transform.localPosition.z - exit.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;
+            ob.transform.position = exit.position - exit.forward * ob.GetComponent<Obstacle>().entry.transform.localPosition.z  - exit.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;
             ob.transform.rotation = Quaternion.Euler(0,exit.rotation.eulerAngles.y,0);
-
-            planeGenerator.StartPathGenerator(ob.GetComponent<Obstacle>().exit.position, ob.transform.rotation);
+            
+            planeGenerator.StartPathGenerator(ob.GetComponent<Obstacle>().exit.position, ob.transform.rotation, totalPointsForPath);
             amountPaths++;
         }
     }

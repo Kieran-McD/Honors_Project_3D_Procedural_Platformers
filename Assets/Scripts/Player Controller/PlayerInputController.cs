@@ -34,6 +34,7 @@ namespace GaRo
             else if (context.phase == InputActionPhase.Canceled)
             {
                 Player.SetJump(false);
+              
             }
         }
 
