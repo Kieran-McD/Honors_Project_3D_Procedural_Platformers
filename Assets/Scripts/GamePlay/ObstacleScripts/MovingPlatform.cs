@@ -14,6 +14,7 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField] List<PosTimer> posList;
     [SerializeField] float speed;
     private int currentId;
+    [SerializeField]
     private bool reverse = false;
     private float timer;
     [SerializeField]
@@ -46,10 +47,8 @@ public class MovingPlatform : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        nextID();
-
         transform.position = Vector3.MoveTowards(transform.position, nextPos.pos.position, speed * Time.deltaTime);
+        nextID();
 
     }
 
@@ -66,22 +65,22 @@ public class MovingPlatform : MonoBehaviour
                 if (currentId == posList.Capacity-1)
                 {
 
-                    if (isLooping)
+                    if (isLooping && !reverse)
                     {
                         currentId = -1;
                     }
-                    else
+                    else if(!isLooping)
                     {
                         reverse = true;
                     }
                 }
                 else if (currentId == 0)
                 {
-                    if (isLooping)
+                    if (isLooping && reverse)
                     {
-
+                        currentId = posList.Capacity;
                     }
-                    else
+                    else if(!isLooping)
                     {
                         reverse = false;
                     }

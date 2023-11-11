@@ -256,6 +256,7 @@ MonoBehaviour:
   - pos: {fileID: 3016431224884235207}
     timer: 0
   speed: 5
+  reverse: 1
   isLooping: 1
 --- !u!1 &4806775440604187127
 GameObject:
@@ -385,6 +386,7 @@ MonoBehaviour:
   - pos: {fileID: 1554776602005947069}
     timer: 0
   speed: 5
+  reverse: 1
   isLooping: 1
 --- !u!1 &4845861544759530118
 GameObject:
@@ -514,6 +516,7 @@ MonoBehaviour:
   - pos: {fileID: 3633003890962024380}
     timer: 0
   speed: 5
+  reverse: 1
   isLooping: 1
 --- !u!1 &8071223650616698575
 GameObject:
@@ -674,6 +677,7 @@ MonoBehaviour:
   - pos: {fileID: 3296483078484431527}
     timer: 0
   speed: 5
+  reverse: 1
   isLooping: 1
 --- !u!1001 &7203564228687589640
 PrefabInstance:

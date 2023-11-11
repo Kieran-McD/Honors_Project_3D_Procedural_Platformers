@@ -83,6 +83,7 @@ namespace GaRo
         //Check for current platform
         private Vector3 previousPlatformPosition;
         private Transform currentPlatform;
+        Vector3 sp;
 
         public void SetInputDirection(Vector2 inputDirection)
         {
@@ -140,17 +141,28 @@ namespace GaRo
             //Check to see if we're grounded
             //We use a SphereCast to avoid any weird capsule collider issues
             if (Physics.SphereCast(transform.position, CharController.radius, Vector3.down, 
-                out HitInfo, halfHeight + heightCheckDistance - CharController.radius, grounds, QueryTriggerInteraction.Ignore))
+                out HitInfo, halfHeight + heightCheckDistance - CharController.radius+0.1f, grounds, QueryTriggerInteraction.Ignore))
             {
                 GroundNormal = HitInfo.normal;
                 StateInfo.ContactPosition = HitInfo.point;
                 
+
+
+                //
+                var currentPosition = HitInfo.transform.position;
+                sp = Vector3.zero;
+                if (currentPosition != previousPlatformPosition && currentPlatform == HitInfo.transform)
+                {
+                    sp = (currentPosition - previousPlatformPosition);
+                    
+                    Debug.Log(sp.y);
+                    CharController.Move(sp);
+                }
+                currentPlatform = HitInfo.transform;
+                previousPlatformPosition = HitInfo.transform.position;
+               
                 //Only become grounded if we're falling.
                 //This avoids becoming grounded when jumping over a ledge
-
-                var currentPosition = HitInfo.transform.position;
-
-
                 if (Velocity.y <= 0)
 				{
 					//Move the character to the ground.
@@ -162,7 +174,7 @@ namespace GaRo
                     if (Vector3.Angle(GroundNormal, Vector3.up) < CharController.slopeLimit)
 					{
                         IsGrounded = true;
-                        Velocity.y = 0.0f;
+                        Velocity.y = sp.y;
                         IsSliding = false;
                     }
 					else
@@ -172,17 +184,12 @@ namespace GaRo
                     }
                 }
 
-                if (currentPosition != previousPlatformPosition && currentPlatform == HitInfo.transform)
-                {
-                    Vector3 sp = (currentPosition - previousPlatformPosition);
-                    CharController.Move(sp);
-                }
-                currentPlatform = HitInfo.transform;
-                previousPlatformPosition = HitInfo.transform.position;
+
 
             }
             else
             {
+                currentPlatform = null;
                 //If our cast didn't hit anything, we're airborne
                 IsGrounded = false;
                 IsSliding = false;
@@ -295,8 +302,8 @@ namespace GaRo
             }
 			else
             {
-                desiredVelocity.x = LateralVelocity.x;
-                desiredVelocity.z = LateralVelocity.z;
+                desiredVelocity.x += LateralVelocity.x;
+                desiredVelocity.z += LateralVelocity.z;
                 if (IsSliding)
                 {
                     //We project out desired velocity onto the surface we're sliding against
