@@ -53,6 +53,8 @@ public class MovingPlatform : MonoBehaviour
 
     }
 
+
+
     void nextID()
     {
         if (transform.position == nextPos.pos.position)

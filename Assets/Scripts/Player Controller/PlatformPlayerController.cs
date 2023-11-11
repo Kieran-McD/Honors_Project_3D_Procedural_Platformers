@@ -149,7 +149,8 @@ namespace GaRo
                 //This avoids becoming grounded when jumping over a ledge
 
                 var currentPosition = HitInfo.transform.position;
-             
+
+
                 if (Velocity.y <= 0)
 				{
 					//Move the character to the ground.
@@ -170,9 +171,11 @@ namespace GaRo
                         IsSliding = true;
                     }
                 }
+
                 if (currentPosition != previousPlatformPosition && currentPlatform == HitInfo.transform)
                 {
-                    CharController.Move((currentPosition - previousPlatformPosition));
+                    Vector3 sp = (currentPosition - previousPlatformPosition);
+                    CharController.Move(sp);
                 }
                 currentPlatform = HitInfo.transform;
                 previousPlatformPosition = HitInfo.transform.position;
