@@ -12,6 +12,13 @@ public class SpawnPlayer : MonoBehaviour
         Spawn();
     }
 
+    private void Update()
+    {
+        if (spawn)
+        {
+
+        }
+    }
     // Update is called once per frame
     void LateUpdate()
     {
@@ -19,6 +26,7 @@ public class SpawnPlayer : MonoBehaviour
         {
             spawn = false;
             player.transform.position = transform.position;
+            
         }
     }
 

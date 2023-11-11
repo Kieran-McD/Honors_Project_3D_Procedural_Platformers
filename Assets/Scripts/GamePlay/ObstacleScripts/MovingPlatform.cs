@@ -35,6 +35,12 @@ public class MovingPlatform : MonoBehaviour
             id++;
         }
         timer = 0;
+        if (!TryGetComponent<LineRenderer>(out LineRenderer line)) return;  
+        line.positionCount = posList.Count;
+        for (int i = 0; i < posList.Count; i++)
+        {
+            line.SetPosition(i, posList[i].pos.position);
+        }
     }
 
     // Update is called once per frame

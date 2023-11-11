@@ -8,7 +8,7 @@ using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
-
+using UnityEngine.SceneManagement;
 namespace GaRo
 {
     [RequireComponent(typeof(PlatformPlayerController))]
@@ -49,8 +49,9 @@ namespace GaRo
         public void OnInputReset(InputAction.CallbackContext context)
         {
             if(context.phase == InputActionPhase.Started)
-            {
+            {               
                 spawn.Spawn();
+                //SceneManager.LoadScene(SceneManager.GetActiveScene().ToString());
             }
         }
 #else

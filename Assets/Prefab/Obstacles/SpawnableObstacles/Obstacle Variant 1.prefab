@@ -255,6 +255,7 @@ MonoBehaviour:
     timer: 0
   - pos: {fileID: 3016431224884235207}
     timer: 0
+  line: {fileID: 0}
   speed: 5
   isLooping: 1
 --- !u!1 &4806775440604187127
@@ -384,6 +385,7 @@ MonoBehaviour:
     timer: 0
   - pos: {fileID: 1554776602005947069}
     timer: 0
+  line: {fileID: 0}
   speed: 5
   isLooping: 1
 --- !u!1 &4845861544759530118
@@ -513,6 +515,7 @@ MonoBehaviour:
     timer: 0
   - pos: {fileID: 3633003890962024380}
     timer: 0
+  line: {fileID: 0}
   speed: 5
   isLooping: 1
 --- !u!1 &8071223650616698575
@@ -673,6 +676,7 @@ MonoBehaviour:
     timer: 0
   - pos: {fileID: 3296483078484431527}
     timer: 0
+  line: {fileID: 0}
   speed: 5
   isLooping: 1
 --- !u!1001 &7203564228687589640

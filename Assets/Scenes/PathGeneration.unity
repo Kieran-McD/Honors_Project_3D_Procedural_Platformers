@@ -259,6 +259,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &228024213
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 228024214}
+  m_Layer: 0
+  m_Name: Level
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &228024214
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 228024213}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &312051534
 GameObject:
   m_ObjectHideFlags: 0
@@ -437,13 +468,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planeGenerator: {fileID: 1548410686}
   obstacle:
-  - {fileID: 6786846475115889264, guid: 711ec380dedbceb4d8adc299ad463392, type: 3}
-  - {fileID: 9155157574543609349, guid: 96dcbe0082b3147419006f3583b77ba4, type: 3}
-  - {fileID: 1763585132587578619, guid: af379b1dad2d4a343a2db508ea220664, type: 3}
-  - {fileID: 7483632760982237943, guid: fae050df5bd38684e958189d48afe268, type: 3}
-  - {fileID: 481397246318071799, guid: e0e4aa7955b804748b37b693dff39f27, type: 3}
+  - obstacle: {fileID: 6786846475115889264, guid: 711ec380dedbceb4d8adc299ad463392, type: 3}
+    active: 1
+  - obstacle: {fileID: 9155157574543609349, guid: 96dcbe0082b3147419006f3583b77ba4, type: 3}
+    active: 1
+  - obstacle: {fileID: 1763585132587578619, guid: af379b1dad2d4a343a2db508ea220664, type: 3}
+    active: 1
+  - obstacle: {fileID: 7483632760982237943, guid: fae050df5bd38684e958189d48afe268, type: 3}
+    active: 1
+  - obstacle: {fileID: 481397246318071799, guid: e0e4aa7955b804748b37b693dff39f27, type: 3}
+    active: 1
   goal: {fileID: 3655032058997271801, guid: 96360d4c03185434690cef085508824f, type: 3}
+  totalPaths: 5
   totalPointsForPath: 20
+  levelTransform: {fileID: 228024214}
 --- !u!4 &765286723
 Transform:
   m_ObjectHideFlags: 0
@@ -1222,7 +1260,7 @@ CharacterController:
   serializedVersion: 3
   m_Height: 1
   m_Radius: 0.2
-  m_SlopeLimit: 50
+  m_SlopeLimit: 70
   m_StepOffset: 0.3
   m_SkinWidth: 0.001
   m_MinMoveDistance: 0.001
@@ -1255,3 +1293,4 @@ SceneRoots:
   - {fileID: 1326922712}
   - {fileID: 970064865}
   - {fileID: 203809819}
+  - {fileID: 228024214}

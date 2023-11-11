@@ -148,16 +148,13 @@ namespace GaRo
                 //Only become grounded if we're falling.
                 //This avoids becoming grounded when jumping over a ledge
 
-
                 var currentPosition = HitInfo.transform.position;
-
-
-               
+             
                 if (Velocity.y <= 0)
 				{
 					//Move the character to the ground.
 					//This allows the character to stay attached to a downward slope
-					//CharController.Move(((HitInfo.distance + CharController.radius) - halfHeight) * Vector3.down);
+					CharController.Move(((HitInfo.distance + CharController.radius) - halfHeight) * Vector3.down);
 					
                     //If the ground is steep, make us slide and set grounded to false
                     //Otherwise, we're grounded!

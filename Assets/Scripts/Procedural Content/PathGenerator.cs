@@ -22,7 +22,8 @@ public class PathGenerator : MonoBehaviour
     float pointSpawnRate = 1f;
     [SerializeField]
     float pathWidth = 4f;
-    public bool isFinished;
+
+    private bool isFinished;
 
     private int pointsInPath;
 
@@ -36,7 +37,7 @@ public class PathGenerator : MonoBehaviour
     {
         if (currentWorm.IsUnityNull() || isFinished == true) return;
         tick += Time.deltaTime;
-        tick += 1 * Mathf.Abs(((float)currentWorm.GetComponent<PerlinWormPath>().turnValue)) * Time.deltaTime * 20f;
+        tick += 1 * Mathf.Abs(((float)currentWorm.GetComponent<PerlinWormPath>().turnValue)) * Time.deltaTime;
 
         if (tick > pointSpawnRate)
         {
@@ -136,5 +137,29 @@ public class PathGenerator : MonoBehaviour
     public GameObject GetCurrentPath()
     {
         return currentPath;
+    }
+
+    public Transform GetCurrentWorm()
+    {
+        return currentWorm;
+    }
+
+    public void ClearPathGenerator()
+    {
+        bool skipFirst = false;
+        foreach(Transform child in transform)
+        {
+            if (!skipFirst)
+            {
+                skipFirst = true;
+                continue;
+            }
+            Destroy(child.gameObject);
+        }
+    }
+
+    public bool GetIsFinished()
+    {
+        return isFinished;
     }
 }
