@@ -93,9 +93,9 @@ public class PerlinWorm : MonoBehaviour
             max = (float)noise;
         }
 
-        float turn = (float)noise * 360.0f;
+        float turn = (float)noise * 180.0f;
 
-        float turn2 = (float)noise2 * 45.0f;
+        float turn2 = (float)noise2 * 55.0f;
 
         transform.rotation = Quaternion.identity;
         if (roll)
@@ -109,7 +109,12 @@ public class PerlinWorm : MonoBehaviour
            
 
         if (pitch)
-            transform.rotation *= Quaternion.AngleAxis(turn2, transform.right);
+        {
+			//transform.rotation *= Quaternion.AngleAxis(turn2, transform.right);
+
+			transform.rotation = Quaternion.Euler(turn2, transform.rotation.eulerAngles.y, 0);
+		}
+           
         // (0, 0, turn);// = Quaternion.AngleAxis(heading, transform.forward);// Quaternion.Euler (0, 0, heading) * direction;
         //transform.Rotate(heading2, 0, 0);
         transform.position += transform.forward * (speed * Time.deltaTime);

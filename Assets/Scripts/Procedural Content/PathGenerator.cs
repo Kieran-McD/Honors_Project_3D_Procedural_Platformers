@@ -126,7 +126,7 @@ public class PathGenerator : MonoBehaviour
         currentWorm = Instantiate(perlinWormPrefab, pos, rot).transform;
         pathPointTransforms.Clear();
         pathPointTransforms.Add(Instantiate<GameObject>(pathPointPrefab, pos, rot, transform).transform);
-        pointSpawnRate = currentWorm.GetComponent<PerlinWormPath>().speed / (currentWorm.GetComponent<PerlinWormPath>().speed * currentWorm.GetComponent<PerlinWormPath>().speed) * 2;
+        pointSpawnRate = currentWorm.GetComponent<PerlinWormPath>().speed / (currentWorm.GetComponent<PerlinWormPath>().speed * currentWorm.GetComponent<PerlinWormPath>().speed);
         pointsInPath = pathPoints;
     }
     public GameObject GetCurrentPath()
