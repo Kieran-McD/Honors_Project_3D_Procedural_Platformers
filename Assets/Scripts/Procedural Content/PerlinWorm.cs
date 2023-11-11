@@ -95,7 +95,7 @@ public class PerlinWorm : MonoBehaviour
 
         float turn = (float)noise * 180.0f;
 
-        float turn2 = (float)noise2 * 55.0f;
+        float turn2 = (float)noise2 * 45.0f;
 
         transform.rotation = Quaternion.identity;
         if (roll)

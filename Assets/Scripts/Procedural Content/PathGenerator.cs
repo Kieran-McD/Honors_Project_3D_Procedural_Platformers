@@ -55,17 +55,21 @@ public class PathGenerator : MonoBehaviour
 
     void BuildPath()
     {
-        
+        //Spawns the path object
         currentPath = Instantiate(pathPrefab);
+        //Sets the exit for the path to the the position of the final point generated
         currentPath.GetComponent<Path>().exit.position = pathPointTransforms[pathPointTransforms.Count-1].position;
         currentPath.GetComponent<Path>().exit.rotation = pathPointTransforms[pathPointTransforms.Count - 1].rotation;
+        //Sets up the mesh filter and mesh
         MeshFilter currentMeshFilter = currentPath.GetComponent<MeshFilter>();
         Mesh mesh = new Mesh();
         currentMeshFilter.mesh = mesh;
 
         mesh.Clear();
+        //Generates the vertices
         List<Vector3>vertices = GenerateVertices();
         mesh.vertices = vertices.ToArray();
+        //Sets up the indices
         mesh.triangles = GenerateTriangles(vertices).ToArray();
 
 

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Goal : MonoBehaviour
 {
@@ -9,9 +10,11 @@ public class Goal : MonoBehaviour
     float yOffSet = 0.2f;
     float speed = 4f;
 
-    private void Awake()
+    TextMeshProUGUI text;
+    private void Start()
     {
-        startPos = transform.position;
+        startPos = transform.localPosition;
+        text = FindFirstObjectByType<YouWinText>().GetComponent<TextMeshProUGUI>();
     }
 
     private void AnimateGoal()
@@ -20,10 +23,23 @@ public class Goal : MonoBehaviour
 
         updateYPos = new Vector3(0, Mathf.Sin(Time.time * speed) * yOffSet, 0);
 
-        transform.position = startPos + updateYPos;
+        transform.localPosition = startPos + updateYPos;
 
         transform.rotation =  Quaternion.Euler(0, Time.time * 180, 0);
 
+    }
+
+    IEnumerator DisplayText()
+    {
+        float time = 0;
+        while(text.color.a < 1f)
+        {
+            time += Time.deltaTime;
+            text.color = text.color + new Color(0, 0, 0, Mathf.Lerp(0, 1, time / 1000f));
+            yield return null;
+        }
+
+        yield return null;
     }
 
     // Update is called once per frame
@@ -39,6 +55,7 @@ public class Goal : MonoBehaviour
             return;
         }
 
-        gameObject.SetActive(false);
+        GetComponent<MeshRenderer>().enabled = false;
+        StartCoroutine(DisplayText());
     }
 }

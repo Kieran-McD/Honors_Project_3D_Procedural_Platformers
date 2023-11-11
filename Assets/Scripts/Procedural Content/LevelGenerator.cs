@@ -8,6 +8,8 @@ public class LevelGenerator : MonoBehaviour
     PathGenerator planeGenerator;
     [SerializeField]
     List<GameObject> obstacle;
+    [SerializeField]
+    GameObject goal;
 
     int totalPaths = 5;
     int amountPaths = 0;
@@ -29,23 +31,31 @@ public class LevelGenerator : MonoBehaviour
     {
         if (isFinished == true) return;
 
-        if(totalPaths > 5)
-        {
-            isFinished = true;
-        }
+        
+
 
         if (planeGenerator.isFinished)
         {
              
             //LOOK INTO BETTER METHOD FOR SPAWNING OBSTABVLES IN
             Transform exit = planeGenerator.GetCurrentPath().GetComponent<Path>().exit.transform;
-            GameObject ob = Instantiate<GameObject>(obstacle[Random.Range(0, obstacle.Count)]);
+            GameObject ob; 
+            amountPaths++;
+            if (amountPaths >= totalPaths)
+            {
+                isFinished = true;
+                ob = Instantiate<GameObject>(goal);
+                ob.transform.position = exit.position;
+                ob.transform.rotation = Quaternion.Euler(0, exit.rotation.eulerAngles.y, 0);
+                return;
+            }
+            ob = Instantiate<GameObject>(obstacle[Random.Range(0, obstacle.Count)]);
             //ob.transform.position = exit.position + exit.forward * ob.GetComponent<Obstacle>().exit.transform.localPosition.z - exit.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;
             ob.transform.position = exit.position - exit.forward * ob.GetComponent<Obstacle>().entry.transform.localPosition.z  - exit.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;
             ob.transform.rotation = Quaternion.Euler(0,exit.rotation.eulerAngles.y,0);
-            
+
             planeGenerator.StartPathGenerator(ob.GetComponent<Obstacle>().exit.position, ob.transform.rotation, totalPointsForPath);
-            amountPaths++;
+
         }
     }
 }
