@@ -125,7 +125,7 @@ namespace GaRo
             float halfHeight = CharController.height * 0.5f;
 
             //Check to see if we are above a solid surface
-			if (Physics.Raycast(transform.position, Vector3.down, out HitInfo, MaxShadowDistance, grounds))
+			if (Physics.Raycast(transform.position, Vector3.down, out HitInfo, MaxShadowDistance, grounds, QueryTriggerInteraction.Ignore))
 			{
                 StateInfo.ShadowPosition = HitInfo.point;
             }
@@ -140,11 +140,11 @@ namespace GaRo
             //Check to see if we're grounded
             //We use a SphereCast to avoid any weird capsule collider issues
             if (Physics.SphereCast(transform.position, CharController.radius, Vector3.down, 
-                out HitInfo, halfHeight + heightCheckDistance - CharController.radius, grounds))
+                out HitInfo, halfHeight + heightCheckDistance - CharController.radius, grounds, QueryTriggerInteraction.Ignore))
             {
                 GroundNormal = HitInfo.normal;
                 StateInfo.ContactPosition = HitInfo.point;
-
+                
                 //Only become grounded if we're falling.
                 //This avoids becoming grounded when jumping over a ledge
 

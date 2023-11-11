@@ -226,6 +226,7 @@ MonoBehaviour:
   - {fileID: 9155157574543609349, guid: 96dcbe0082b3147419006f3583b77ba4, type: 3}
   - {fileID: 1763585132587578619, guid: af379b1dad2d4a343a2db508ea220664, type: 3}
   - {fileID: 7483632760982237943, guid: fae050df5bd38684e958189d48afe268, type: 3}
+  - {fileID: 481397246318071799, guid: e0e4aa7955b804748b37b693dff39f27, type: 3}
   totalPointsForPath: 50
 --- !u!4 &765286723
 Transform:
@@ -332,8 +333,8 @@ Camera:
   m_GameObject: {fileID: 1326922708}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -892,7 +893,7 @@ CharacterController:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
