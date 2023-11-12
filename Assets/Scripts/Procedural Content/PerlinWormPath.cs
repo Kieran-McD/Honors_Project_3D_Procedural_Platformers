@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class PerlinWormPath : PerlinWorm
 {
-
-
-    public void Update()
+    public new void Update()
     {
         base.Update();
     }

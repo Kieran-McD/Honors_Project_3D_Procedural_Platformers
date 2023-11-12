@@ -21,7 +21,7 @@ public class SimpleProceduralMesh : MonoBehaviour
     PerlinNoise perlinNoise;
     public AnimationCurve perlinSlope;
 
-    MeshCollider collider;
+    MeshCollider col;
 
     private void Awake()
     {
@@ -29,7 +29,7 @@ public class SimpleProceduralMesh : MonoBehaviour
         meshFilter = GetComponent<MeshFilter>();
         meshFilter.mesh = myMesh;
         perlinNoise = GetComponent<PerlinNoise>();
-        collider = GetComponent<MeshCollider>();
+        col = GetComponent<MeshCollider>();
     }
 
    
@@ -49,7 +49,8 @@ public class SimpleProceduralMesh : MonoBehaviour
 
             float yPos = perlinNoise.perlinTexture.GetPixelBilinear(uvPos.x , uvPos.y).r;
             yPos = perlinSlope.Evaluate(yPos);
-            float finalValue = 0;
+            
+            //float finalValue = 0;
             //for(float j = 0; j < yPos; j += 0.2f)
             //{
             //    finalValue += 0.2f;
@@ -128,7 +129,7 @@ public class SimpleProceduralMesh : MonoBehaviour
         ApplyPerlinNoise();
         //SinWaveAnimation(Time.time * WaveSpeed);
         AssignMesh();
-        collider.sharedMesh = myMesh;
+        col.sharedMesh = myMesh;
         
     }
 
@@ -137,7 +138,7 @@ public class SimpleProceduralMesh : MonoBehaviour
         ApplyPerlinNoise();
         //SinWaveAnimation(Time.time * WaveSpeed);
         AssignMesh();
-        collider.sharedMesh = myMesh;
+        col.sharedMesh = myMesh;
     }
 
     private void TestingCreationProceduralMesh()

@@ -97,7 +97,7 @@ namespace GaRo
 
              if (IsGrounded && JumpTrigger)
             {
-                foreach (FlipPlatform flip in FindObjectsOfType<FlipPlatform>())
+                foreach (FlipPlatform flip in FindObjectsByType<FlipPlatform>(FindObjectsSortMode.None))
                 {
                     flip.Flip();
                 }

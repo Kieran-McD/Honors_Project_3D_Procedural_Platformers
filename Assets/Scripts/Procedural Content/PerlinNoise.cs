@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PerlinNoise : MonoBehaviour
 {
-    public Renderer renderer;
+    public Renderer rend;
 
     public int width = 256;
     public int height = 256;
@@ -23,9 +23,9 @@ public class PerlinNoise : MonoBehaviour
 
     private void Start()
     {
-        renderer = GetComponent<Renderer>();
+        rend = GetComponent<Renderer>();
         perlinTexture = GenerateTexture();
-        renderer.material.mainTexture = perlinTexture;
+        rend.material.mainTexture = perlinTexture;
     }
 
 
@@ -33,7 +33,7 @@ public class PerlinNoise : MonoBehaviour
     private void OnValidate()
     {
         perlinTexture = GenerateTexture();
-        renderer.sharedMaterial.mainTexture = perlinTexture;
+        rend.sharedMaterial.mainTexture = perlinTexture;
     }
 
 

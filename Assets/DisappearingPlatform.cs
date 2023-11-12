@@ -12,7 +12,7 @@ public class DisappearingPlatform : MonoBehaviour
     [SerializeField]
     float timeRespawn = 2f;
     [SerializeField]
-    BoxCollider collider;
+    BoxCollider col;
 
     bool isWorking = false;
 
@@ -51,13 +51,13 @@ public class DisappearingPlatform : MonoBehaviour
             yield return null;
         }
 
-        collider.enabled = false;
+        col.enabled = false;
         yield return new WaitForSeconds(timeRespawn);
 
         transform.localScale = maxScale;
         isWorking = false;
 
-        collider.enabled = true;
+        col.enabled = true;
         yield return null;
     }
 }

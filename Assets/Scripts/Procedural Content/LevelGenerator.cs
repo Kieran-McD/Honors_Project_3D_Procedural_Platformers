@@ -4,21 +4,12 @@ using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
-    [System.Serializable]
-    public struct AvailableObstacles {
-        public GameObject obstacle;
-        public bool active;
 
-        public GameObject GetObstacle()
-        {
-            if (active) return obstacle;
-            return null;
-        }
-    }
     [SerializeField]
     PathGenerator pathGenerator;
+
     [SerializeField]
-    List<AvailableObstacles> obstacle;
+    ObstacleStorage obstacles;
     [SerializeField]
     GameObject goal;
     [SerializeField]
@@ -93,16 +84,19 @@ public class LevelGenerator : MonoBehaviour
                 return;
             }
             //Gets a random obstacle to spawn
-            while (ob == null)
+            ob = obstacles.GetRandomObstacle();
+
+            if (ob == null)
             {
-                ob = obstacle[Random.Range(0, obstacle.Count)].GetObstacle();
+                pathGenerator.StartPathGenerator(exit.position, exit.rotation, totalPointsForPath);
+                return;
             }
             //Checks for a level object to store the obstacle
             if (levelTransform != null)
                 ob = Instantiate<GameObject>(ob, levelTransform);
             else
                 ob = Instantiate<GameObject>(ob);
-
+            
             //LOOK INTO BETTER METHOD FOR SPAWNING OBSTABVLES IN
             //ob.transform.position = exit.position + exit.forward * ob.GetComponent<Obstacle>().exit.transform.localPosition.z - exit.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;
             ob.transform.position = exit.position - exit.forward * ob.GetComponent<Obstacle>().entry.transform.localPosition.z - exit.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;

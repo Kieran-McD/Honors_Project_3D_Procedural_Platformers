@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -735,17 +735,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pathGenerator: {fileID: 1548410686}
-  obstacle:
-  - obstacle: {fileID: 6786846475115889264, guid: 711ec380dedbceb4d8adc299ad463392, type: 3}
-    active: 0
-  - obstacle: {fileID: 9155157574543609349, guid: 96dcbe0082b3147419006f3583b77ba4, type: 3}
-    active: 1
-  - obstacle: {fileID: 1763585132587578619, guid: af379b1dad2d4a343a2db508ea220664, type: 3}
-    active: 0
-  - obstacle: {fileID: 7483632760982237943, guid: fae050df5bd38684e958189d48afe268, type: 3}
-    active: 0
-  - obstacle: {fileID: 481397246318071799, guid: e0e4aa7955b804748b37b693dff39f27, type: 3}
-    active: 0
+  obstacles: {fileID: 11400000, guid: f3fcbd892b9b7a242bb9c1ea50e81a86, type: 2}
   goal: {fileID: 3655032058997271801, guid: 96360d4c03185434690cef085508824f, type: 3}
   totalPaths: 5
   totalPointsForPath: 20
