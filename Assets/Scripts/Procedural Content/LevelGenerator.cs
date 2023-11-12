@@ -81,6 +81,7 @@ public class LevelGenerator : MonoBehaviour
                     ob = Instantiate<GameObject>(goal);
                 ob.transform.position = exit.position;
                 ob.transform.rotation = Quaternion.Euler(0, exit.rotation.eulerAngles.y, 0);
+                pathGenerator.ClearPathGenerator();
                 return;
             }
             //Gets a random obstacle to spawn

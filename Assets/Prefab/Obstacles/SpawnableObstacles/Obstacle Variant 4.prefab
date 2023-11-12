@@ -122,7 +122,7 @@ MonoBehaviour:
   delay: 0.25
   maxTime: 2
   timeRespawn: 2
-  collider: {fileID: 5192840069519539165}
+  col: {fileID: 1430216592702261596}
 --- !u!65 &1430216592702261596
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -266,7 +266,7 @@ MonoBehaviour:
   delay: 0.25
   maxTime: 2
   timeRespawn: 2
-  collider: {fileID: 1169064119632288447}
+  col: {fileID: 1430216592702261596}
 --- !u!65 &6792804659632789772
 BoxCollider:
   m_ObjectHideFlags: 0
