@@ -71,6 +71,7 @@ public class PathGenerator : MonoBehaviour
         //Generates the vertices
         List<Vector3>vertices = GenerateVertices();
         mesh.vertices = vertices.ToArray();
+        mesh.normals = GenerateNormals().ToArray();
         //Sets up the indices
         mesh.triangles = GenerateTriangles(vertices).ToArray();
 
@@ -94,8 +95,20 @@ public class PathGenerator : MonoBehaviour
             vertices.Add(pos + (right * pathWidth / 2f));
             Instantiate<GameObject>(pathPointPrefab, vertices[vertices.Count - 1], Quaternion.identity, transform);
         }
-
         return vertices;        
+    }
+
+    List<Vector3> GenerateNormals()
+    {
+        List<Vector3> normals = new List<Vector3>();
+
+        //Generate all the vertices along the point
+        for (int i = 0; i < pathPointTransforms.Count; i++)
+        {
+            normals.Add(pathPointTransforms[i].up);           
+            normals.Add(pathPointTransforms[i].up);          
+        }
+        return normals;
     }
 
     //If Vertices generation changes, change triangle generation
