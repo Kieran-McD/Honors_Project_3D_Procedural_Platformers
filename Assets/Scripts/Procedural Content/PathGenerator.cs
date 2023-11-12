@@ -47,7 +47,8 @@ public class PathGenerator : MonoBehaviour
 
         if(pathPointTransforms.Count > pointsInPath)
         {
-            Destroy(currentWorm.gameObject);
+            //Destroy(currentWorm.gameObject);
+            currentWorm.GetComponent<PerlinWormPath>().isMoving = false;
             BuildPath();
             isFinished = true;
         }
@@ -127,8 +128,17 @@ public class PathGenerator : MonoBehaviour
     {
         isFinished = false;
         tick = 0;
-        currentWorm = null;
-        currentWorm = Instantiate(perlinWormPrefab, pos, rot).transform;
+        //CURRENTLY DECIDING IF CURRENT WORM SHOULD BE REPLACED OR REUSED
+        //REPLACE
+        //currentWorm = null;
+        //currentWorm = Instantiate(perlinWormPrefab, pos, rot).transform;
+        //REUSE
+        if (currentWorm == null)
+            currentWorm = Instantiate(perlinWormPrefab, pos, rot).transform;
+        currentWorm.position = pos;
+        currentWorm.rotation = rot;
+        currentWorm.GetComponent<PerlinWormPath>().isMoving = true;
+
         pathPointTransforms.Clear();
         pathPointTransforms.Add(Instantiate<GameObject>(pathPointPrefab, pos, rot, transform).transform);
         pointSpawnRate = currentWorm.GetComponent<PerlinWormPath>().speed / (currentWorm.GetComponent<PerlinWormPath>().speed * currentWorm.GetComponent<PerlinWormPath>().speed);
@@ -156,6 +166,8 @@ public class PathGenerator : MonoBehaviour
             }
             Destroy(child.gameObject);
         }
+        if (currentWorm) Destroy(currentWorm.gameObject);
+        currentWorm = null;
     }
 
     public bool GetIsFinished()

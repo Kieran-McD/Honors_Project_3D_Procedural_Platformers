@@ -48,7 +48,7 @@ public class LevelGenerator : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        if (pathGenerator.GetCurrentWorm()) Destroy(pathGenerator.GetCurrentWorm().gameObject);
+     
         pathGenerator.ClearPathGenerator();
         pathGenerator.StartPathGenerator(pathGenerator.transform.position, pathGenerator.transform.rotation, totalPointsForPath);
         reset = false;

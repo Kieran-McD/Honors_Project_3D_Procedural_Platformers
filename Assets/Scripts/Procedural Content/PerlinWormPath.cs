@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class PerlinWormPath : PerlinWorm
 {
+    public bool isMoving = true;
+
     public new void Update()
     {
-        base.Update();
+        if (isMoving)
+        {
+            base.Update();
+        }    
     }
 
 }
