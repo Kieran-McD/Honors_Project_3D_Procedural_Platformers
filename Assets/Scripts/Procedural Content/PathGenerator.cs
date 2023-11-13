@@ -102,7 +102,7 @@ public class PathGenerator : MonoBehaviour
     {
         List<Vector3> normals = new List<Vector3>();
 
-        //Generate all the vertices along the point
+        //Generate all the normals along the point
         for (int i = 0; i < pathPointTransforms.Count; i++)
         {
             normals.Add(pathPointTransforms[i].up);           

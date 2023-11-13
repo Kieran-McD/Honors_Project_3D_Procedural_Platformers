@@ -155,3 +155,5 @@ MonoBehaviour:
   pitch: 1
   freq: 0.1
   turnValue: 0
+  onlyUp: 0
+  isMoving: 1

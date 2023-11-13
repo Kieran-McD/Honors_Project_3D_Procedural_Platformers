@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   obstacles:
   - obstacle: {fileID: 6786846475115889264, guid: 711ec380dedbceb4d8adc299ad463392, type: 3}
-    active: 1
+    active: 0
   - obstacle: {fileID: 9155157574543609349, guid: 96dcbe0082b3147419006f3583b77ba4, type: 3}
-    active: 1
+    active: 0
   - obstacle: {fileID: 1763585132587578619, guid: af379b1dad2d4a343a2db508ea220664, type: 3}
-    active: 1
+    active: 0
   - obstacle: {fileID: 7483632760982237943, guid: fae050df5bd38684e958189d48afe268, type: 3}
-    active: 1
+    active: 0
   - obstacle: {fileID: 481397246318071799, guid: e0e4aa7955b804748b37b693dff39f27, type: 3}
     active: 1

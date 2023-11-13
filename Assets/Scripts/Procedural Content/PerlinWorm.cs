@@ -27,6 +27,7 @@ public class PerlinWorm : MonoBehaviour
 	static public float max = 0.0f;
 
 	public float turnValue = 0;
+	public bool onlyUp = false;
 
 
     public Vector2 GetMinMax()
@@ -74,15 +75,22 @@ public class PerlinWorm : MonoBehaviour
 
 	void PerlinWormLogic()
 	{
-        float x = transform.position.x;
-        float y = transform.position.y;
-        float z = transform.position.z;
+		float x = transform.position.x;
+		float y = transform.position.y;
+		float z = transform.position.z;
 
-        double noise = ImprovedNoise.noise((x * freq) + randA, (y * freq) + randA, (z * freq) + randA);// Mathf.PerlinNoise( x, y);
-        double noise2 = ImprovedNoise.noise((x * freq) + randB, (y * freq) + randB, (z * freq) + randB);// Mathf.PerlinNoise( x, y);
+		double noise = ImprovedNoise.noise((x * freq) + randA, (y * freq) + randA, (z * freq) + randA);// Mathf.PerlinNoise( x, y);
+		double noise2 = ImprovedNoise.noise((x * freq) + randB, (y * freq) + randB, (z * freq) + randB);// Mathf.PerlinNoise( x, y);
 
-        /*noise *= 2.0f;
+		/*noise *= 2.0f;
 		noise2 *= 2.0f;*/
+
+		if (onlyUp)
+		{
+            noise2 -= 1;
+            noise2 /= 2f;
+        }
+
 
         if (noise < min)
         {

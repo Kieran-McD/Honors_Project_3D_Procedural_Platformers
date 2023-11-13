@@ -145,8 +145,6 @@ namespace GaRo
             {
                 GroundNormal = HitInfo.normal;
                 StateInfo.ContactPosition = HitInfo.point;
-                
-
 
                 //
                 var currentPosition = HitInfo.transform.position;
