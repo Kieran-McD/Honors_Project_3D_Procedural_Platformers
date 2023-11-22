@@ -153,7 +153,7 @@ MonoBehaviour:
   frames: 10
   roll: 1
   pitch: 1
-  freq: 0.1
+  freq: 0.2
   turnValue: 0
   onlyUp: 0
   isMoving: 1

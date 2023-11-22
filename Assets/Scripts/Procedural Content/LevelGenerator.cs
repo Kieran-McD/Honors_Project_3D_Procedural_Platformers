@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -108,4 +109,12 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
+    public void SetTotalPaths(Single paths)
+    {
+        totalPaths =    ((int)paths);
+    }
+    public void SetTotalPointsPath(Single points)
+    {
+        totalPointsForPath =  ((int)points);
+    }
 }
