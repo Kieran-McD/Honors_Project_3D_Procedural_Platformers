@@ -12,6 +12,9 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField]
     ObstacleStorage obstacles;
     [SerializeField]
+    GameObject Split;
+
+    [SerializeField]
     GameObject goal;
     [SerializeField]
     int totalPaths = 5;
@@ -98,15 +101,27 @@ public class LevelGenerator : MonoBehaviour
                 ob = Instantiate<GameObject>(ob, levelTransform);
             else
                 ob = Instantiate<GameObject>(ob);
-            
+
             //LOOK INTO BETTER METHOD FOR SPAWNING OBSTABVLES IN
             //ob.transform.position = exit.position + exit.forward * ob.GetComponent<Obstacle>().exit.transform.localPosition.z - exit.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;
             ob.transform.position = exit.position - exit.forward * ob.GetComponent<Obstacle>().entry.transform.localPosition.z - exit.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;
             ob.transform.rotation = Quaternion.Euler(0, exit.rotation.eulerAngles.y, 0);
 
+            //Start Path generation
             pathGenerator.StartPathGenerator(ob.GetComponent<Obstacle>().exit.position, ob.transform.rotation, totalPointsForPath);
 
+            //SplitPath(exit.position, exit.rotation);
+
         }
+    }
+
+    void SplitPath(Vector3 pos, Quaternion rotation)
+    {
+        GameObject split = Instantiate(Split, pos, rotation);
+        split.transform.rotation = Quaternion.Euler(0,rotation.eulerAngles.y,0);
+        split.transform.position = pos + split.transform.forward * 1.5f;
+        split.transform.localScale = new Vector3(pathGenerator.GetPathWidth(),1, pathGenerator.GetPathWidth());
+        split.GetComponent<SplitPathObjects>().BuildSpawnPaths(pathGenerator, totalPointsForPath);
     }
 
     public void SetTotalPaths(Single paths)

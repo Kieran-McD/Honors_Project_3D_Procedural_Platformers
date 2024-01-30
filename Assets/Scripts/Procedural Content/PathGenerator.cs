@@ -187,4 +187,9 @@ public class PathGenerator : MonoBehaviour
     {
         return isFinished;
     }
+
+    public float GetPathWidth()
+    {
+        return pathWidth;
+    }
 }

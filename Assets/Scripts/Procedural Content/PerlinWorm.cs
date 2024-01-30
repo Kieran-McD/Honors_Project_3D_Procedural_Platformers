@@ -29,6 +29,7 @@ public class PerlinWorm : MonoBehaviour
 	public float turnValue = 0;
 	public bool onlyUp = false;
 
+	float SpawnedRotation;
 
     public Vector2 GetMinMax()
     {
@@ -47,7 +48,7 @@ public class PerlinWorm : MonoBehaviour
 
 	void Start()
 	{
-
+		SpawnedRotation = transform.rotation.eulerAngles.y;
 		randA = Random.value * 5000.0f;
 		randB = 10000 + Random.value * 2500.0f;
 
@@ -101,18 +102,19 @@ public class PerlinWorm : MonoBehaviour
             max = (float)noise;
         }
 
-        float turn = (float)noise * 180.0f;
+        float turn = (float)noise * 5.0f;
 
         float turn2 = (float)noise2 * 45.0f;
 
-        transform.rotation = Quaternion.identity;
+        //transform.rotation = Quaternion.identity;
         if (roll)
 		{
-			turnValue = Mathf.Abs(turn)/360f;
+			turnValue = Mathf.Abs(turn * Time.deltaTime)/360f;
 			//Debug.Log(turnValue);
-            //transform.rotation = Quaternion.AngleAxis(turn, transform.forward);
+			//transform.rotation = Quaternion.AngleAxis(turn, transform.forward);
+			transform.rotation = Quaternion.Euler(0, turn + transform.eulerAngles.y, 0);
             //transform.rotation = Quaternion.Euler(0,turn,0);
-            transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y + turn, 0);
+            //transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y + turn + SpawnedRotation, 0);
         }
            
 
