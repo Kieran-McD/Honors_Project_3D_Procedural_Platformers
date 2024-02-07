@@ -15,6 +15,8 @@ public class VoronoiDiagram : MonoBehaviour
     // This is where we will store the resulting data
     private Dictionary<Vector2, Site> sites;
     private List<Edge> edges;
+    private List<Site> pointsForPath;
+
 
     void Start()
     {
@@ -35,7 +37,7 @@ public class VoronoiDiagram : MonoBehaviour
         // There is a two ways you can create the voronoi diagram: with or without the lloyd relaxation
         // Here I used it with 2 iterations of the lloyd relaxation
         Voronoi voronoi = new Voronoi(points, bounds, 5);
-
+        
         // But you could also create it without lloyd relaxtion and call that function later if you want
         //Voronoi voronoi = new Voronoi(points,bounds);
         //voronoi.LloydRelaxation(5);
@@ -43,10 +45,13 @@ public class VoronoiDiagram : MonoBehaviour
 
         sites = new Dictionary<Vector2, Site>();
         edges = new List<Edge>();
+        pointsForPath = new List<Site>();
+        
 
         // Now retreive the edges from it, and the new sites position if you used lloyd relaxtion
         sites = voronoi.SitesIndexedByLocation;
         edges = voronoi.Edges;
+        pointsForPath = PathFindingAStar(voronoi);
 
         DisplayVoronoiDiagram();
     }
@@ -88,6 +93,12 @@ public class VoronoiDiagram : MonoBehaviour
 
             DrawLine(edge.ClippedEnds[LR.LEFT], edge.ClippedEnds[LR.RIGHT], tx, Color.black);
         }
+        for(int i =0; i< pointsForPath.Count-1; i++)
+        {
+            DrawLine(pointsForPath[i].Coord, pointsForPath[i + 1].Coord, tx, Color.magenta);
+        }
+       
+
         tx.Apply();
 
         this.GetComponent<Renderer>().material.mainTexture = tx;
@@ -124,6 +135,51 @@ public class VoronoiDiagram : MonoBehaviour
                 y0 += sy;
             }
         }
+    }
+
+
+    private List<Site> PathFindingAStar(Voronoi voronoi)
+    {
+        Site startingSite, endSite;
+        voronoi.SitesIndexedByLocation.TryGetValue(voronoi.SiteCoords()[Random.Range(0, voronoi.SiteCoords().Count)], out startingSite);
+        voronoi.SitesIndexedByLocation.TryGetValue(voronoi.SiteCoords()[Random.Range(0, voronoi.SiteCoords().Count)], out endSite);
+
+        List<Site> result = new List<Site>();
+        List<Site> visited = new List<Site>();
+        Queue<Site> work = new Queue<Site>();
+
+        startingSite.history = new List<Site>();
+        visited.Add(startingSite);
+        work.Enqueue(startingSite);
+
+        while (work.Count > 0)
+        {
+            Site current = work.Dequeue();
+            if (current == endSite)
+            {
+                //Found Node
+                result = current.history;
+                result.Add(current);
+                return result;
+            }
+            else
+            {
+                //Didn't find Node
+                for (int i = 0; i < current.NeighborSites().Count; i++)
+                {
+                    Site currentNeighbor = current.NeighborSites()[i];
+                    if (!visited.Contains(currentNeighbor))
+                    {
+                        currentNeighbor.history = new List<Site>(current.history);
+                        currentNeighbor.history.Add(current);
+                        visited.Add(currentNeighbor);
+                        work.Enqueue(currentNeighbor);
+                    }
+                }
+            }
+        }
+        //Route not found, loop ends
+        return null;
     }
 }
 
