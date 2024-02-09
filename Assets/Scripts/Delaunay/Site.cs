@@ -7,6 +7,8 @@ namespace csDelaunay {
 
 		private static Queue<Site> pool = new Queue<Site>();
 
+		public List<Site> history;
+
 		public static Site Create(Vector2 p, int index, float weigth) {
 			if (pool.Count > 0) {
 				return pool.Dequeue().Init(p, index, weigth);

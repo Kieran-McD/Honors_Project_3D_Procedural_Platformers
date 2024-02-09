@@ -17,6 +17,8 @@ public class VoronoiDiagram : MonoBehaviour
     private List<Edge> edges;
     private List<Site> pointsForPath;
 
+    public Voronoi voronoi;
+    public VoronoiMeshGenerator meshGenerator;
 
     void Start()
     {
@@ -36,7 +38,7 @@ public class VoronoiDiagram : MonoBehaviour
 
         // There is a two ways you can create the voronoi diagram: with or without the lloyd relaxation
         // Here I used it with 2 iterations of the lloyd relaxation
-        Voronoi voronoi = new Voronoi(points, bounds, 5);
+        voronoi = new Voronoi(points, bounds, 5);
         
         // But you could also create it without lloyd relaxtion and call that function later if you want
         //Voronoi voronoi = new Voronoi(points,bounds);
@@ -54,6 +56,7 @@ public class VoronoiDiagram : MonoBehaviour
         pointsForPath = PathFindingAStar(voronoi);
 
         DisplayVoronoiDiagram();
+        if (meshGenerator) meshGenerator.GeneratePlane(voronoi);
     }
 
     IEnumerator waiter()

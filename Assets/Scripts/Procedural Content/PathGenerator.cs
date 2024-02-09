@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class PathGenerator : MonoBehaviour
 {
@@ -10,6 +12,8 @@ public class PathGenerator : MonoBehaviour
     GameObject pathPointPrefab;
     [SerializeField]
     GameObject pathPrefab;
+    [SerializeField]
+    Transform pathGenratorStartPoint;
 
     GameObject currentPath;
 
@@ -30,6 +34,7 @@ public class PathGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
     }
 
     // Update is called once per frame
@@ -47,14 +52,18 @@ public class PathGenerator : MonoBehaviour
 
         if(pathPointTransforms.Count > pointsInPath)
         {
-            //Destroy(currentWorm.gameObject);
-            currentWorm.GetComponent<PerlinWormPath>().isMoving = false;
-            BuildPath();
-            isFinished = true;
+            PerlinWormFinished();
         }
     }
 
-
+    public void PerlinWormFinished()
+    {
+        //Destroy(currentWorm.gameObject);
+        currentWorm.GetComponent<PerlinWormPath>().isMoving = false;
+        BuildPath();
+        isFinished = true;
+    }
+    
     void BuildPath()
     {
         //Spawns the path object
@@ -132,6 +141,11 @@ public class PathGenerator : MonoBehaviour
         return triangles;
     }
 
+    public void StartPathGenerator()
+    {
+        StartPathGenerator(pathGenratorStartPoint.position, pathGenratorStartPoint.rotation, int.MaxValue);
+    }
+
     public void StartPathGenerator(Vector3 pos, Quaternion rot)
     {
         StartPathGenerator(pos, rot, 20);
@@ -147,7 +161,10 @@ public class PathGenerator : MonoBehaviour
         //currentWorm = Instantiate(perlinWormPrefab, pos, rot).transform;
         //REUSE
         if (currentWorm == null)
+        {
             currentWorm = Instantiate(perlinWormPrefab, pos, rot).transform;
+            currentWorm.GetComponent<PerlinWormPath>().pathGenerator = this;
+        }
         currentWorm.position = pos;
         currentWorm.rotation = rot;
         currentWorm.GetComponent<PerlinWormPath>().isMoving = true;
@@ -191,5 +208,28 @@ public class PathGenerator : MonoBehaviour
     public float GetPathWidth()
     {
         return pathWidth;
+    }
+
+
+    [CustomEditor(typeof(PathGenerator))]
+    public class PathGeneratorEditor : Editor
+    {
+
+        // some declaration missing??
+
+        override public void OnInspectorGUI()
+        {
+            if (Application.isPlaying)
+            {
+                GUILayout.TextField("Dont Press Button To Much Bad Idea");
+
+                PathGenerator colliderCreator = (PathGenerator)target;
+                if (GUILayout.Button("Start Generation"))
+                {
+                    colliderCreator.StartPathGenerator(); // how do i call this?
+                }
+            }
+            DrawDefaultInspector();
+        }
     }
 }

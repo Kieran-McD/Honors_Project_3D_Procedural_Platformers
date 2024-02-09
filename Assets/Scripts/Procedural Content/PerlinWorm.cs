@@ -109,7 +109,7 @@ public class PerlinWorm : MonoBehaviour
         //transform.rotation = Quaternion.identity;
         if (roll)
 		{
-			turnValue = Mathf.Abs(turn * Time.deltaTime)/360f;
+			turnValue = (turn * Time.deltaTime)/360f;
 			//Debug.Log(turnValue);
 			//transform.rotation = Quaternion.AngleAxis(turn, transform.forward);
 			transform.rotation = Quaternion.Euler(0, turn + transform.eulerAngles.y, 0);
