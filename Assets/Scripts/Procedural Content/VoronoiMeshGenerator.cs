@@ -9,12 +9,49 @@ using TMPro.EditorUtilities;
 public class VoronoiMeshGenerator : MonoBehaviour
 {
     
-    public void GeneratePlane(Voronoi voronoi)
+    public VoronoiDiagram voronoiDiagram;
+
+    public void GeneratePlane()
+    {
+
+        if (!voronoiDiagram) { return; }
+        Mesh mesh = new Mesh();
+        GetComponent<MeshFilter>().mesh = mesh;
+        mesh.Clear();
+        List<List<Vector3>> regionPlotPoints = GenerateVertices(voronoiDiagram.voronoi);
+
+        List<Vector3> vertices = new List<Vector3>();
+
+        for (int i = 0; i < regionPlotPoints.Count; i++)
+        {
+            List<Vector3> points = regionPlotPoints[i];
+            for (int j = 0; j < points.Count; j++)
+            {
+                vertices.Add(points[j]);
+                Debug.Log("Total Vertices: " + vertices.Count);
+            }
+        }
+
+        Debug.Log("Total Vertices: " + vertices.Count);
+
+        mesh.vertices = vertices.ToArray();
+
+        List<Vector3> normals = new List<Vector3>();
+
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            normals.Add(Vector3.up);
+        }
+        mesh.normals = normals.ToArray();
+        mesh.triangles = GenerateTriangles(regionPlotPoints).ToArray();
+    }
+
+    public void GeneratePlane(Voronoi tempVoronoi)
     {
         Mesh mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         mesh.Clear();
-        List<List<Vector3>> regionPlotPoints = GenerateVertices(voronoi);
+        List<List<Vector3>> regionPlotPoints = GenerateVertices(tempVoronoi);
         
         List<Vector3> vertices = new List<Vector3>();
 
@@ -40,8 +77,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
         }
         mesh.normals = normals.ToArray();
         mesh.triangles = GenerateTriangles(regionPlotPoints).ToArray();
+        mesh.colors = GenerateColourRegions(regionPlotPoints).ToArray();
 
- 
+        mesh.RecalculateNormals();
     }
 
     List<List<Vector3>> GenerateVertices(Voronoi voronoi)
@@ -138,6 +176,25 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         Debug.Log("Total Triangles: " + triangles.Count);
         return triangles;
+    }
+
+    List<Color> GenerateColourRegions(List<List<Vector3>> vertices)
+    {
+
+        List<Color> colourRegions = new List<Color>();
+
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            List<Vector3> points = vertices[i];
+            Color color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
+            for (int j = 0; j < points.Count; j++)
+            {
+                colourRegions.Add(color);
+            }
+
+
+        }
+        return colourRegions;
     }
 
 }
