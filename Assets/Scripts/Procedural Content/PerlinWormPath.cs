@@ -12,26 +12,26 @@ public class PerlinWormPath : PerlinWorm
     {
         if (isMoving)
         {
-            MagnetizeToPoint();
-
+         
             base.Update();
-
-            if(transform.position == followPoint.position)
-            {
-                pathGenerator.PerlinWormFinished();
-            }
+            MagnetizeToPoint();
 
         }    
     }
 
     private void MagnetizeToPoint()
     {
-        Vector3 directionToPoint = followPoint.position - transform.position; 
-
+        Vector3 directionToPoint = followPoint.position - transform.position;
+        directionToPoint.Normalize();
+        //directionToPoint = new Vector3(0, 1, 0);
+        //Horizontal Direction
         float dotProduct = Vector3.Dot(transform.forward, directionToPoint);
         float angleToPoint = Mathf.Acos(dotProduct / (transform.forward.magnitude * directionToPoint.magnitude)) / 3.14159f;
-
         transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, directionToPoint, angleToPoint * 45f * Time.deltaTime, 0f));
+        //Quaternion toRotation = Quaternion.LookRotation(directionToPoint); // instead of LookRotation( )
+        //transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, angleToPoint * 30f * Time.deltaTime);
+
+        Debug.Log("Direction to target: " + directionToPoint);
 
         //Debug.Log("Angle to point: " + Mathf.Rad2Deg * angleToPoint);
     }

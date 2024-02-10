@@ -39,7 +39,7 @@ public class VoronoiDiagram : MonoBehaviour
         // There is a two ways you can create the voronoi diagram: with or without the lloyd relaxation
         // Here I used it with 2 iterations of the lloyd relaxation
         voronoi = new Voronoi(points, bounds, 5);
-        
+
         // But you could also create it without lloyd relaxtion and call that function later if you want
         //Voronoi voronoi = new Voronoi(points,bounds);
         //voronoi.LloydRelaxation(5);
@@ -48,7 +48,7 @@ public class VoronoiDiagram : MonoBehaviour
         sites = new Dictionary<Vector2, Site>();
         edges = new List<Edge>();
         pointsForPath = new List<Site>();
-        
+
 
         // Now retreive the edges from it, and the new sites position if you used lloyd relaxtion
         sites = voronoi.SitesIndexedByLocation;
@@ -56,10 +56,14 @@ public class VoronoiDiagram : MonoBehaviour
         pointsForPath = PathFindingAStar(voronoi);
 
         DisplayVoronoiDiagram();
-        if (meshGenerator) meshGenerator.GeneratePlane(voronoi);
-    }
+        if (meshGenerator)
+        {
+            meshGenerator.GeneratePlane(voronoi);
+            meshGenerator.SpawnPathNodes(pointsForPath);
+        }
 
-    IEnumerator waiter()
+    }
+        IEnumerator waiter()
     {
         //Wait for 4 seconds
         yield return new WaitForSeconds(0.2f);
@@ -184,6 +188,19 @@ public class VoronoiDiagram : MonoBehaviour
         //Route not found, loop ends
         return null;
     }
+
+    public List<PathNode> GetPathList(float Scaling)
+    {
+
+        for(int i = 0; i < pointsForPath.Count; i++)
+        {
+            
+        }
+
+
+        return new List<PathNode>();
+    }
+
 }
 
 
@@ -208,3 +225,4 @@ public class VoronoiDiagramEditor : Editor
         DrawDefaultInspector();
     }
 }
+

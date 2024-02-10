@@ -29,6 +29,9 @@ public class PerlinWorm : MonoBehaviour
 	public float turnValue = 0;
 	public bool onlyUp = false;
 
+	public float maxPerlinHorizontalRotation =5f;
+	public float maxPerlinVerticalRotation=5f;
+
 	float SpawnedRotation;
 
     public Vector2 GetMinMax()
@@ -102,9 +105,9 @@ public class PerlinWorm : MonoBehaviour
             max = (float)noise;
         }
 
-        float turn = (float)noise * 5.0f;
+        float turn = (float)noise * maxPerlinHorizontalRotation;
 
-        float turn2 = (float)noise2 * 45.0f;
+        float turn2 = (float)noise2 * maxPerlinVerticalRotation;
 
         //transform.rotation = Quaternion.identity;
         if (roll)
@@ -112,7 +115,7 @@ public class PerlinWorm : MonoBehaviour
 			turnValue = (turn * Time.deltaTime)/360f;
 			//Debug.Log(turnValue);
 			//transform.rotation = Quaternion.AngleAxis(turn, transform.forward);
-			transform.rotation = Quaternion.Euler(0, turn + transform.eulerAngles.y, 0);
+			transform.rotation = Quaternion.Euler(transform.eulerAngles.x, turn + transform.eulerAngles.y, transform.eulerAngles.z);
             //transform.rotation = Quaternion.Euler(0,turn,0);
             //transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y + turn + SpawnedRotation, 0);
         }
@@ -120,9 +123,10 @@ public class PerlinWorm : MonoBehaviour
 
         if (pitch)
         {
-			//transform.rotation *= Quaternion.AngleAxis(turn2, transform.right);
+            //transform.rotation *= Quaternion.AngleAxis(turn2, transform.right);
+            turnValue = (turn2 * Time.deltaTime) / 360f;
 
-			transform.rotation = Quaternion.Euler(turn2, transform.rotation.eulerAngles.y, 0);
+            transform.rotation = Quaternion.Euler(turn2 + transform.eulerAngles.x, transform.rotation.eulerAngles.y, transform.eulerAngles.z);
 		}
            
         // (0, 0, turn);// = Quaternion.AngleAxis(heading, transform.forward);// Quaternion.Euler (0, 0, heading) * direction;

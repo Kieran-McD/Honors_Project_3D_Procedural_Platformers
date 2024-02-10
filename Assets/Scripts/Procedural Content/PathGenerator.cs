@@ -144,6 +144,11 @@ public class PathGenerator : MonoBehaviour
     public void StartPathGenerator()
     {
         StartPathGenerator(pathGenratorStartPoint.position, pathGenratorStartPoint.rotation, int.MaxValue);
+
+        if (pathGenratorStartPoint.GetComponent<PathNode>())
+        {
+            currentWorm.GetComponent<PerlinWormPath>().followPoint = pathGenratorStartPoint.GetComponent<PathNode>().NextNode.transform;
+        }
     }
 
     public void StartPathGenerator(Vector3 pos, Quaternion rot)

@@ -11,6 +11,13 @@ public class VoronoiMeshGenerator : MonoBehaviour
     
     public VoronoiDiagram voronoiDiagram;
 
+    public GameObject pathNode;
+
+    List<GameObject> pathNodeObjects;
+
+    [SerializeField]
+    float scaling = 1f;
+
     public void GeneratePlane()
     {
 
@@ -107,13 +114,13 @@ public class VoronoiMeshGenerator : MonoBehaviour
         for (int i = 0; i < siteCoords.Count; i++)
         {
             List<Vector3> points = new List<Vector3>();
-            points.Add(new Vector3(siteCoords[i].X / 512f, 0, siteCoords[i].Y / 512));
+            points.Add(new Vector3(siteCoords[i].X / scaling, 0, siteCoords[i].Y / scaling));
 
             List<Vector2> plotPoints = voronoi.Region(siteCoords[i]);
 
             for (int j = 0; j < plotPoints.Count; j++)
             {
-                points.Add(new Vector3(plotPoints[j].X / 512f, 0, plotPoints[j].Y / 512f));
+                points.Add(new Vector3(plotPoints[j].X / scaling, 0, plotPoints[j].Y / scaling));
                 Debug.Log("Plot Point: " + (i * plotPoints.Count + j) + " Position: " + points[j]);
             }
             totalPointsSoFar += points.Count;
@@ -195,6 +202,24 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         }
         return colourRegions;
+    }
+
+    public void SpawnPathNodes(List<Site> sites)
+    {
+
+        PathNode previousNode = Instantiate(pathNode, this.transform).GetComponent<PathNode>();
+        previousNode.transform.localPosition = new Vector3(sites[sites.Count - 1].Coord.X / scaling, Random.Range(5,10), sites[sites.Count - 1].Coord.Y / scaling);
+        for (int i = sites.Count-2; i > 0; i--)
+        {
+            PathNode nextNode = Instantiate(pathNode, this.transform).GetComponent<PathNode>();
+            nextNode.transform.localPosition = new Vector3(sites[i].Coord.X / scaling, Random.Range(5, 10), sites[i].Coord.Y / scaling);
+            
+            nextNode.transform.rotation = Quaternion.LookRotation(previousNode.transform.position - nextNode.transform.position, Vector3.up);
+            
+            nextNode.NextNode = previousNode;
+            previousNode = nextNode;
+        }
+
     }
 
 }
