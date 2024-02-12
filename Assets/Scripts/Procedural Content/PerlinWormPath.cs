@@ -28,6 +28,7 @@ public class PerlinWormPath : PerlinWorm
         float dotProduct = Vector3.Dot(transform.forward, directionToPoint);
         float angleToPoint = Mathf.Acos(dotProduct / (transform.forward.magnitude * directionToPoint.magnitude)) / 3.14159f;
         transform.rotation = Quaternion.LookRotation(Vector3.RotateTowards(transform.forward, directionToPoint, angleToPoint * 45f * Time.deltaTime, 0f));
+
         //Quaternion toRotation = Quaternion.LookRotation(directionToPoint); // instead of LookRotation( )
         //transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, angleToPoint * 30f * Time.deltaTime);
 

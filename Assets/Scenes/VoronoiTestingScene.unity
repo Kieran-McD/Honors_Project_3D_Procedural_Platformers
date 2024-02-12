@@ -559,7 +559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49907e73eecb60346839c566bc638d4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  polygonNumber: 200
+  polygonNumber: 500
   meshGenerator: {fileID: 2046141018}
 --- !u!23 &2007234574
 MeshRenderer:
@@ -680,7 +680,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 11d8a8a1019d0cd45be4323165781370, type: 2}
+  - {fileID: 2100000, guid: f2850cfa625590d40bd79c17b67806b4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

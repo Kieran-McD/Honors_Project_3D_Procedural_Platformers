@@ -4,6 +4,7 @@ using UnityEngine;
 using csDelaunay;
 using Vector2 = System.Numerics.Vector2;
 using TMPro.EditorUtilities;
+using UnityEngine.UIElements;
 
 
 public class VoronoiMeshGenerator : MonoBehaviour
@@ -26,6 +27,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         GetComponent<MeshFilter>().mesh = mesh;
         mesh.Clear();
         List<List<Vector3>> regionPlotPoints = GenerateVertices(voronoiDiagram.voronoi);
+      
 
         List<Vector3> vertices = new List<Vector3>();
 
@@ -35,11 +37,11 @@ public class VoronoiMeshGenerator : MonoBehaviour
             for (int j = 0; j < points.Count; j++)
             {
                 vertices.Add(points[j]);
-                Debug.Log("Total Vertices: " + vertices.Count);
+                //Debug.Log("Total Vertices: " + vertices.Count);
             }
         }
 
-        Debug.Log("Total Vertices: " + vertices.Count);
+        //Debug.Log("Total Vertices: " + vertices.Count);
 
         mesh.vertices = vertices.ToArray();
 
@@ -60,6 +62,13 @@ public class VoronoiMeshGenerator : MonoBehaviour
         mesh.Clear();
         List<List<Vector3>> regionPlotPoints = GenerateVertices(tempVoronoi);
         
+        Debug.Log("Path Nodes: " + pathNodeObjects.Count);
+        if (pathNodeObjects.Count > 0)
+        {
+            Debug.Log("It Got here");
+            regionPlotPoints = MoveVertices(regionPlotPoints);
+        }
+
         List<Vector3> vertices = new List<Vector3>();
 
         for(int i = 0; i < regionPlotPoints.Count; i++)
@@ -68,11 +77,11 @@ public class VoronoiMeshGenerator : MonoBehaviour
             for(int j = 0; j < points.Count; j++)
             {
                 vertices.Add(points[j]);
-                Debug.Log("Total Vertices: " + vertices.Count);
+                //Debug.Log("Total Vertices: " + vertices.Count);
             }
         }
 
-        Debug.Log("Total Vertices: " + vertices.Count);
+        //Debug.Log("Total Vertices: " + vertices.Count);
 
         mesh.vertices = vertices.ToArray();
 
@@ -121,7 +130,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             for (int j = 0; j < plotPoints.Count; j++)
             {
                 points.Add(new Vector3(plotPoints[j].X / scaling, 0, plotPoints[j].Y / scaling));
-                Debug.Log("Plot Point: " + (i * plotPoints.Count + j) + " Position: " + points[j]);
+                //Debug.Log("Plot Point: " + (i * plotPoints.Count + j) + " Position: " + points[j]);
             }
             totalPointsSoFar += points.Count;
             regionPlotPoints.Add(points);
@@ -150,7 +159,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         for(int i = 0; i < vertices.Count; i++)
         {
             List<Vector3> points = vertices[i];
-            Debug.Log("Current Region " + i + " Total Points " + points.Count);
+            //Debug.Log("Current Region " + i + " Total Points " + points.Count);
             for(int j = 1; j < points.Count; j++)
             {
                 triangles.Add(totalPointsSoFar + j);
@@ -166,7 +175,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             }
 
             totalPointsSoFar += points.Count;
-            Debug.Log("Total Points So Far: " + totalPointsSoFar);
+            //Debug.Log("Total Points So Far: " + totalPointsSoFar);
 
             ////Generate the first triangle
             //triangles.Add(i);
@@ -181,7 +190,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             //}
         }
 
-        Debug.Log("Total Triangles: " + triangles.Count);
+        //Debug.Log("Total Triangles: " + triangles.Count);
         return triangles;
     }
 
@@ -206,14 +215,15 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     public void SpawnPathNodes(List<Site> sites)
     {
-
+        pathNodeObjects = new List<GameObject>();
         PathNode previousNode = Instantiate(pathNode, this.transform).GetComponent<PathNode>();
-        previousNode.transform.localPosition = new Vector3(sites[sites.Count - 1].Coord.X / scaling, Random.Range(5,10), sites[sites.Count - 1].Coord.Y / scaling);
+        previousNode.transform.localPosition = new Vector3(sites[sites.Count - 1].Coord.X / scaling, 0, sites[sites.Count - 1].Coord.Y / scaling);
+        pathNodeObjects.Add(previousNode.gameObject);
         for (int i = sites.Count-2; i > 0; i--)
         {
             PathNode nextNode = Instantiate(pathNode, this.transform).GetComponent<PathNode>();
-            nextNode.transform.localPosition = new Vector3(sites[i].Coord.X / scaling, Random.Range(5, 10), sites[i].Coord.Y / scaling);
-            
+            nextNode.transform.localPosition = new Vector3(sites[i].Coord.X / scaling, 0, sites[i].Coord.Y / scaling);
+            pathNodeObjects.Add(nextNode.gameObject);
             nextNode.transform.rotation = Quaternion.LookRotation(previousNode.transform.position - nextNode.transform.position, Vector3.up);
             
             nextNode.NextNode = previousNode;
@@ -221,5 +231,25 @@ public class VoronoiMeshGenerator : MonoBehaviour
         }
 
     }
+    public List<List<Vector3>> MoveVertices(List<List<Vector3>> vertces)
+    {
 
+        for (int i = 0; i < vertces.Count; i++)
+        {
+            Debug.Log("MERJFHBESHAJNC ");
+            for (int j = 0; j < pathNodeObjects.Count; j++)
+            {
+
+                if (vertces[i][0] == pathNodeObjects[j].transform.localPosition)
+                {
+                    for (int k = 0; k < vertces[i].Count; k++)
+                    {
+                        Debug.Log("MERJFHBESHAJNC ");
+                        vertces[i][k] = new Vector3(vertces[i][k].x, 10, vertces[i][k].z);
+                    }
+                }
+            }
+        }
+        return vertces;
+    }
 }
