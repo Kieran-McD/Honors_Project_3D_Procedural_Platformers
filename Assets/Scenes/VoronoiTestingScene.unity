@@ -1142,7 +1142,7 @@ MonoBehaviour:
   pathNode: {fileID: 6487082539711551649, guid: 49db638293fb68d498ea87dbab6e2478, type: 3}
   scaling: 4
   moveVertices: 0
-  randomizeHeights: 0
+  randomizeHeights: 1
 --- !u!23 &2046141019
 MeshRenderer:
   m_ObjectHideFlags: 0
