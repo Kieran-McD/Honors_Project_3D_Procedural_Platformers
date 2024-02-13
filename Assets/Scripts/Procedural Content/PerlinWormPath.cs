@@ -45,6 +45,14 @@ public class PerlinWormPath : PerlinWorm
 
             if (other.transform != followPoint) return;
 
+            if (pathNode.isObstacle)
+            {
+                pathGenerator.PerlinWormFinished();
+                followPoint = pathNode.NextNode.transform;
+                return;
+            }
+
+
             if (!pathNode.NextNode)
             {
                 pathGenerator.PerlinWormFinished();

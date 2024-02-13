@@ -100,6 +100,15 @@ public class VoronoiDiagram : MonoBehaviour
 
             DrawLine(edge.ClippedEnds[LR.LEFT], edge.ClippedEnds[LR.RIGHT], tx, Color.black);
         }
+
+        foreach(Vector2 site in voronoi.SiteCoords())
+        {
+            foreach(Vector2 otherSite in voronoi.NeighborSitesForSite(site))
+            {
+                DrawLine(site, otherSite, tx, Color.blue);
+            }
+        }
+
         for(int i =0; i< pointsForPath.Count-1; i++)
         {
             DrawLine(pointsForPath[i].Coord, pointsForPath[i + 1].Coord, tx, Color.magenta);

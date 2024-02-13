@@ -6,6 +6,7 @@ public class PathNode : MonoBehaviour
 {
     public PathNode NextNode;
 
+    public bool isObstacle; 
 
     private void OnDrawGizmos()
     {

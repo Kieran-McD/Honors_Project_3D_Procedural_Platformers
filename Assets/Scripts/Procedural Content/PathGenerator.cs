@@ -13,7 +13,7 @@ public class PathGenerator : MonoBehaviour
     [SerializeField]
     GameObject pathPrefab;
     [SerializeField]
-    Transform pathGenratorStartPoint;
+    public Transform pathGenratorStartPoint;
 
     GameObject currentPath;
 

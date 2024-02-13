@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using csDelaunay;
 using Vector2 = System.Numerics.Vector2;
-using TMPro.EditorUtilities;
-using UnityEngine.UIElements;
+using UnityEditor;
 
 
 public class VoronoiMeshGenerator : MonoBehaviour
@@ -18,6 +17,16 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     [SerializeField]
     float scaling = 1f;
+
+    float[] speed;
+
+    public bool moveVertices;
+    public bool randomizeHeights;
+
+    private void Update()
+    {
+        if(moveVertices)UpdateVertices();
+    }
 
     public void GeneratePlane()
     {
@@ -34,9 +43,11 @@ public class VoronoiMeshGenerator : MonoBehaviour
         for (int i = 0; i < regionPlotPoints.Count; i++)
         {
             List<Vector3> points = regionPlotPoints[i];
+            int randomNum = Random.Range(0, 10);
             for (int j = 0; j < points.Count; j++)
             {
                 vertices.Add(points[j]);
+                //vertices.Add(new Vector3(points[j].x, randomNum, points[j].z));
                 //Debug.Log("Total Vertices: " + vertices.Count);
             }
         }
@@ -44,7 +55,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Debug.Log("Total Vertices: " + vertices.Count);
 
         mesh.vertices = vertices.ToArray();
-
+        speed = new float[mesh.vertices.Length];
         List<Vector3> normals = new List<Vector3>();
 
         for (int i = 0; i < vertices.Count; i++)
@@ -84,7 +95,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Debug.Log("Total Vertices: " + vertices.Count);
 
         mesh.vertices = vertices.ToArray();
-
+        speed = new float[mesh.vertices.Length];
         List<Vector3> normals = new List<Vector3>();
 
         for(int i = 0; i < vertices.Count; i++)
@@ -95,7 +106,36 @@ public class VoronoiMeshGenerator : MonoBehaviour
         mesh.triangles = GenerateTriangles(regionPlotPoints).ToArray();
         mesh.colors = GenerateColourRegions(regionPlotPoints).ToArray();
 
+        
+        GetComponent<MeshCollider>().sharedMesh = mesh;
         mesh.RecalculateNormals();
+    }
+
+    void UpdateVertices()
+    {
+        Vector3[] vertices = GetComponent<MeshFilter>().mesh.vertices;
+    
+        for(int i = 0; i < vertices.Length; i++)
+        {
+            if (speed[i] == 0f)
+            {
+                speed[i] = 5f;
+            }
+
+            if (speed[i] >0f && vertices[i].y > 10f)
+            {
+                speed[i] = -5f;
+            }
+            else if (speed[i] < 0f && vertices[i].y < 0f)
+            {
+                speed[i] = 5f;
+            }
+            vertices[i] = new Vector3(vertices[i].x, vertices[i].y + Time.deltaTime * speed[i], vertices[i].z);
+        }
+
+        GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().mesh;
+        GetComponent<MeshFilter>().mesh.vertices = vertices;
+        GetComponent<MeshFilter>().mesh.RecalculateNormals();
     }
 
     List<List<Vector3>> GenerateVertices(Voronoi voronoi)
@@ -122,14 +162,15 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         for (int i = 0; i < siteCoords.Count; i++)
         {
+            int randomNum = Random.Range(0, 10);
             List<Vector3> points = new List<Vector3>();
-            points.Add(new Vector3(siteCoords[i].X / scaling, 0, siteCoords[i].Y / scaling));
+            points.Add(new Vector3(siteCoords[i].X / scaling, randomizeHeights ? randomNum : 0, siteCoords[i].Y / scaling));
 
             List<Vector2> plotPoints = voronoi.Region(siteCoords[i]);
 
             for (int j = 0; j < plotPoints.Count; j++)
             {
-                points.Add(new Vector3(plotPoints[j].X / scaling, 0, plotPoints[j].Y / scaling));
+                points.Add(new Vector3(plotPoints[j].X / scaling, randomizeHeights ? randomNum : 0, plotPoints[j].Y / scaling));
                 //Debug.Log("Plot Point: " + (i * plotPoints.Count + j) + " Position: " + points[j]);
             }
             totalPointsSoFar += points.Count;
@@ -201,6 +242,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         for (int i = 0; i < vertices.Count; i++)
         {
+          
             List<Vector3> points = vertices[i];
             Color color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
             for (int j = 0; j < points.Count; j++)
@@ -236,7 +278,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         for (int i = 0; i < vertces.Count; i++)
         {
-            Debug.Log("MERJFHBESHAJNC ");
+            //Debug.Log("MERJFHBESHAJNC ");
             for (int j = 0; j < pathNodeObjects.Count; j++)
             {
 
@@ -253,3 +295,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
         return vertces;
     }
 }
+
+
+
