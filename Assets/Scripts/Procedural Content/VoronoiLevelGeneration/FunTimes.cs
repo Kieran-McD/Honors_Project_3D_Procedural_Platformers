@@ -59,7 +59,7 @@ public class VoronoiDiagram : MonoBehaviour
         if (meshGenerator)
         {
             meshGenerator.SpawnPathNodes(pointsForPath);
-            meshGenerator.GeneratePlane(voronoi);           
+            meshGenerator.GenerateMesh(voronoi);           
         }
 
     }

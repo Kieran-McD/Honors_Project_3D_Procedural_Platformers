@@ -49,7 +49,7 @@ public class PerlinWorm : MonoBehaviour
 		}
 	}
 
-	void Start()
+	public void Start()
 	{
 		SpawnedRotation = transform.rotation.eulerAngles.y;
 		randA = Random.value * 5000.0f;
@@ -133,15 +133,15 @@ public class PerlinWorm : MonoBehaviour
         //transform.Rotate(heading2, 0, 0);
         transform.position += transform.forward * (speed * Time.deltaTime);
 
-        for (int i = 0; i < positions.Length - 1; i++)
-        {
-            positions[i] = positions[i + 1];
-        }
-        positions[positions.Length - 1] = transform.position;
+		for (int i = 0; i < positions.Length - 1; i++)
+		{
+			positions[i] = positions[i + 1];
+		}
+		positions[positions.Length - 1] = transform.position;
 
-        //CheckOffscreen();
+		//CheckOffscreen();
 
-        DrivePositions();
+		DrivePositions();
     }
 
 	void DrivePositions()

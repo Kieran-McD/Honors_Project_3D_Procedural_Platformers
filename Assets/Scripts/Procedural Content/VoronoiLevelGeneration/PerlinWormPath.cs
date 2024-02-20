@@ -4,18 +4,26 @@ public class PerlinWormPath : PerlinWorm
 {
     public bool isMoving = true;
 
+    public bool finalPoint;
+
     public PathGenerator pathGenerator;
 
+    public LevelGeneratorVoronoi levelGeneratorVoronoi;
+
     public Transform followPoint;
+
+    public void Start()
+    {
+        levelGeneratorVoronoi = FindAnyObjectByType<LevelGeneratorVoronoi>();
+        base.Start();
+    }
 
     public new void Update()
     {
         if (isMoving)
         {
-         
             base.Update();
             MagnetizeToPoint();
-
         }    
     }
 
@@ -55,7 +63,9 @@ public class PerlinWormPath : PerlinWorm
 
             if (!pathNode.NextNode)
             {
+                levelGeneratorVoronoi.isGenerationFinished = true;
                 pathGenerator.PerlinWormFinished();
+                
             }
             else
             {

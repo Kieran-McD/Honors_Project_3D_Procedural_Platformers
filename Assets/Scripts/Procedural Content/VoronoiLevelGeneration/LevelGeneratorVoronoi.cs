@@ -16,16 +16,18 @@ public class LevelGeneratorVoronoi : MonoBehaviour
 
     [SerializeField]
     GameObject goal;
+
     [SerializeField]
-    int totalPaths = 5;
-    int amountPaths = 0;
+    List<PathNode> mainPath;
+
+    public bool isGenerationFinished = false;
 
     [SerializeField]
     int totalPointsForPath = 20;
     [SerializeField]
     Transform levelTransform;
 
-    bool isFinished = false;
+    public bool isFinished = false;
     [SerializeField]
     bool reset = false;
 
@@ -53,7 +55,7 @@ public class LevelGeneratorVoronoi : MonoBehaviour
         pathGenerator.StartPathGenerator();
         reset = false;
         isFinished = false;
-        amountPaths = 0;
+        
     }
 
     void GenerateLevel()
@@ -70,8 +72,8 @@ public class LevelGeneratorVoronoi : MonoBehaviour
 
             Transform exit = pathGenerator.GetCurrentPath().GetComponent<Path>().exit.transform;
             GameObject ob = null;
-            amountPaths++;
-            if (amountPaths >= totalPaths)
+
+            if (isGenerationFinished)
             {
                 isFinished = true;
                 //Checks for a level object to store the goal
@@ -118,15 +120,6 @@ public class LevelGeneratorVoronoi : MonoBehaviour
         split.transform.position = pos + split.transform.forward * 1.5f;
         split.transform.localScale = new Vector3(pathGenerator.GetPathWidth(), 1, pathGenerator.GetPathWidth());
         split.GetComponent<SplitPathObjects>().BuildSpawnPaths(pathGenerator, totalPointsForPath);
-    }
-
-    public void SetTotalPaths(Single paths)
-    {
-        totalPaths = ((int)paths);
-    }
-    public void SetTotalPointsPath(Single points)
-    {
-        totalPointsForPath = ((int)points);
     }
 
 }
