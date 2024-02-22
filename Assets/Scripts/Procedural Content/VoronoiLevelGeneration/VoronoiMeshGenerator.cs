@@ -21,7 +21,11 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     public GameObject Floor;
     public GameObject Walls;
+    public GameObject PathNodeStorage;
     public GameObject TestingLinePoint;
+    public GameObject PlayerSpawner;
+
+    public PerlinNoise perlinTexture;
 
 
     [SerializeField]
@@ -63,6 +67,8 @@ public class VoronoiMeshGenerator : MonoBehaviour
             }
         }
 
+        
+
         //Debug.Log("Total Vertices: " + vertices.Count);
 
         mesh.vertices = vertices.ToArray();
@@ -83,22 +89,43 @@ public class VoronoiMeshGenerator : MonoBehaviour
         GenerateWalls();
     }
 
+    public void GenerateMesh()
+    {
+        //Randomizes the perlin texture for terrain transformation
+        perlinTexture.RandomizePerlinTexture();
+        //Spawns nodes for the main path of the level
+        SpawnPathNodes(voronoiDiagram.PathFindingAStar(voronoiDiagram.voronoi));
+        //Generates the plane for the level
+        GeneratePlane(voronoiDiagram.voronoi);
+        //generates the walls for the level
+        GenerateWalls();
+        //Move the player spawner
+        PlayerSpawner.transform.position = pathNodeObjects[pathNodeObjects.Count-1].transform.position;
+        //Spawn the player
+        PlayerSpawner.GetComponentInChildren<SpawnPlayer>().Spawn();
+    }
+
     public void GeneratePlane(Voronoi tempVoronoi)
     {
+        //Set up the mesh to be generated
         Mesh mesh = new Mesh();
         Floor.GetComponent<MeshFilter>().mesh = mesh;
         mesh.Clear();
+        //Generate a list of vectors to represent the regions of the voronoi noise
         List<List<Vector3>> regionPlotPoints = GenerateVertices(tempVoronoi);
-        
-        Debug.Log("Path Nodes: " + pathNodeObjects.Count);
+
+        //Generate colours for each unique region for the mesh
+        mesh.colors = GenerateColourRegions(regionPlotPoints).ToArray();
+
+        Debug.Log("Path Nodes: " + pathNodeObjects.Count);      
         if (pathNodeObjects.Count > 0)
         {
             Debug.Log("It Got here");
             regionPlotPoints = MoveVertices(regionPlotPoints);
         }
 
+        //Set up the vertices for the plane into a singular list to be used for the mesh
         List<Vector3> vertices = new List<Vector3>();
-
         for(int i = 0; i < regionPlotPoints.Count; i++)
         {
             List<Vector3> points = regionPlotPoints[i];
@@ -109,21 +136,29 @@ public class VoronoiMeshGenerator : MonoBehaviour
             }
         }
 
+        //apply the perlin noise to the plane
+        vertices = ApplyPerlinNoise(vertices);
+
         //Debug.Log("Total Vertices: " + vertices.Count);
-
+        //Set the vertices for the mesh
         mesh.vertices = vertices.ToArray();
-        speed = new float[mesh.vertices.Length];
-        List<Vector3> normals = new List<Vector3>();
 
+        //Speed storage used to move the vertices up and down
+        speed = new float[mesh.vertices.Length];
+        
+        List<Vector3> normals = new List<Vector3>();
+        //Se up normals for the vertices
         for(int i = 0; i < vertices.Count; i++)
         {
             normals.Add(Vector3.up);
         }
+        //Set up each of the mesh data
         mesh.normals = normals.ToArray();
+        //Set up the triangles for mesh generation
         mesh.triangles = GenerateTriangles(regionPlotPoints).ToArray();
         mesh.colors = GenerateColourRegions(regionPlotPoints).ToArray();
 
-        
+        //Set the mesh collider for the plane
         Floor.GetComponent<MeshCollider>().sharedMesh = mesh;
         mesh.RecalculateNormals();
     }
@@ -153,7 +188,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     void UpdateVertices()
     {
-        Vector3[] vertices = GetComponent<MeshFilter>().mesh.vertices;
+        Vector3[] vertices =  Floor.GetComponent<MeshFilter>().mesh.vertices;
     
         for(int i = 0; i < vertices.Length; i++)
         {
@@ -173,29 +208,16 @@ public class VoronoiMeshGenerator : MonoBehaviour
             vertices[i] = new Vector3(vertices[i].x, vertices[i].y + Time.deltaTime * speed[i], vertices[i].z);
         }
 
-        GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().mesh;
-        GetComponent<MeshFilter>().mesh.vertices = vertices;
-        GetComponent<MeshFilter>().mesh.RecalculateNormals();
+        Floor.GetComponent<MeshCollider>().sharedMesh = Floor.GetComponent<MeshFilter>().mesh;
+        Floor.GetComponent<MeshFilter>().mesh.vertices = vertices;
+        Floor.GetComponent<MeshFilter>().mesh.RecalculateNormals();
     }
 
     List<List<Vector3>> GenerateVertices(Voronoi voronoi)
     {    
-
-        List<Vector3> vertices = new List<Vector3>();
-
+        //Gets all of the regions vectors for the voronoi diagram
         List<Vector2> siteCoords = voronoi.SiteCoords();
-        //List<Vector2> plotPoints = voronoi.Region(siteCoords[0]);
-
-        //for (int i = 0; i < plotPoints.Count; i++)
-        //{
-            
-        //    vertices.Add(new Vector3(plotPoints[i].X/512f, 0, plotPoints[i].Y/512f));
-        //    Debug.Log("Plot Point: " + i + " Position: " + vertices[i]);
-        //}
-
-        //return vertices;
-
-
+        //Storage used to seperate out all the vectors into regions
         List<List<Vector3>> regionPlotPoints = new List<List<Vector3>>();
 
         int totalPointsSoFar = 0;
@@ -204,13 +226,14 @@ public class VoronoiMeshGenerator : MonoBehaviour
         {
             int randomNum = Random.Range(0, 10);
             List<Vector3> points = new List<Vector3>();
-            points.Add(new Vector3(siteCoords[i].X / scaling, randomizeHeights ? randomNum : 0, siteCoords[i].Y / scaling));
-
+            //Add the center of the region vertic first
+            points.Add(new Vector3(siteCoords[i].X / scaling, randomizeHeights ? 0 : 0, siteCoords[i].Y / scaling));
+            //Get list of all vectors in the region
             List<Vector2> plotPoints = voronoi.Region(siteCoords[i]);
-
+            //Store all the points in the region
             for (int j = 0; j < plotPoints.Count; j++)
             {
-                points.Add(new Vector3(plotPoints[j].X / scaling, randomizeHeights ? randomNum : 0, plotPoints[j].Y / scaling));
+                points.Add(new Vector3(plotPoints[j].X / scaling, randomizeHeights ? 0 : 0, plotPoints[j].Y / scaling));
                 //Debug.Log("Plot Point: " + (i * plotPoints.Count + j) + " Position: " + points[j]);
             }
             totalPointsSoFar += points.Count;
@@ -234,13 +257,17 @@ public class VoronoiMeshGenerator : MonoBehaviour
     //If Vertices generation changes, change triangle generation
     List<int> GenerateTriangles(List<List<Vector3>> vertices)
     {
+        //List of triangles
         List<int> triangles = new List<int>();
         int totalPointsSoFar = 0;
 
+
         for(int i = 0; i < vertices.Count; i++)
         {
+            //list of points for a region
             List<Vector3> points = vertices[i];
-            //Debug.Log("Current Region " + i + " Total Points " + points.Count);
+
+            //Gets the triangles for each region
             for(int j = 1; j < points.Count; j++)
             {
                 triangles.Add(totalPointsSoFar + j);
@@ -282,43 +309,79 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         for (int i = 0; i < vertices.Count; i++)
         {
-          
+
+
             List<Vector3> points = vertices[i];
+
+            bool checkForValid = true;
+            for (int k = 0; k < pathNodeObjects.Count; k++)
+            {
+                Debug.Log("OH Yeah Thats How its Done");
+                if (points[0] == new Vector3(pathNodeObjects[k].transform.localPosition.x,0 ,pathNodeObjects[k].transform.localPosition.z))
+                {
+                    checkForValid = false;
+                    for (int j = 0; j < points.Count; j++)
+                    {
+                        colourRegions.Add(Color.yellow);
+                    }
+                    break;
+                }
+
+            }
+            if (!checkForValid) continue;
+
+
             Color color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
             for (int j = 0; j < points.Count; j++)
             {
                 colourRegions.Add(color);
             }
 
-
+            
         }
         return colourRegions;
     }
 
     public void SpawnPathNodes(List<Site> sites)
     {
+        for (var i = PathNodeStorage.transform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(PathNodeStorage.transform.GetChild(i).gameObject);
+        }
+
         pathNodeObjects = new List<GameObject>();
-        PathNode previousNode = Instantiate(pathNode, this.transform).GetComponent<PathNode>();
-        previousNode.transform.localPosition = new Vector3(sites[sites.Count - 1].Coord.X / scaling,Random.Range(0,10), sites[sites.Count - 1].Coord.Y / scaling);
+        //Spawns in the first node
+        PathNode previousNode = Instantiate(pathNode, PathNodeStorage.transform).GetComponent<PathNode>();
+        //Set the position for the node
+        previousNode.transform.localPosition = new Vector3(sites[sites.Count - 1].Coord.X / scaling, perlinTexture.perlinTexture.GetPixel((int)sites[sites.Count - 1].Coord.X, (int)sites[sites.Count - 1].Coord.Y).r * 10f, sites[sites.Count - 1].Coord.Y / scaling);
+        //Add node to list of nodes
         pathNodeObjects.Add(previousNode.gameObject);
+        
+        //Spawn rest of the nodes
         for (int i = sites.Count-2; i > 0; i--)
         {
-            PathNode nextNode = Instantiate(pathNode, this.transform).GetComponent<PathNode>();
-            nextNode.transform.localPosition = new Vector3(sites[i].Coord.X / scaling, Random.Range(0, 10), sites[i].Coord.Y / scaling);
+            //Spawns the next node
+            PathNode nextNode = Instantiate(pathNode, PathNodeStorage.transform).GetComponent<PathNode>();
+            //Sets position of node
+            nextNode.transform.localPosition = new Vector3(sites[i].Coord.X / scaling, perlinTexture.perlinTexture.GetPixel((int)sites[i].Coord.X, (int)sites[i].Coord.Y).r * 10f, sites[i].Coord.Y / scaling);
+            //Store node
             pathNodeObjects.Add(nextNode.gameObject);
+            //Sets up the rotation of the node
             nextNode.transform.rotation = Quaternion.LookRotation(previousNode.transform.position - nextNode.transform.position, Vector3.up);
-            
+            //Sets the next node to connect to the previous node
             nextNode.NextNode = previousNode;
+            //use the next node as the previous node
             previousNode = nextNode;
         }
 
     }
+    //This is for fun used to move vertices seperatley from each other
     public List<List<Vector3>> MoveVertices(List<List<Vector3>> vertces)
     {
 
         for (int i = 0; i < vertces.Count; i++)
         {
-            //Debug.Log("MERJFHBESHAJNC ");
+
             for (int j = 0; j < pathNodeObjects.Count; j++)
             {
                 
@@ -326,7 +389,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
                 {
                     for (int k = 0; k < vertces[i].Count; k++)
                     {
-                        Debug.Log("MERJFHBESHAJNC ");
                         vertces[i][k] = new Vector3(vertces[i][k].x, pathNodeObjects[j].transform.localPosition.y, vertces[i][k].z);
                     }
                 }
@@ -335,14 +397,17 @@ public class VoronoiMeshGenerator : MonoBehaviour
         return vertces;
     }
 
+    //Generate vertices for the wall
     public List<Vector3> GenerateWallVertices()
     {
         List<Vector3> points = new List<Vector3>();
 
+        //Loops through all path nodes to find each region vector
         for (int i = 0; i < pathNodeObjects.Count; i++)
         {
-            Debug.Log("AHHHHHHHHHHHHHHHHHHHHHHHHHH");
+            //Get all the connected lines attached to the region
             List<LineSegment> connectedLines = voronoiDiagram.voronoi.VoronoiBoundarayForSite(new Vector2(pathNodeObjects[i].transform.localPosition.x * scaling, pathNodeObjects[i].transform.localPosition.z * scaling));
+            //Gets all neigbours attached to the current region
             List<Vector2> Neighbours = voronoiDiagram.voronoi.NeighborSitesForSite(new Vector2(pathNodeObjects[i].transform.localPosition.x * scaling, pathNodeObjects[i].transform.localPosition.z * scaling));
             for (int j = 0; j < Neighbours.Count; j++)
             {
@@ -372,13 +437,17 @@ public class VoronoiMeshGenerator : MonoBehaviour
                         if (neighboursLines[k].p0 == connectedLines[w].p0 && neighboursLines[k].p1 == connectedLines[w].p1)
                         {
 
-
+                            //Direction from point p1 to p0
                             Vector2 direction = connectedLines[w].p0 - connectedLines[w].p1;
-                            Vector2 midPoint = connectedLines[w].p1 + direction;
+                            //Direction from the midpoint of p1 and p0 to the center of the region
                             Vector2 directionToCenter = new Vector2(pathNodeObjects[i].transform.localPosition.x * scaling, pathNodeObjects[i].transform.localPosition.z * scaling)-(connectedLines[w].p1 +direction/2);
-                             direction = Vector2.Normalize(direction);
+                            //Normalize directions
+                            direction = Vector2.Normalize(direction);
                             directionToCenter = Vector2.Normalize(directionToCenter);
+                            //Find the cross product to see if the point is to the left and right
                             Vector3 temp = Vector3.Cross(new Vector3(direction.X, 0, direction.Y),new Vector3(directionToCenter.X, 0, directionToCenter.Y));
+                            
+                            //Checks to find if p0 is the left vector to generate mesh the right way around
                             if (temp.y <0)
                             {
                                 Debug.Log("WE Got Some WALLS");
@@ -409,6 +478,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         return points;
     }
 
+    //Get triangles for wall generation
     List<int>  GenerateWallTriangles(List<Vector3> vertices)
     {
         List<int> triangles = new List<int>();
@@ -423,13 +493,45 @@ public class VoronoiMeshGenerator : MonoBehaviour
             triangles.Add(i + 1);
             triangles.Add(i + 2);
 
-
-
         }
 
         return triangles;
     }
+
+    List<Vector3> ApplyPerlinNoise(List<Vector3> vertices)
+    {
+        
+        for(int i = 0; i < vertices.Count; i++)
+        {
+            float height = perlinTexture.perlinTexture.GetPixel((int)(vertices[i].x * scaling), (int)(vertices[i].z*scaling)).r;
+            vertices[i] = new Vector3(vertices[i].x, height * 10, vertices[i].z);
+        }
+
+        return vertices;
+    }
+
 }
 
+[CustomEditor(typeof(VoronoiMeshGenerator))]
+public class VoronoiMeshGeneratorEditor : Editor
+{
+
+    // some declaration missing??
+
+    override public void OnInspectorGUI()
+    {
+        if (Application.isPlaying)
+        {
+            GUILayout.TextField("Dont Press Button To Much Bad Idea");
+
+            VoronoiMeshGenerator colliderCreator = (VoronoiMeshGenerator)target;
+            if (GUILayout.Button("Generate New Level Mesh"))
+            {
+                colliderCreator.GenerateMesh(); // how do i call this?
+            }
+        }
+        DrawDefaultInspector();
+    }
+}
 
 

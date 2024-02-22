@@ -154,7 +154,7 @@ public class VoronoiDiagram : MonoBehaviour
     }
 
 
-    private List<Site> PathFindingAStar(Voronoi voronoi)
+    public List<Site> PathFindingAStar(Voronoi voronoi)
     {
         Site startingSite, endSite;
         voronoi.SitesIndexedByLocation.TryGetValue(voronoi.SiteCoords()[Random.Range(0, voronoi.SiteCoords().Count)], out startingSite);

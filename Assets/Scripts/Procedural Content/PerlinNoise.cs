@@ -6,8 +6,8 @@ public class PerlinNoise : MonoBehaviour
 {
     public Renderer rend;
 
-    public int width = 256;
-    public int height = 256;
+    public int width = 512;
+    public int height = 512;
 
     public float offSetX = 100f;
     public float offSetY = 100f;
@@ -67,7 +67,7 @@ public class PerlinNoise : MonoBehaviour
                     float sampleX = x / scale * frequency;
                     float sampleY = y / scale * frequency;
 
-                    float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
+                    float perlinValue = Mathf.PerlinNoise(sampleX + offSetX, sampleY + offSetY) * 2 - 1;
                     noiseHeight += perlinValue * amplitude;
 
                     amplitude *= persistance;
@@ -94,7 +94,13 @@ public class PerlinNoise : MonoBehaviour
         return texture;
     }
 
-    
+    public void RandomizePerlinTexture()
+    {
+        offSetX = Random.Range(-10000, 10000);
+        offSetY = Random.Range(-10000, 10000);
+        perlinTexture = GenerateTexture();
+        rend.sharedMaterial.mainTexture = perlinTexture;
+    }
 
     Color CalculateColour(float colourValue)
     {;
