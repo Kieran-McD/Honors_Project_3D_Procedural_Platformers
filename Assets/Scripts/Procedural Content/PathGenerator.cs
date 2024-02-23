@@ -44,9 +44,12 @@ public class PathGenerator : MonoBehaviour
         tick += Time.deltaTime;
         tick += 1 * Mathf.Abs(((float)currentWorm.GetComponent<PerlinWormPath>().turnValue)) * Time.deltaTime;
 
+        Debug.DrawRay(currentWorm.position + Vector3.up * 2, Vector3.down);
         if (tick > pointSpawnRate)
         {
-            pathPointTransforms.Add(Instantiate<GameObject>(pathPointPrefab, currentWorm.position, currentWorm.rotation, transform).transform);
+            Transform currentPoint = Instantiate<GameObject>(pathPointPrefab, currentWorm.position, currentWorm.rotation, transform).transform;
+          
+            pathPointTransforms.Add(currentPoint);
             tick = 0;
         }
 

@@ -1,11 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using csDelaunay;
 using Vector2 = System.Numerics.Vector2;
 using UnityEditor;
-using UnityEngine.Networking.PlayerConnection;
-using Unity.VisualScripting;
+
 
 
 public class VoronoiMeshGenerator : MonoBehaviour
@@ -97,6 +95,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
         SpawnPathNodes(voronoiDiagram.PathFindingAStar(voronoiDiagram.voronoi));
         //Generates the plane for the level
         GeneratePlane(voronoiDiagram.voronoi);
+
+        WidenPath();
+
         //generates the walls for the level
         GenerateWalls();
         //Move the player spawner
@@ -316,7 +317,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             bool checkForValid = true;
             for (int k = 0; k < pathNodeObjects.Count; k++)
             {
-                Debug.Log("OH Yeah Thats How its Done");
+                
                 if (points[0] == new Vector3(pathNodeObjects[k].transform.localPosition.x,0 ,pathNodeObjects[k].transform.localPosition.z))
                 {
                     checkForValid = false;
@@ -374,6 +375,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             previousNode = nextNode;
         }
 
+        
     }
     //This is for fun used to move vertices seperatley from each other
     public List<List<Vector3>> MoveVertices(List<List<Vector3>> vertces)
@@ -430,17 +432,17 @@ public class VoronoiMeshGenerator : MonoBehaviour
                 for (int k = 0; k < neighboursLines.Count; k++)
                 {
                     Debug.Log("Some Lines");
-                    for(int w = 0; w < connectedLines.Count; w++)
+                    for(int l = 0; l < connectedLines.Count; l++)
                     {
                         Debug.Log("LOTS AND LOTS OF LINES");
 
-                        if (neighboursLines[k].p0 == connectedLines[w].p0 && neighboursLines[k].p1 == connectedLines[w].p1)
+                        if (neighboursLines[k].p0 == connectedLines[l].p0 && neighboursLines[k].p1 == connectedLines[l].p1)
                         {
 
                             //Direction from point p1 to p0
-                            Vector2 direction = connectedLines[w].p0 - connectedLines[w].p1;
+                            Vector2 direction = connectedLines[l].p0 - connectedLines[l].p1;
                             //Direction from the midpoint of p1 and p0 to the center of the region
-                            Vector2 directionToCenter = new Vector2(pathNodeObjects[i].transform.localPosition.x * scaling, pathNodeObjects[i].transform.localPosition.z * scaling)-(connectedLines[w].p1 +direction/2);
+                            Vector2 directionToCenter = new Vector2(pathNodeObjects[i].transform.localPosition.x * scaling, pathNodeObjects[i].transform.localPosition.z * scaling)-(connectedLines[l].p1 +direction/2);
                             //Normalize directions
                             direction = Vector2.Normalize(direction);
                             directionToCenter = Vector2.Normalize(directionToCenter);
@@ -451,18 +453,18 @@ public class VoronoiMeshGenerator : MonoBehaviour
                             if (temp.y <0)
                             {
                                 Debug.Log("WE Got Some WALLS");
-                                points.Add(new Vector3(connectedLines[w].p0.X / scaling, 0, connectedLines[w].p0.Y / scaling));
-                                points.Add(new Vector3(connectedLines[w].p1.X / scaling, 0, connectedLines[w].p1.Y / scaling));
-                                points.Add(new Vector3(connectedLines[w].p0.X / scaling, 10, connectedLines[w].p0.Y / scaling));
-                                points.Add(new Vector3(connectedLines[w].p1.X / scaling, 10, connectedLines[w].p1.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, 0, connectedLines[l].p0.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, 0, connectedLines[l].p1.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, 10, connectedLines[l].p0.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, 10, connectedLines[l].p1.Y / scaling));
                             }
                             else
                             {
                                 Debug.Log("WE Got Some WALLS");
-                                points.Add(new Vector3(connectedLines[w].p1.X / scaling, 0, connectedLines[w].p1.Y / scaling));
-                                points.Add(new Vector3(connectedLines[w].p0.X / scaling, 0, connectedLines[w].p0.Y / scaling));
-                                points.Add(new Vector3(connectedLines[w].p1.X / scaling, 10, connectedLines[w].p1.Y / scaling));
-                                points.Add(new Vector3(connectedLines[w].p0.X / scaling, 10, connectedLines[w].p0.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, 0, connectedLines[l].p1.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, 0, connectedLines[l].p0.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, 10, connectedLines[l].p1.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, 10, connectedLines[l].p0.Y / scaling));
                             }
                           
                             
@@ -476,6 +478,42 @@ public class VoronoiMeshGenerator : MonoBehaviour
         }
 
         return points;
+    }
+
+    public void WidenPath()
+    {
+        List<GameObject> pathNodeExtras = new List<GameObject>();
+        List<GameObject> finalExtras = new List<GameObject>();
+        pathNodeExtras.AddRange(pathNodeObjects);
+        for(int i = 0; i < pathNodeObjects.Count; i++)
+        {
+            List<Vector2> neighbours = voronoiDiagram.voronoi.NeighborSitesForSite(new Vector2(pathNodeObjects[i].transform.localPosition.x*scaling, pathNodeObjects[i].transform.localPosition.z*scaling));
+
+            for(int j = 0; j < neighbours.Count; j++)
+            {
+                bool valid = true;
+                for(int k = 0; k < pathNodeExtras.Count; k++)
+                {
+
+                    if (neighbours[j] == new Vector2(pathNodeExtras[k].transform.localPosition.x * scaling, pathNodeExtras[k].transform.localPosition.z * scaling))
+                    {
+                        valid = false;
+                    }
+                    
+                }
+
+                if (valid == false) continue;
+
+                GameObject node = Instantiate<GameObject>(pathNode, PathNodeStorage.transform);
+                node.transform.localPosition = new Vector3(neighbours[j].X / scaling, 0 ,neighbours[j].Y / scaling);
+
+                pathNodeExtras.Add(node);
+                finalExtras.Add(node);
+            }
+
+        }
+
+        pathNodeObjects.AddRange(finalExtras);
     }
 
     //Get triangles for wall generation
