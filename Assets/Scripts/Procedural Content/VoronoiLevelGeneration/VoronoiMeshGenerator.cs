@@ -25,6 +25,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     public PerlinNoise perlinTexture;
 
+    public VoronoiAvailableTerrain availableTerrain;
 
     [SerializeField]
     float scaling = 1f;
@@ -85,6 +86,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
     {
         GeneratePlane(tempVoronoi);
         GenerateWalls();
+        availableTerrain.SetUp();
     }
 
     public void GenerateMesh()
@@ -104,6 +106,8 @@ public class VoronoiMeshGenerator : MonoBehaviour
         PlayerSpawner.transform.position = pathNodeObjects[pathNodeObjects.Count-1].transform.position;
         //Spawn the player
         PlayerSpawner.GetComponentInChildren<SpawnPlayer>().Spawn();
+
+        availableTerrain.SetUp();
     }
 
     public void GeneratePlane(Voronoi tempVoronoi)
@@ -115,8 +119,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Generate a list of vectors to represent the regions of the voronoi noise
         List<List<Vector3>> regionPlotPoints = GenerateVertices(tempVoronoi);
 
-        //Generate colours for each unique region for the mesh
-        mesh.colors = GenerateColourRegions(regionPlotPoints).ToArray();
 
         Debug.Log("Path Nodes: " + pathNodeObjects.Count);      
         if (pathNodeObjects.Count > 0)
@@ -143,6 +145,8 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Debug.Log("Total Vertices: " + vertices.Count);
         //Set the vertices for the mesh
         mesh.vertices = vertices.ToArray();
+        //Generate colours for each unique region for the mesh
+        mesh.colors = GenerateColourRegions(regionPlotPoints).ToArray();
 
         //Speed storage used to move the vertices up and down
         speed = new float[mesh.vertices.Length];
@@ -323,7 +327,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
                     checkForValid = false;
                     for (int j = 0; j < points.Count; j++)
                     {
-                        colourRegions.Add(Color.yellow);
+                        //colourRegions.Add(Color.yellow);
                     }
                     break;
                 }
