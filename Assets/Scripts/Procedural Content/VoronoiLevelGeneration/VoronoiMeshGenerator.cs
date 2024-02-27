@@ -3,6 +3,7 @@ using UnityEngine;
 using csDelaunay;
 using Vector2 = System.Numerics.Vector2;
 using UnityEditor;
+using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 
 
@@ -19,13 +20,19 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     public GameObject Floor;
     public GameObject Walls;
+    public GameObject ObjectStorage;
+
     public GameObject PathNodeStorage;
     public GameObject TestingLinePoint;
     public GameObject PlayerSpawner;
-
+    
+    public GameObject randomObject;
     public PerlinNoise perlinTexture;
 
+
     public VoronoiAvailableTerrain availableTerrain;
+
+    public List<Vector2> sitePositions;
 
     [SerializeField]
     float scaling = 1f;
@@ -86,7 +93,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
     {
         GeneratePlane(tempVoronoi);
         GenerateWalls();
-        availableTerrain.SetUp();
+        SetPathSites();
+        availableTerrain.SetUp(sitePositions);
+        PlaceScatteredObects();
     }
 
     public void GenerateMesh()
@@ -95,10 +104,11 @@ public class VoronoiMeshGenerator : MonoBehaviour
         perlinTexture.RandomizePerlinTexture();
         //Spawns nodes for the main path of the level
         SpawnPathNodes(voronoiDiagram.PathFindingAStar(voronoiDiagram.voronoi));
+        WidenPath();
         //Generates the plane for the level
         GeneratePlane(voronoiDiagram.voronoi);
 
-        WidenPath();
+        
 
         //generates the walls for the level
         GenerateWalls();
@@ -107,7 +117,10 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Spawn the player
         PlayerSpawner.GetComponentInChildren<SpawnPlayer>().Spawn();
 
-        availableTerrain.SetUp();
+        SetPathSites();
+
+        availableTerrain.SetUp(sitePositions);
+        PlaceScatteredObects();
     }
 
     public void GeneratePlane(Voronoi tempVoronoi)
@@ -322,12 +335,12 @@ public class VoronoiMeshGenerator : MonoBehaviour
             for (int k = 0; k < pathNodeObjects.Count; k++)
             {
                 
-                if (points[0] == new Vector3(pathNodeObjects[k].transform.localPosition.x,0 ,pathNodeObjects[k].transform.localPosition.z))
+                if (points[0].x == pathNodeObjects[k].transform.localPosition.x && points[0].z == pathNodeObjects[k].transform.localPosition.z)
                 {
                     checkForValid = false;
                     for (int j = 0; j < points.Count; j++)
                     {
-                        //colourRegions.Add(Color.yellow);
+                        colourRegions.Add(Color.yellow);
                     }
                     break;
                 }
@@ -336,7 +349,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             if (!checkForValid) continue;
 
 
-            Color color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
+            Color color = Color.green;
             for (int j = 0; j < points.Count; j++)
             {
                 colourRegions.Add(color);
@@ -550,6 +563,37 @@ public class VoronoiMeshGenerator : MonoBehaviour
         }
 
         return vertices;
+    }
+
+    void SetPathSites()
+    {
+        sitePositions = new List<Vector2>();
+        for(int i = 0; i < pathNodeObjects.Count; i++)
+        {
+            sitePositions.Add(new Vector2(pathNodeObjects[i].transform.localPosition.x*scaling, pathNodeObjects[i].transform.localPosition.z * scaling));
+        }
+    }
+
+    void PlaceScatteredObects()
+    {
+        GameObject g;
+        for (var i = ObjectStorage.transform.childCount - 1; i >= 0; i--)
+        {
+            Object.Destroy(ObjectStorage.transform.GetChild(i).gameObject);
+        }
+
+
+        List<Vector2> points = PoissonDiskSampling.RandomPoints(512, 512, 500);
+
+
+
+        for(int i = 0; i < points.Count; i++)
+        {
+            if (availableTerrain.perlinTexture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r == 1) continue;
+            float yPos = perlinTexture.perlinTexture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r;
+            Instantiate<GameObject>(randomObject, ObjectStorage.transform).transform.localPosition = new Vector3(points[i].X / scaling, yPos * 10, points[i].Y / scaling);
+        }
+
     }
 
 }
