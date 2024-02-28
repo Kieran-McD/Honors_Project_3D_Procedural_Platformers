@@ -15,7 +15,7 @@ public class VoronoiDiagram : MonoBehaviour
     // This is where we will store the resulting data
     private Dictionary<Vector2, Site> sites;
     private List<Edge> edges;
-    private List<Site> pointsForPath;
+    public List<Site> pointsForPath;
 
     public Voronoi voronoi;
     public VoronoiMeshGenerator meshGenerator;
@@ -23,6 +23,11 @@ public class VoronoiDiagram : MonoBehaviour
     void Start()
     {
        CreateDiagram();
+        if (meshGenerator)
+        {
+            meshGenerator.SpawnPathNodes(pointsForPath);
+            meshGenerator.GenerateMesh(voronoi);
+        }
     }
 
 
@@ -56,11 +61,6 @@ public class VoronoiDiagram : MonoBehaviour
         pointsForPath = PathFindingAStar(voronoi);
 
         DisplayVoronoiDiagram();
-        if (meshGenerator)
-        {
-            meshGenerator.SpawnPathNodes(pointsForPath);
-            meshGenerator.GenerateMesh(voronoi);           
-        }
 
     }
         IEnumerator waiter()

@@ -6,7 +6,9 @@ public class PathNode : MonoBehaviour
 {
     public PathNode NextNode;
 
-    public bool isObstacle; 
+    public bool isObstacle;
+    public bool isGoal;
+    public bool isStart;
 
     private void OnDrawGizmos()
     {

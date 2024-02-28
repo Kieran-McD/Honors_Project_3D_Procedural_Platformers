@@ -26,17 +26,19 @@ public class VoronoiMeshGenerator : MonoBehaviour
     public GameObject TestingLinePoint;
     public GameObject PlayerSpawner;
     
-    public GameObject randomObject;
+    public List<GameObject> randomObject;
     public PerlinNoise perlinTexture;
 
-
     public VoronoiAvailableTerrain availableTerrain;
+
+    public GameObject goalPrefab;
 
     public List<Vector2> sitePositions;
 
     [SerializeField]
     float scaling = 1f;
-
+    [SerializeField]
+    float perlinScaling = 10f;
     float[] speed;
 
     public bool moveVertices;
@@ -103,7 +105,8 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Randomizes the perlin texture for terrain transformation
         perlinTexture.RandomizePerlinTexture();
         //Spawns nodes for the main path of the level
-        SpawnPathNodes(voronoiDiagram.PathFindingAStar(voronoiDiagram.voronoi));
+        voronoiDiagram.CreateDiagram();
+        SpawnPathNodes(voronoiDiagram.pointsForPath);
         WidenPath();
         //Generates the plane for the level
         GeneratePlane(voronoiDiagram.voronoi);
@@ -111,11 +114,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         
 
         //generates the walls for the level
-        GenerateWalls();
-        //Move the player spawner
-        PlayerSpawner.transform.position = pathNodeObjects[pathNodeObjects.Count-1].transform.position;
-        //Spawn the player
-        PlayerSpawner.GetComponentInChildren<SpawnPlayer>().Spawn();
+        GenerateWalls();    
 
         SetPathSites();
 
@@ -374,7 +373,11 @@ public class VoronoiMeshGenerator : MonoBehaviour
         previousNode.transform.localPosition = new Vector3(sites[sites.Count - 1].Coord.X / scaling, perlinTexture.perlinTexture.GetPixel((int)sites[sites.Count - 1].Coord.X, (int)sites[sites.Count - 1].Coord.Y).r * 10f, sites[sites.Count - 1].Coord.Y / scaling);
         //Add node to list of nodes
         pathNodeObjects.Add(previousNode.gameObject);
-        
+
+        previousNode.isGoal = true;
+
+        Instantiate<GameObject>(goalPrefab, PathNodeStorage.transform).transform.localPosition = previousNode.transform.localPosition; 
+
         //Spawn rest of the nodes
         for (int i = sites.Count-2; i > 0; i--)
         {
@@ -392,7 +395,11 @@ public class VoronoiMeshGenerator : MonoBehaviour
             previousNode = nextNode;
         }
 
-        
+        //Move the player spawner
+        PlayerSpawner.transform.position = previousNode.transform.position;
+        //Spawn the player
+        PlayerSpawner.GetComponentInChildren<SpawnPlayer>().Spawn();
+
     }
     //This is for fun used to move vertices seperatley from each other
     public List<List<Vector3>> MoveVertices(List<List<Vector3>> vertces)
@@ -472,16 +479,16 @@ public class VoronoiMeshGenerator : MonoBehaviour
                                 Debug.Log("WE Got Some WALLS");
                                 points.Add(new Vector3(connectedLines[l].p0.X / scaling, 0, connectedLines[l].p0.Y / scaling));
                                 points.Add(new Vector3(connectedLines[l].p1.X / scaling, 0, connectedLines[l].p1.Y / scaling));
-                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, 10, connectedLines[l].p0.Y / scaling));
-                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, 10, connectedLines[l].p1.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, 30, connectedLines[l].p0.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, 30, connectedLines[l].p1.Y / scaling));
                             }
                             else
                             {
                                 Debug.Log("WE Got Some WALLS");
                                 points.Add(new Vector3(connectedLines[l].p1.X / scaling, 0, connectedLines[l].p1.Y / scaling));
                                 points.Add(new Vector3(connectedLines[l].p0.X / scaling, 0, connectedLines[l].p0.Y / scaling));
-                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, 10, connectedLines[l].p1.Y / scaling));
-                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, 10, connectedLines[l].p0.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, 30, connectedLines[l].p1.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, 30, connectedLines[l].p0.Y / scaling));
                             }
                           
                             
@@ -559,7 +566,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         for(int i = 0; i < vertices.Count; i++)
         {
             float height = perlinTexture.perlinTexture.GetPixel((int)(vertices[i].x * scaling), (int)(vertices[i].z*scaling)).r;
-            vertices[i] = new Vector3(vertices[i].x, height * 10, vertices[i].z);
+            vertices[i] = new Vector3(vertices[i].x, height * perlinScaling, vertices[i].z);
         }
 
         return vertices;
@@ -591,7 +598,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
         {
             if (availableTerrain.perlinTexture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r == 1) continue;
             float yPos = perlinTexture.perlinTexture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r;
-            Instantiate<GameObject>(randomObject, ObjectStorage.transform).transform.localPosition = new Vector3(points[i].X / scaling, yPos * 10, points[i].Y / scaling);
+            GameObject temp = Instantiate<GameObject>(randomObject[Random.Range(0, randomObject.Count)], ObjectStorage.transform);
+            temp.transform.localPosition = new Vector3(points[i].X / scaling, yPos * perlinScaling, points[i].Y / scaling);
+            temp.transform.localRotation = Quaternion.Euler(0, Random.Range(0f,360f),0);
         }
 
     }
