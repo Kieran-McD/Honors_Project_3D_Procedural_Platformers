@@ -9,6 +9,7 @@ public class PathNode : MonoBehaviour
     public bool isObstacle;
     public bool isGoal;
     public bool isStart;
+    public bool isPitfall;
 
     private void OnDrawGizmos()
     {

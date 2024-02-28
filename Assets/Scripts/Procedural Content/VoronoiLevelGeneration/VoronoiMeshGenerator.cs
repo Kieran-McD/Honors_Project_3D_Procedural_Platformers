@@ -130,7 +130,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
         mesh.Clear();
         //Generate a list of vectors to represent the regions of the voronoi noise
         List<List<Vector3>> regionPlotPoints = GenerateVertices(tempVoronoi);
-
+        //apply the perlin noise to the plane
+        regionPlotPoints = ApplyPerlinNoise(regionPlotPoints);
+        regionPlotPoints = PitFallVertexMove(regionPlotPoints);
 
         Debug.Log("Path Nodes: " + pathNodeObjects.Count);      
         if (pathNodeObjects.Count > 0)
@@ -139,6 +141,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             regionPlotPoints = MoveVertices(regionPlotPoints);
         }
 
+        
         //Set up the vertices for the plane into a singular list to be used for the mesh
         List<Vector3> vertices = new List<Vector3>();
         for(int i = 0; i < regionPlotPoints.Count; i++)
@@ -151,8 +154,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             }
         }
 
-        //apply the perlin noise to the plane
-        vertices = ApplyPerlinNoise(vertices);
+       
 
         //Debug.Log("Total Vertices: " + vertices.Count);
         //Set the vertices for the mesh
@@ -381,6 +383,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Spawn rest of the nodes
         for (int i = sites.Count-2; i > 0; i--)
         {
+
+            if(Random.Range(0,2) == 0) previousNode.isPitfall = true;
+
             //Spawns the next node
             PathNode nextNode = Instantiate(pathNode, PathNodeStorage.transform).GetComponent<PathNode>();
             //Sets position of node
@@ -421,6 +426,32 @@ public class VoronoiMeshGenerator : MonoBehaviour
             }
         }
         return vertces;
+    }
+
+    public List<List<Vector3>> PitFallVertexMove(List<List<Vector3>> vertices)
+    {
+        List<int> regions = new List<int>();
+        for(int i = 0; i < vertices.Count; i++)
+        {
+            for(int j = 0; j < pathNodeObjects.Count; j++)
+            {
+                if (vertices[i][0].x == pathNodeObjects[j].transform.localPosition.x && vertices[i][0].z == pathNodeObjects[j].transform.localPosition.z && pathNodeObjects[j].GetComponent<PathNode>().isPitfall)
+                {
+                    regions.Add(i);
+                }
+            }
+  
+        }
+
+        for(int i = 0; i < regions.Count; i++)
+        {
+            for(int j = 0; j < vertices[regions[i]].Count; j++)
+            {
+                vertices[regions[i]][j] = new Vector3(vertices[regions[i]][j].x, -20, vertices[regions[i]][j].z);
+            }
+        }
+
+        return vertices;
     }
 
     //Generate vertices for the wall
@@ -567,6 +598,20 @@ public class VoronoiMeshGenerator : MonoBehaviour
         {
             float height = perlinTexture.perlinTexture.GetPixel((int)(vertices[i].x * scaling), (int)(vertices[i].z*scaling)).r;
             vertices[i] = new Vector3(vertices[i].x, height * perlinScaling, vertices[i].z);
+        }
+
+        return vertices;
+    }
+
+    List<List<Vector3>> ApplyPerlinNoise(List<List<Vector3>> vertices)
+    {
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            for(int j = 0; j < vertices[i].Count; j++)
+            {
+                float height = perlinTexture.perlinTexture.GetPixel((int)(vertices[i][j].x * scaling), (int)(vertices[i][j].z * scaling)).r;
+                vertices[i][j] = new Vector3(vertices[i][j].x, height * perlinScaling, vertices[i][j].z);
+            }         
         }
 
         return vertices;
