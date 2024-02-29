@@ -21,6 +21,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
     public GameObject Floor;
     public GameObject Walls;
     public GameObject ObjectStorage;
+    public GameObject ObstacleStorage;
+    public GameObject PitfallTrapPrefab;
+
 
     public GameObject PathNodeStorage;
     public GameObject TestingLinePoint;
@@ -447,8 +450,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
         {
             for(int j = 0; j < vertices[regions[i]].Count; j++)
             {
-                vertices[regions[i]][j] = new Vector3(vertices[regions[i]][j].x, -20, vertices[regions[i]][j].z);
+                vertices[regions[i]][j] = new Vector3(vertices[regions[i]][j].x, -20, vertices[regions[i]][j].z);             
             }
+            CreatePitFall(vertices[regions[i]][0]);
         }
 
         return vertices;
@@ -626,7 +630,99 @@ public class VoronoiMeshGenerator : MonoBehaviour
         }
     }
 
-    void PlaceScatteredObects()
+    void CreatePitFall(Vector3 currentNode)
+    {
+        List<Vector2> points = voronoiDiagram.voronoi.Region(new Vector2(currentNode.x * scaling, currentNode.z * scaling));
+
+        PitFall pitFall = Instantiate<GameObject>(PitfallTrapPrefab, ObstacleStorage.transform).GetComponent<PitFall>();
+
+        MeshFilter meshFilter = pitFall.lava.GetComponent<MeshFilter>();
+        
+        Mesh mesh = new Mesh();
+        mesh.Clear();
+
+        meshFilter.mesh = mesh;
+
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+
+
+
+        //Create the lava Vertices
+        vertices.Add(new Vector3(currentNode.x, -5f, currentNode.z));
+        for (int i = 0; i < points.Count; i++)
+        {
+            vertices.Add(new Vector3(points[i].X / scaling, -5f, points[i].Y / scaling));
+        }
+        //Create the Lava Triangles
+        for (int i = 0; i < vertices.Count; i++)
+        {
+
+            triangles.Add(i);
+            triangles.Add(0);
+            if (i == vertices.Count - 1)
+            {
+                triangles.Add(1);
+            }
+            else
+            {
+                triangles.Add(i + 1);
+            }
+        }
+
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+
+
+        meshFilter = pitFall.walls.GetComponent<MeshFilter>();
+        mesh = new Mesh();
+        mesh.Clear();
+        meshFilter.mesh = mesh;
+
+        vertices.Clear();
+        triangles.Clear();
+
+        //Create Walls vertices
+        for(int i = 0; i < points.Count; i++)
+        {
+            vertices.Add(new Vector3(points[i].X / scaling, perlinTexture.perlinTexture.GetPixel((int)points[i].X, (int)points[i].Y).r * perlinScaling, points[i].Y / scaling));
+            vertices.Add(new Vector3(points[i].X / scaling, -5f, points[i].Y / scaling));
+        }
+
+        //Create Wall Triangles
+        for (int i = 0; i < vertices.Count; i+=2)
+        {
+           
+            if(i < vertices.Count - 2)
+            {
+                triangles.Add(i + 3);
+                triangles.Add(i);
+                triangles.Add(i + 1);
+
+                triangles.Add(i + 2);
+                triangles.Add(i);
+                triangles.Add(i + 3);
+            }
+            else
+            {
+                triangles.Add(1);
+                triangles.Add(i);
+                triangles.Add(i + 1);
+
+                triangles.Add(0);
+                triangles.Add(i);
+                triangles.Add(1);
+            }
+        }
+        
+
+        
+
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+
+    }
+        void PlaceScatteredObects()
     {
         GameObject g;
         for (var i = ObjectStorage.transform.childCount - 1; i >= 0; i--)
