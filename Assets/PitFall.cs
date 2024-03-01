@@ -6,4 +6,5 @@ public class PitFall : MonoBehaviour
 {
     public GameObject walls;
     public GameObject lava;
+    public GameObject platform;
 }

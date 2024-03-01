@@ -4,6 +4,7 @@ using csDelaunay;
 using Vector2 = System.Numerics.Vector2;
 using UnityEditor;
 using static UnityEditor.Searcher.SearcherWindow.Alignment;
+using NUnit.Framework;
 
 
 
@@ -137,10 +138,10 @@ public class VoronoiMeshGenerator : MonoBehaviour
         regionPlotPoints = ApplyPerlinNoise(regionPlotPoints);
         regionPlotPoints = PitFallVertexMove(regionPlotPoints);
 
-        Debug.Log("Path Nodes: " + pathNodeObjects.Count);      
+        //Debug.Log("Path Nodes: " + pathNodeObjects.Count);      
         if (pathNodeObjects.Count > 0)
         {
-            Debug.Log("It Got here");
+            //Debug.Log("It Got here");
             regionPlotPoints = MoveVertices(regionPlotPoints);
         }
 
@@ -387,7 +388,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         for (int i = sites.Count-2; i > 0; i--)
         {
 
-            if(Random.Range(0,2) == 0) previousNode.isPitfall = true;
+            if(i%3 == 0) previousNode.isPitfall = true;
 
             //Spawns the next node
             PathNode nextNode = Instantiate(pathNode, PathNodeStorage.transform).GetComponent<PathNode>();
@@ -434,6 +435,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
     public List<List<Vector3>> PitFallVertexMove(List<List<Vector3>> vertices)
     {
         List<int> regions = new List<int>();
+        List<int> pathPoints = new List<int>();
         for(int i = 0; i < vertices.Count; i++)
         {
             for(int j = 0; j < pathNodeObjects.Count; j++)
@@ -441,18 +443,49 @@ public class VoronoiMeshGenerator : MonoBehaviour
                 if (vertices[i][0].x == pathNodeObjects[j].transform.localPosition.x && vertices[i][0].z == pathNodeObjects[j].transform.localPosition.z && pathNodeObjects[j].GetComponent<PathNode>().isPitfall)
                 {
                     regions.Add(i);
+                    pathPoints.Add(j);
                 }
             }
   
         }
 
-        for(int i = 0; i < regions.Count; i++)
+        for (int i = 0; i < vertices.Count; i++)
         {
+            for (int j = 0; j < pathPoints.Count; j++)
+            {
+                List<PathNode> connectedNodes = pathNodeObjects[pathPoints[j]].GetComponent<PathNode>().ConnectedNodes;
+                for (int k = 0; k < connectedNodes.Count; k++)
+                {
+                    if (vertices[i][0].x == connectedNodes[k].transform.localPosition.x && vertices[i][0].z == connectedNodes[k].transform.localPosition.z && !connectedNodes[k].NextNode && !connectedNodes[k].isGoal)
+                    {
+                        regions.Add(i);
+                    }
+                }              
+            }
+        }
+
+        for (var i = ObstacleStorage.transform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(ObstacleStorage.transform.GetChild(i).gameObject);
+        }
+
+        List<List<Vector3>> removePoints = new List<List<Vector3>>();
+        for (int i = 0; i < regions.Count; i++)
+        {
+            removePoints.Add(vertices[regions[i]]);
             for(int j = 0; j < vertices[regions[i]].Count; j++)
             {
+
                 vertices[regions[i]][j] = new Vector3(vertices[regions[i]][j].x, -20, vertices[regions[i]][j].z);             
             }
+            //Generates the mesh for the pitfall
             CreatePitFall(vertices[regions[i]][0]);
+        }
+
+        for (var i = removePoints.Count - 1; i >= 0; i--)
+        {
+            vertices.Remove(removePoints[i]);
+            removePoints.RemoveAt(i);
         }
 
         return vertices;
@@ -475,7 +508,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
                 bool checkForValid = true;
                 for (int k = 0; k < pathNodeObjects.Count; k++)
                 {
-                    Debug.Log("OH Yeah Thats How its Done");
+                    //Debug.Log("OH Yeah Thats How its Done");
                     if (Neighbours[j] == new Vector2(pathNodeObjects[k].transform.localPosition.x*scaling, pathNodeObjects[k].transform.localPosition.z*scaling))
                     {                     
                         checkForValid = false;
@@ -490,10 +523,10 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
                 for (int k = 0; k < neighboursLines.Count; k++)
                 {
-                    Debug.Log("Some Lines");
+                    //Debug.Log("Some Lines");
                     for(int l = 0; l < connectedLines.Count; l++)
                     {
-                        Debug.Log("LOTS AND LOTS OF LINES");
+                        //Debug.Log("LOTS AND LOTS OF LINES");
 
                         if (neighboursLines[k].p0 == connectedLines[l].p0 && neighboursLines[k].p1 == connectedLines[l].p1)
                         {
@@ -511,7 +544,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
                             //Checks to find if p0 is the left vector to generate mesh the right way around
                             if (temp.y <0)
                             {
-                                Debug.Log("WE Got Some WALLS");
+                                //Debug.Log("WE Got Some WALLS");
                                 points.Add(new Vector3(connectedLines[l].p0.X / scaling, 0, connectedLines[l].p0.Y / scaling));
                                 points.Add(new Vector3(connectedLines[l].p1.X / scaling, 0, connectedLines[l].p1.Y / scaling));
                                 points.Add(new Vector3(connectedLines[l].p0.X / scaling, 30, connectedLines[l].p0.Y / scaling));
@@ -519,7 +552,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
                             }
                             else
                             {
-                                Debug.Log("WE Got Some WALLS");
+                                //Debug.Log("WE Got Some WALLS");
                                 points.Add(new Vector3(connectedLines[l].p1.X / scaling, 0, connectedLines[l].p1.Y / scaling));
                                 points.Add(new Vector3(connectedLines[l].p0.X / scaling, 0, connectedLines[l].p0.Y / scaling));
                                 points.Add(new Vector3(connectedLines[l].p1.X / scaling, 30, connectedLines[l].p1.Y / scaling));
@@ -556,6 +589,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
                     if (neighbours[j] == new Vector2(pathNodeExtras[k].transform.localPosition.x * scaling, pathNodeExtras[k].transform.localPosition.z * scaling))
                     {
+                        pathNodeObjects[i].GetComponent<PathNode>().ConnectedNodes.Add(pathNodeExtras[k].GetComponent<PathNode>());
                         valid = false;
                     }
                     
@@ -566,6 +600,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
                 GameObject node = Instantiate<GameObject>(pathNode, PathNodeStorage.transform);
                 node.transform.localPosition = new Vector3(neighbours[j].X / scaling, 0 ,neighbours[j].Y / scaling);
 
+                pathNodeObjects[i].GetComponent<PathNode>().ConnectedNodes.Add(node.GetComponent<PathNode>()); 
                 pathNodeExtras.Add(node);
                 finalExtras.Add(node);
             }
@@ -714,12 +749,14 @@ public class VoronoiMeshGenerator : MonoBehaviour
                 triangles.Add(1);
             }
         }
-        
-
-        
+            
 
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
+
+        pitFall.platform.transform.localPosition = new Vector3(currentNode.x, perlinTexture.perlinTexture.GetPixel((int)(currentNode.x * scaling), (int)(currentNode.z * scaling)).r * perlinScaling, currentNode.z);
+
+
 
     }
         void PlaceScatteredObects()
