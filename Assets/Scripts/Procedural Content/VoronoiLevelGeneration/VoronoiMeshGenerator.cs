@@ -5,6 +5,7 @@ using Vector2 = System.Numerics.Vector2;
 using UnityEditor;
 using static UnityEditor.Searcher.SearcherWindow.Alignment;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 
 
@@ -436,32 +437,67 @@ public class VoronoiMeshGenerator : MonoBehaviour
     {
         List<int> regions = new List<int>();
         List<int> pathPoints = new List<int>();
-        for(int i = 0; i < vertices.Count; i++)
+        List<List<Vector3>> regionsConnected = new List<List<Vector3>>();
+
+
+        int pointInArray = 0;
+        //Find all regions that are set to pitfalls
+        for (int i = 0; i < vertices.Count; i++)
         {
             for(int j = 0; j < pathNodeObjects.Count; j++)
             {
                 if (vertices[i][0].x == pathNodeObjects[j].transform.localPosition.x && vertices[i][0].z == pathNodeObjects[j].transform.localPosition.z && pathNodeObjects[j].GetComponent<PathNode>().isPitfall)
                 {
+                    regionsConnected.Add(new List<Vector3>());
+                    regionsConnected[pointInArray].Add(vertices[i][0]);
+                    pointInArray++;
+                    //Stores region point in array
                     regions.Add(i);
+                    //Store path point in array
                     pathPoints.Add(j);
                 }
             }
   
         }
 
-        for (int i = 0; i < vertices.Count; i++)
+        pointInArray = 0;
+        ////Find connected regions which will be used for the current pitfall
+        //for (int i = 0; i < vertices.Count; i++)
+        //{
+        //    bool upOne = false;
+        //    for (int j = 0; j < pathPoints.Count; j++)
+        //    {
+        //        List<PathNode> connectedNodes = pathNodeObjects[pathPoints[j]].GetComponent<PathNode>().ConnectedNodes;
+        //        for (int k = 0; k < connectedNodes.Count; k++)
+        //        {
+        //            if (vertices[i][0].x == connectedNodes[k].transform.localPosition.x && vertices[i][0].z == connectedNodes[k].transform.localPosition.z && !connectedNodes[k].NextNode && !connectedNodes[k].isGoal)
+        //            {
+        //                Debug.Log(pointInArray + " Size of Array: " + regionsConnected.Count);
+        //                regionsConnected[pointInArray].Add(vertices[i][0]);
+        //                upOne = true;
+        //                regions.Add(i);
+        //            }
+        //        }
+        //        if (upOne) pointInArray++;
+        //    }
+           
+        //}
+
+        bool upOne = false;
+        for (int j = 0; j < pathPoints.Count; j++)
         {
-            for (int j = 0; j < pathPoints.Count; j++)
+            List<PathNode> connectedNodes = pathNodeObjects[pathPoints[j]].GetComponent<PathNode>().ConnectedNodes;
+            for (int k = 0; k < connectedNodes.Count; k++)
             {
-                List<PathNode> connectedNodes = pathNodeObjects[pathPoints[j]].GetComponent<PathNode>().ConnectedNodes;
-                for (int k = 0; k < connectedNodes.Count; k++)
+                if(!connectedNodes[k].NextNode && !connectedNodes[k].isGoal)
                 {
-                    if (vertices[i][0].x == connectedNodes[k].transform.localPosition.x && vertices[i][0].z == connectedNodes[k].transform.localPosition.z && !connectedNodes[k].NextNode && !connectedNodes[k].isGoal)
-                    {
-                        regions.Add(i);
-                    }
-                }              
+                    Debug.Log(pointInArray + " Size of Array: " + regionsConnected.Count);
+                    regionsConnected[pointInArray].Add(connectedNodes[k].transform.localPosition);
+                    upOne = true;
+
+                }
             }
+            if (upOne) pointInArray++;
         }
 
         for (var i = ObstacleStorage.transform.childCount - 1; i >= 0; i--)
@@ -473,13 +509,19 @@ public class VoronoiMeshGenerator : MonoBehaviour
         for (int i = 0; i < regions.Count; i++)
         {
             removePoints.Add(vertices[regions[i]]);
+            
             for(int j = 0; j < vertices[regions[i]].Count; j++)
             {
 
                 vertices[regions[i]][j] = new Vector3(vertices[regions[i]][j].x, -20, vertices[regions[i]][j].z);             
             }
             //Generates the mesh for the pitfall
-            CreatePitFall(vertices[regions[i]][0]);
+            //CreatePitFall(vertices[regions[i]][0]);
+        }
+
+        for(int i = 0; i < regionsConnected.Count; i++)
+        {
+            CreatePitFall(regionsConnected[i]);
         }
 
         for (var i = removePoints.Count - 1; i >= 0; i--)
@@ -663,6 +705,122 @@ public class VoronoiMeshGenerator : MonoBehaviour
         {
             sitePositions.Add(new Vector2(pathNodeObjects[i].transform.localPosition.x*scaling, pathNodeObjects[i].transform.localPosition.z * scaling));
         }
+    }
+
+    void CreatePitFall(List<Vector3> sitePos)
+    {
+        List<Vector3> points = new List<Vector3>();
+
+        PitFall pitFall = Instantiate<GameObject>(PitfallTrapPrefab, ObstacleStorage.transform).GetComponent<PitFall>();
+        
+        MeshFilter meshFilter = pitFall.walls.GetComponent<MeshFilter>();
+        Mesh mesh = new Mesh();
+        mesh.Clear();
+        meshFilter.mesh = mesh;
+
+
+        //Loops through all path nodes to find each region vector
+        for (int i = 0; i < sitePos.Count; i++)
+        {
+            //Get all the connected lines attached to the region
+            List<LineSegment> connectedLines = voronoiDiagram.voronoi.VoronoiBoundarayForSite(new Vector2(sitePos[i].x * scaling, sitePos[i].z * scaling));
+            //Gets all neigbours attached to the current region
+            List<Vector2> Neighbours = voronoiDiagram.voronoi.NeighborSitesForSite(new Vector2(sitePos[i].x * scaling, sitePos[i].z * scaling));
+            for (int j = 0; j < Neighbours.Count; j++)
+            {
+                bool checkForValid = true;
+                for (int k = 0; k < sitePos.Count; k++)
+                {
+                    //Debug.Log("OH Yeah Thats How its Done");
+                    if (Neighbours[j] == new Vector2(sitePos[i].x * scaling, sitePos[i].z * scaling))
+                    {
+                        checkForValid = false;
+                        break;
+                    }
+
+                }
+                if (!checkForValid) continue;
+
+
+                List<LineSegment> neighboursLines = voronoiDiagram.voronoi.VoronoiBoundarayForSite(Neighbours[j]);
+
+                for (int k = 0; k < neighboursLines.Count; k++)
+                {
+                    //Debug.Log("Some Lines");
+                    for (int l = 0; l < connectedLines.Count; l++)
+                    {
+                        //Debug.Log("LOTS AND LOTS OF LINES");
+
+                        if (neighboursLines[k].p0 == connectedLines[l].p0 || neighboursLines[k].p1 == connectedLines[l].p1)
+                        {
+
+                            //Direction from point p1 to p0
+                            Vector2 direction = connectedLines[l].p0 - connectedLines[l].p1;
+                            //Direction from the midpoint of p1 and p0 to the center of the region
+                            Vector2 directionToCenter = new Vector2(sitePos[i].x * scaling, sitePos[i].z * scaling) - (connectedLines[l].p1 + direction / 2);
+                            //Normalize directions
+                            direction = Vector2.Normalize(direction);
+                            directionToCenter = Vector2.Normalize(directionToCenter);
+                            //Find the cross product to see if the point is to the left and right
+                            Vector3 temp = Vector3.Cross(new Vector3(direction.X, 0, direction.Y), new Vector3(directionToCenter.X, 0, directionToCenter.Y));
+
+                            //Checks to find if p0 is the left vector to generate mesh the right way around
+                            if (temp.y < 0)
+                            {
+
+                                float Height1 = perlinTexture.perlinTexture.GetPixel((int)connectedLines[l].p0.X, (int)connectedLines[l].p0.Y).r * perlinScaling;
+                                float Height2 = perlinTexture.perlinTexture.GetPixel((int)connectedLines[l].p1.X, (int)connectedLines[l].p1.Y).r * perlinScaling;
+
+                                //Debug.Log("WE Got Some WALLS");
+                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, -5, connectedLines[l].p0.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, -5, connectedLines[l].p1.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, Height1, connectedLines[l].p0.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, Height2, connectedLines[l].p1.Y / scaling));
+                            }
+                            else
+                            {
+                                float Height1 = perlinTexture.perlinTexture.GetPixel((int)connectedLines[l].p0.X, (int)connectedLines[l].p0.Y).r * perlinScaling;
+                                float Height2 = perlinTexture.perlinTexture.GetPixel((int)connectedLines[l].p1.X, (int)connectedLines[l].p1.Y).r * perlinScaling;
+
+                                //Debug.Log("WE Got Some WALLS");
+                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, -5, connectedLines[l].p1.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, -5, connectedLines[l].p0.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, Height2, connectedLines[l].p1.Y / scaling));
+                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, Height1, connectedLines[l].p0.Y / scaling));
+                            }
+
+
+
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+        List<int> triangles = new List<int>();
+
+        for (int i = 0; i < points.Count; i += 4)
+        {
+            triangles.Add(i + 2);
+            triangles.Add(i + 1);
+            triangles.Add(i);
+
+            triangles.Add(i + 3);
+            triangles.Add(i + 1);
+            triangles.Add(i + 2);
+
+        }
+
+        mesh.vertices = points.ToArray();
+        mesh.triangles = triangles.ToArray();
+
+        meshFilter = pitFall.walls.GetComponent<MeshFilter>();
+        meshFilter.mesh = mesh;
+
+        points.Clear();
+        triangles.Clear();
     }
 
     void CreatePitFall(Vector3 currentNode)
