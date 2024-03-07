@@ -796,6 +796,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         List<int> triangles = new List<int>();
 
+        //Sets up the triangles
         for (int i = 0; i < points.Count; i += 4)
         {
             triangles.Add(i + 2);
@@ -820,6 +821,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         points.Clear();
         triangles.Clear();
 
+        //Used to seperate each of the regions that are used for the pitfall
         List<List<Vector3>> vertices = new List<List<Vector3>>();
 
         //Create Lava Vertices
@@ -835,7 +837,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         }
 
         int currentPointInArray = 0;
-        //Set up lava triangles
+        //Create Lava triangles
         for(int i = 0; i < vertices.Count; i++)
         {
             for(int j = 0; j < vertices[i].Count; j++)
@@ -853,7 +855,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             }
             currentPointInArray += vertices[i].Count;
         }
-
+        //Set up the mesh
         mesh.vertices = points.ToArray();
         mesh.triangles = triangles.ToArray();
         pitFall.lava.GetComponent<MeshCollider>().sharedMesh = mesh;
