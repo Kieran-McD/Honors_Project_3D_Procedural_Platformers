@@ -211,7 +211,7 @@ public class VoronoiDiagram : MonoBehaviour
 
 }
 
-
+#if UNITY_EDITOR 
 [CustomEditor(typeof(VoronoiDiagram))]
 public class VoronoiDiagramEditor : Editor
 {
@@ -233,4 +233,4 @@ public class VoronoiDiagramEditor : Editor
         DrawDefaultInspector();
     }
 }
-
+#endif

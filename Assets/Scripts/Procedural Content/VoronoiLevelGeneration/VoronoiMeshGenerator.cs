@@ -1013,7 +1013,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             if (pathNodeObjects[i].isGoal)
             {
                 float height = perlinTexture.perlinTexture.GetPixel(pathNodeObjects[i].x, pathNodeObjects[i].y).r * perlinScaling;
-                Instantiate<GameObject>(goalPrefab, this.transform).transform.localPosition = pathNodeObjects[i].transform.localPosition + new Vector3(0,height,0);
+                Instantiate<GameObject>(goalPrefab, ObstacleStorage.transform).transform.localPosition = pathNodeObjects[i].transform.localPosition + new Vector3(0,height,0);
 
             }
 
@@ -1021,7 +1021,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
     }
 
 }
-
+#if UNITY_EDITOR 
 [CustomEditor(typeof(VoronoiMeshGenerator))]
 public class VoronoiMeshGeneratorEditor : Editor
 {
@@ -1043,5 +1043,5 @@ public class VoronoiMeshGeneratorEditor : Editor
         DrawDefaultInspector();
     }
 }
-
+#endif
 

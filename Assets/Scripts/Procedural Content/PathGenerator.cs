@@ -18,7 +18,7 @@ public class PathGenerator : MonoBehaviour
     GameObject currentPath;
 
     Transform currentWorm;
-    
+
     List<Transform> pathPointTransforms = new List<Transform>();
 
     float tick;
@@ -48,12 +48,12 @@ public class PathGenerator : MonoBehaviour
         if (tick > pointSpawnRate)
         {
             Transform currentPoint = Instantiate<GameObject>(pathPointPrefab, currentWorm.position, currentWorm.rotation, transform).transform;
-          
+
             pathPointTransforms.Add(currentPoint);
             tick = 0;
         }
 
-        if(pathPointTransforms.Count > pointsInPath)
+        if (pathPointTransforms.Count > pointsInPath)
         {
             PerlinWormFinished();
         }
@@ -66,13 +66,13 @@ public class PathGenerator : MonoBehaviour
         BuildPath();
         isFinished = true;
     }
-    
+
     void BuildPath()
     {
         //Spawns the path object
         currentPath = Instantiate(pathPrefab);
         //Sets the exit for the path to the the position of the final point generated
-        currentPath.GetComponent<Path>().exit.position = pathPointTransforms[pathPointTransforms.Count-1].position;
+        currentPath.GetComponent<Path>().exit.position = pathPointTransforms[pathPointTransforms.Count - 1].position;
         currentPath.GetComponent<Path>().exit.rotation = pathPointTransforms[pathPointTransforms.Count - 1].rotation;
         //Sets up the mesh filter and mesh
         MeshFilter currentMeshFilter = currentPath.GetComponent<MeshFilter>();
@@ -81,7 +81,7 @@ public class PathGenerator : MonoBehaviour
 
         mesh.Clear();
         //Generates the vertices
-        List<Vector3>vertices = GenerateVertices();
+        List<Vector3> vertices = GenerateVertices();
         mesh.vertices = vertices.ToArray();
         mesh.normals = GenerateNormals().ToArray();
         //Sets up the indices
@@ -90,7 +90,7 @@ public class PathGenerator : MonoBehaviour
 
         currentPath.GetComponent<MeshCollider>().sharedMesh = mesh;
 
-        
+
     }
 
     List<Vector3> GenerateVertices()
@@ -98,16 +98,16 @@ public class PathGenerator : MonoBehaviour
         List<Vector3> vertices = new List<Vector3>();
 
         //Generate all the vertices along the point
-        for(int i = 0; i < pathPointTransforms.Count; i++)
+        for (int i = 0; i < pathPointTransforms.Count; i++)
         {
             Vector3 pos = pathPointTransforms[i].position;
             Vector3 right = pathPointTransforms[i].right;
-            vertices.Add(pos - (right * pathWidth/2f));
-            Instantiate<GameObject>(pathPointPrefab, vertices[vertices.Count-1], Quaternion.identity, transform);
+            vertices.Add(pos - (right * pathWidth / 2f));
+            Instantiate<GameObject>(pathPointPrefab, vertices[vertices.Count - 1], Quaternion.identity, transform);
             vertices.Add(pos + (right * pathWidth / 2f));
             Instantiate<GameObject>(pathPointPrefab, vertices[vertices.Count - 1], Quaternion.identity, transform);
         }
-        return vertices;        
+        return vertices;
     }
 
     List<Vector3> GenerateNormals()
@@ -117,8 +117,8 @@ public class PathGenerator : MonoBehaviour
         //Generate all the normals along the point
         for (int i = 0; i < pathPointTransforms.Count; i++)
         {
-            normals.Add(pathPointTransforms[i].up);           
-            normals.Add(pathPointTransforms[i].up);          
+            normals.Add(pathPointTransforms[i].up);
+            normals.Add(pathPointTransforms[i].up);
         }
         return normals;
     }
@@ -128,15 +128,15 @@ public class PathGenerator : MonoBehaviour
     {
         List<int> triangles = new List<int>();
 
-        for(int i = 0; i < pathPointTransforms.Count-1; i++)
+        for (int i = 0; i < pathPointTransforms.Count - 1; i++)
         {
             //Generate the first triangle
-            triangles.Add(i * 2 );
+            triangles.Add(i * 2);
             triangles.Add(i * 2 + 3);
             triangles.Add(i * 2 + 1);
 
             //Generate the second triangle
-            triangles.Add(i * 2 );
+            triangles.Add(i * 2);
             triangles.Add(i * 2 + 2);
             triangles.Add(i * 2 + 3);
         }
@@ -195,7 +195,7 @@ public class PathGenerator : MonoBehaviour
     public void ClearPathGenerator()
     {
         bool skipFirst = false;
-        foreach(Transform child in transform)
+        foreach (Transform child in transform)
         {
             if (!skipFirst)
             {
@@ -217,8 +217,8 @@ public class PathGenerator : MonoBehaviour
     {
         return pathWidth;
     }
-
-
+}
+#if UNITY_EDITOR
     [CustomEditor(typeof(PathGenerator))]
     public class PathGeneratorEditor : Editor
     {
@@ -240,4 +240,5 @@ public class PathGenerator : MonoBehaviour
             DrawDefaultInspector();
         }
     }
-}
+
+#endif

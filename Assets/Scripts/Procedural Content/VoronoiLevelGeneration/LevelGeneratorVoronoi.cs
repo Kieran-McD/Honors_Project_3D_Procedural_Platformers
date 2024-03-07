@@ -122,6 +122,7 @@ public class LevelGeneratorVoronoi : MonoBehaviour
 
 }
 
+#if UNITY_EDITOR 
 [CustomEditor(typeof(LevelGeneratorVoronoi))]
 public class LevelGeneratorVoronoiEditor : Editor
 {
@@ -143,4 +144,4 @@ public class LevelGeneratorVoronoiEditor : Editor
         DrawDefaultInspector();
     }
 }
-
+#endif

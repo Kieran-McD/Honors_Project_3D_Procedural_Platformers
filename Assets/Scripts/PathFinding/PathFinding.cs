@@ -146,7 +146,7 @@ public class PathFinding : MonoBehaviour
 
 }
 
-
+#if UNITY_EDITOR
 [CustomEditor(typeof(PathFinding))]
 public class PathFindingEditor : Editor
 {
@@ -168,3 +168,4 @@ public class PathFindingEditor : Editor
         DrawDefaultInspector();
     }
 }
+#endif

@@ -15,6 +15,7 @@ public class Goal : MonoBehaviour
     {
         startPos = transform.localPosition;
         text = FindFirstObjectByType<YouWinText>().GetComponent<TextMeshProUGUI>();
+        text.color = text.color - new Color(0, 0, 0, 1f);
     }
 
     private void AnimateGoal()

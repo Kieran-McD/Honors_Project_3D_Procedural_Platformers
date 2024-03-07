@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/PathGeneration.unity
-    guid: be59c186b9fd75c48b417b20e496b08b
+    path: Assets/Scenes/VoronoiTestingScene.unity
+    guid: 15bc561c26d89164ea8b1326685c8320
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
