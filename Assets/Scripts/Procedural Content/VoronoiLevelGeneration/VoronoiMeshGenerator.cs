@@ -764,13 +764,13 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
                     if (neighboursLines[k].p0 == connectedLines[j].p0 && neighboursLines[k].p1 == connectedLines[j].p1)
                     {
-                        Debug.Log("afdsf");
+                        //Debug.Log("afdsf");
                         valid = false; break;
                     }
 
                     if (neighboursLines[k].p0 == connectedLines[j].p1 && neighboursLines[k].p1 == connectedLines[j].p0)
                     {
-                        Debug.Log("afdsf");
+                        //Debug.Log("afdsf");
                         valid = false; break;
                     }
 
@@ -853,7 +853,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
         {
             List<Vector2> regionPoints = voronoiDiagram.voronoi.Region(new Vector2(sitePos[i].x*scaling, sitePos[i].z*scaling));
             vertices.Add(new List<Vector3>());
-            for(int j = 0; j < regionPoints.Count; j++)
+            vertices[i].Add(new Vector3(sitePos[i].x, -5f, sitePos[i].z));
+            points.Add(new Vector3(sitePos[i].x, -5f, sitePos[i].z));
+            for (int j = 0; j < regionPoints.Count; j++)
             {
                 vertices[i].Add(new Vector3(regionPoints[j].X / scaling, -5f, regionPoints[j].Y / scaling));
                 points.Add(new Vector3(regionPoints[j].X / scaling, -5f, regionPoints[j].Y / scaling));
@@ -864,7 +866,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Create Lava triangles
         for(int i = 0; i < vertices.Count; i++)
         {
-            for(int j = 0; j < vertices[i].Count; j++)
+            for(int j = 1; j < vertices[i].Count; j++)
             {
                 triangles.Add(currentPointInArray + j);
                 triangles.Add(currentPointInArray + 0);

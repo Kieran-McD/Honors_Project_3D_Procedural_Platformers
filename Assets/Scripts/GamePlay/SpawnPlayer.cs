@@ -25,8 +25,9 @@ public class SpawnPlayer : MonoBehaviour
         if (spawn)
         {
             spawn = false;
+            player.GetComponent<CharacterController>().enabled = false;
             player.transform.position = transform.position;
-            
+            player.GetComponent<CharacterController>().enabled = true;
         }
     }
 
