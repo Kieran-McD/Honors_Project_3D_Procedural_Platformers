@@ -49,7 +49,6 @@ public class VoronoiDiagram : MonoBehaviour
         //Voronoi voronoi = new Voronoi(points,bounds);
         //voronoi.LloydRelaxation(5);
 
-
         sites = new Dictionary<Vector2, Site>();
         edges = new List<Edge>();
         pointsForPath = new List<Site>();

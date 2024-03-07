@@ -12,21 +12,49 @@ public class PathNode : MonoBehaviour
     public bool isStart;
     public bool isPitfall;
 
+    //Used For A* Path Finding
+    public int x;
+    public int y;
+
+    public int gCost;
+    public int hCost;
+    public int fCost;
+
+    public PathNode cameFromNode;
+
+    public void ResetNode()
+    {
+        NextNode = null;
+        isObstacle = false;
+        isGoal = false;
+        isStart = false;
+        isPitfall = false;
+    }
+
+    public void CalculateFCost()
+    {
+        fCost = gCost + hCost;
+    }
+
     private void OnDrawGizmos()
     {
         if (ConnectedNodes.Count > 0)
         {
-            Gizmos.color = Color.white;
             for (int i = 0; i < ConnectedNodes.Count; i++)
             {
-                Gizmos.DrawLine(transform.position, ConnectedNodes[i].transform.position);
+                if (ConnectedNodes[i] == NextNode)
+                {
+                    Gizmos.color = Color.magenta;
+                    Gizmos.DrawLine(transform.position, ConnectedNodes[i].transform.position);
+                         
+                }
+                else if(ConnectedNodes[i].NextNode != this)
+                {
+                    Gizmos.color = Color.white;
+                    Gizmos.DrawLine(transform.position, ConnectedNodes[i].transform.position);
+                }
+               
             }
         }
-
-        if (NextNode)
-        {
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawLine(transform.position, NextNode.transform.position);
-        }    
     }
 }

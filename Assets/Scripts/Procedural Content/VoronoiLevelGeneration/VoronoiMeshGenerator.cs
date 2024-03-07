@@ -3,20 +3,17 @@ using UnityEngine;
 using csDelaunay;
 using Vector2 = System.Numerics.Vector2;
 using UnityEditor;
-using static UnityEditor.Searcher.SearcherWindow.Alignment;
-using NUnit.Framework;
-using NUnit.Framework.Internal;
-
-
 
 public class VoronoiMeshGenerator : MonoBehaviour
 {
     
     public VoronoiDiagram voronoiDiagram;
 
+    public PathFinding pathFinding;
+
     public GameObject pathNode;
 
-    public List<GameObject> pathNodeObjects;
+    public List<PathNode> pathNodeObjects;
 
     public List<List<Vector3>> regionPlotPoints;
 
@@ -111,7 +108,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
         perlinTexture.RandomizePerlinTexture();
         //Spawns nodes for the main path of the level
         voronoiDiagram.CreateDiagram();
-        SpawnPathNodes(voronoiDiagram.pointsForPath);
+        pathFinding.Generate();
+        pathNodeObjects = pathFinding.currentPath;
+        //SpawnPathNodes(voronoiDiagram.pointsForPath);
         WidenPath();
         //Generates the plane for the level
         GeneratePlane(voronoiDiagram.voronoi);
@@ -333,8 +332,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         for (int i = 0; i < vertices.Count; i++)
         {
-
-
             List<Vector3> points = vertices[i];
 
             bool checkForValid = true;
@@ -373,13 +370,15 @@ public class VoronoiMeshGenerator : MonoBehaviour
             Destroy(PathNodeStorage.transform.GetChild(i).gameObject);
         }
 
-        pathNodeObjects = new List<GameObject>();
+        pathNodeObjects = new List<PathNode>();
         //Spawns in the first node
         PathNode previousNode = Instantiate(pathNode, PathNodeStorage.transform).GetComponent<PathNode>();
         //Set the position for the node
         previousNode.transform.localPosition = new Vector3(sites[sites.Count - 1].Coord.X / scaling, perlinTexture.perlinTexture.GetPixel((int)sites[sites.Count - 1].Coord.X, (int)sites[sites.Count - 1].Coord.Y).r * 10f, sites[sites.Count - 1].Coord.Y / scaling);
+        previousNode.x = (int)sites[sites.Count - 1].Coord.X;
+        previousNode.y = (int)sites[sites.Count - 1].Coord.Y;
         //Add node to list of nodes
-        pathNodeObjects.Add(previousNode.gameObject);
+        pathNodeObjects.Add(previousNode);
 
         previousNode.isGoal = true;
 
@@ -391,18 +390,22 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
             if(i%3 == 0) previousNode.isPitfall = true;
 
+            
+
             //Spawns the next node
             PathNode nextNode = Instantiate(pathNode, PathNodeStorage.transform).GetComponent<PathNode>();
             //Sets position of node
             nextNode.transform.localPosition = new Vector3(sites[i].Coord.X / scaling, perlinTexture.perlinTexture.GetPixel((int)sites[i].Coord.X, (int)sites[i].Coord.Y).r * 10f, sites[i].Coord.Y / scaling);
             //Store node
-            pathNodeObjects.Add(nextNode.gameObject);
+            pathNodeObjects.Add(nextNode);
             //Sets up the rotation of the node
             nextNode.transform.rotation = Quaternion.LookRotation(previousNode.transform.position - nextNode.transform.position, Vector3.up);
             //Sets the next node to connect to the previous node
             nextNode.NextNode = previousNode;
             //use the next node as the previous node
             previousNode = nextNode;
+            previousNode.x = (int)sites[sites.Count - 1].Coord.X;
+            previousNode.y = (int)sites[sites.Count - 1].Coord.Y;
         }
 
         //Move the player spawner
@@ -611,8 +614,8 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     public void WidenPath()
     {
-        List<GameObject> pathNodeExtras = new List<GameObject>();
-        List<GameObject> finalExtras = new List<GameObject>();
+        List<PathNode> pathNodeExtras = new List<PathNode>();
+        List<PathNode> finalExtras = new List<PathNode>();
         pathNodeExtras.AddRange(pathNodeObjects);
         for(int i = 0; i < pathNodeObjects.Count; i++)
         {
@@ -634,7 +637,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
                 if (valid == false) continue;
 
-                GameObject node = Instantiate<GameObject>(pathNode, PathNodeStorage.transform);
+                PathNode node = Instantiate<GameObject>(pathNode, PathNodeStorage.transform).GetComponent<PathNode>();
                 node.transform.localPosition = new Vector3(neighbours[j].X / scaling, 0 ,neighbours[j].Y / scaling);
 
                 pathNodeObjects[i].GetComponent<PathNode>().ConnectedNodes.Add(node.GetComponent<PathNode>()); 
