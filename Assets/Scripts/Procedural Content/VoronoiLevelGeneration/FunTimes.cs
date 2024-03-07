@@ -22,12 +22,12 @@ public class VoronoiDiagram : MonoBehaviour
 
     void Start()
     {
-       CreateDiagram();
-        if (meshGenerator)
-        {
-            meshGenerator.SpawnPathNodes(pointsForPath);
-            meshGenerator.GenerateMesh(voronoi);
-        }
+       //CreateDiagram();
+       // if (meshGenerator)
+       // {
+       //     meshGenerator.SpawnPathNodes(pointsForPath);
+       //     meshGenerator.GenerateMesh(voronoi);
+       // }
     }
 
 

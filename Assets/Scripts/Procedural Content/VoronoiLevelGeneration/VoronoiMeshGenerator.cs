@@ -46,6 +46,11 @@ public class VoronoiMeshGenerator : MonoBehaviour
     public bool moveVertices;
     public bool randomizeHeights;
 
+    private void Start()
+    {
+        GenerateMesh();
+    }
+
     private void Update()
     {
         if(moveVertices)UpdateVertices();
@@ -106,18 +111,13 @@ public class VoronoiMeshGenerator : MonoBehaviour
     {
         //Randomizes the perlin texture for terrain transformation
         perlinTexture.RandomizePerlinTexture();
-        //Spawns nodes for the main path of the level
-        voronoiDiagram.CreateDiagram();
-        pathFinding.Generate();
-        pathNodeObjects = pathFinding.currentPath;
-        LevelPathNodeSettings();
-        //SpawnPathNodes(voronoiDiagram.pointsForPath);
-        WidenPath();
+
+        SetUpPlayableLevel();
+
         //Generates the plane for the level
         GeneratePlane(voronoiDiagram.voronoi);
         SpawnLevelObects();
         
-
         //generates the walls for the level
         GenerateWalls();    
 
@@ -125,6 +125,22 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         availableTerrain.SetUp(sitePositions);
         PlaceScatteredObects();
+    }
+
+    void SetUpPlayableLevel()
+    {
+        //Sets up the voronoi diagram to be used
+        voronoiDiagram.CreateDiagram();
+        //Sets up a grid of connected path nodes and generates a path for the level
+        pathFinding.Generate();
+        //Gets the path for the level
+        pathNodeObjects = pathFinding.currentPath;
+        //Sets up some of the data for the pat nodes
+        LevelPathNodeSettings();
+
+        //SpawnPathNodes(voronoiDiagram.pointsForPath);
+        //Widens the path for the level
+        WidenPath();
     }
 
     public void GeneratePlane(Voronoi tempVoronoi)
@@ -200,6 +216,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         List<Vector3> normals = new List<Vector3>();
 
+        
         for (int i = 0; i < vertices.Count; i++)
         {
             normals.Add(Vector3.up);
@@ -340,7 +357,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             bool checkForValid = true;
             for (int k = 0; k < pathNodeObjects.Count; k++)
             {
-                
+                //Checks if the current region is within the path for the level
                 if (points[0].x == pathNodeObjects[k].transform.localPosition.x && points[0].z == pathNodeObjects[k].transform.localPosition.z)
                 {
                     checkForValid = false;
@@ -354,7 +371,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             }
             if (!checkForValid) continue;
 
-
+            //Sets the regions outside the level to green
             Color color = Color.green;
             for (int j = 0; j < points.Count; j++)
             {
@@ -708,6 +725,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         }
     }
 
+    //Used to create a pitfall combining multiple regions
     void CreatePitFall(List<Vector3> sitePos)
     {
         List<Vector3> points = new List<Vector3>();
@@ -967,6 +985,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
 
     }
+    //Places objects to fill the outside of the play area
     void PlaceScatteredObects()
     {
         GameObject g;
