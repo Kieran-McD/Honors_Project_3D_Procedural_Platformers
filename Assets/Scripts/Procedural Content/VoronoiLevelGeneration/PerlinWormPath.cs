@@ -12,7 +12,7 @@ public class PerlinWormPath : PerlinWorm
 
     public Transform followPoint;
 
-    public void Start()
+    public new void Start()
     {
         levelGeneratorVoronoi = FindAnyObjectByType<LevelGeneratorVoronoi>();
         base.Start();

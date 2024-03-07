@@ -53,9 +53,9 @@ public class VoronoiAvailableTerrain : MonoBehaviour
             for (int y = 0; y < height; y++)
             {
                 Vector2 point = new Vector2(x, y);
-                float a,b;
+                //float a,b;
 
-                float det1, det2, det3;
+                //float det1, det2, det3;
 
                 bool pointInTriangle = false;
                 int currentTotal = 0;

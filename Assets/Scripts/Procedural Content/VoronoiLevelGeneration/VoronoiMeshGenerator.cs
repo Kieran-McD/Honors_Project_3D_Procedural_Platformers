@@ -499,7 +499,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             {
                 if(!connectedNodes[k].NextNode && !connectedNodes[k].isGoal)
                 {
-                    Debug.Log(pointInArray + " Size of Array: " + regionsConnected.Count);
+                    //Debug.Log(pointInArray + " Size of Array: " + regionsConnected.Count);
                     regionsConnected[pointInArray].Add(connectedNodes[k].transform.localPosition);
                     upOne = true;
 
@@ -962,7 +962,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
     //Places objects to fill the outside of the play area
     void PlaceScatteredObects()
     {
-        GameObject g;
         for (var i = ObjectStorage.transform.childCount - 1; i >= 0; i--)
         {
             Object.Destroy(ObjectStorage.transform.GetChild(i).gameObject);

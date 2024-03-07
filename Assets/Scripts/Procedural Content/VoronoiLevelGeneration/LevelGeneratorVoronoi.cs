@@ -28,8 +28,7 @@ public class LevelGeneratorVoronoi : MonoBehaviour
     Transform levelTransform;
 
     public bool isFinished = false;
-    [SerializeField]
-    bool reset = false;
+
 
 
     // Start is called before the first frame update
@@ -53,7 +52,6 @@ public class LevelGeneratorVoronoi : MonoBehaviour
 
         pathGenerator.ClearPathGenerator();
         pathGenerator.StartPathGenerator();
-        reset = false;
         isFinished = false;
         
     }
