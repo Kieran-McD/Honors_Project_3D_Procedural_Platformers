@@ -461,27 +461,22 @@ public class VoronoiMeshGenerator : MonoBehaviour
         }
 
         pointInArray = 0;
-        ////Find connected regions which will be used for the current pitfall
-        //for (int i = 0; i < vertices.Count; i++)
-        //{
-        //    bool upOne = false;
-        //    for (int j = 0; j < pathPoints.Count; j++)
-        //    {
-        //        List<PathNode> connectedNodes = pathNodeObjects[pathPoints[j]].GetComponent<PathNode>().ConnectedNodes;
-        //        for (int k = 0; k < connectedNodes.Count; k++)
-        //        {
-        //            if (vertices[i][0].x == connectedNodes[k].transform.localPosition.x && vertices[i][0].z == connectedNodes[k].transform.localPosition.z && !connectedNodes[k].NextNode && !connectedNodes[k].isGoal)
-        //            {
-        //                Debug.Log(pointInArray + " Size of Array: " + regionsConnected.Count);
-        //                regionsConnected[pointInArray].Add(vertices[i][0]);
-        //                upOne = true;
-        //                regions.Add(i);
-        //            }
-        //        }
-        //        if (upOne) pointInArray++;
-        //    }
-           
-        //}
+        //Find connected regions which will be used for the current pitfall
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            for (int j = 0; j < pathPoints.Count; j++)
+            {
+                List<PathNode> connectedNodes = pathNodeObjects[pathPoints[j]].GetComponent<PathNode>().ConnectedNodes;
+                for (int k = 0; k < connectedNodes.Count; k++)
+                {
+                    if (vertices[i][0].x == connectedNodes[k].transform.localPosition.x && vertices[i][0].z == connectedNodes[k].transform.localPosition.z && !connectedNodes[k].NextNode && !connectedNodes[k].isGoal)
+                    {
+                        regions.Add(i);
+                    }
+                }
+            }
+
+        }
 
         bool upOne = false;
         for (int j = 0; j < pathPoints.Count; j++)
@@ -724,79 +719,79 @@ public class VoronoiMeshGenerator : MonoBehaviour
         {
             //Get all the connected lines attached to the region
             List<LineSegment> connectedLines = voronoiDiagram.voronoi.VoronoiBoundarayForSite(new Vector2(sitePos[i].x * scaling, sitePos[i].z * scaling));
-            //Gets all neigbours attached to the current region
-            List<Vector2> Neighbours = voronoiDiagram.voronoi.NeighborSitesForSite(new Vector2(sitePos[i].x * scaling, sitePos[i].z * scaling));
-            for (int j = 0; j < Neighbours.Count; j++)
+
+            List<LineSegment> neighboursLines = new List<LineSegment>();
+
+            for (int j = 0; j < sitePos.Count; j++)
             {
-                bool checkForValid = true;
-                for (int k = 0; k < sitePos.Count; k++)
-                {
-                    //Debug.Log("OH Yeah Thats How its Done");
-                    if (Neighbours[j] == new Vector2(sitePos[i].x * scaling, sitePos[i].z * scaling))
-                    {
-                        checkForValid = false;
-                        break;
-                    }
 
-                }
-                if (!checkForValid) continue;
+                if (sitePos[i] == sitePos[j]) continue;
 
+                neighboursLines.AddRange(voronoiDiagram.voronoi.VoronoiBoundarayForSite(new Vector2(sitePos[j].x * scaling, sitePos[j].z * scaling)));
+            }
 
-                List<LineSegment> neighboursLines = voronoiDiagram.voronoi.VoronoiBoundarayForSite(Neighbours[j]);
-
+            for (int j = 0; j < connectedLines.Count; j++)
+            {
+                bool valid = true;
+                //Debug.Log("Some Lines");
                 for (int k = 0; k < neighboursLines.Count; k++)
                 {
-                    //Debug.Log("Some Lines");
-                    for (int l = 0; l < connectedLines.Count; l++)
+                    //Debug.Log("LOTS AND LOTS OF LINES");
+
+                    if (neighboursLines[k].p0 == connectedLines[j].p0 && neighboursLines[k].p1 == connectedLines[j].p1)
                     {
-                        //Debug.Log("LOTS AND LOTS OF LINES");
+                        Debug.Log("afdsf");
+                        valid = false; break;
+                    }
 
-                        if (neighboursLines[k].p0 == connectedLines[l].p0 || neighboursLines[k].p1 == connectedLines[l].p1)
-                        {
-
-                            //Direction from point p1 to p0
-                            Vector2 direction = connectedLines[l].p0 - connectedLines[l].p1;
-                            //Direction from the midpoint of p1 and p0 to the center of the region
-                            Vector2 directionToCenter = new Vector2(sitePos[i].x * scaling, sitePos[i].z * scaling) - (connectedLines[l].p1 + direction / 2);
-                            //Normalize directions
-                            direction = Vector2.Normalize(direction);
-                            directionToCenter = Vector2.Normalize(directionToCenter);
-                            //Find the cross product to see if the point is to the left and right
-                            Vector3 temp = Vector3.Cross(new Vector3(direction.X, 0, direction.Y), new Vector3(directionToCenter.X, 0, directionToCenter.Y));
-
-                            //Checks to find if p0 is the left vector to generate mesh the right way around
-                            if (temp.y < 0)
-                            {
-
-                                float Height1 = perlinTexture.perlinTexture.GetPixel((int)connectedLines[l].p0.X, (int)connectedLines[l].p0.Y).r * perlinScaling;
-                                float Height2 = perlinTexture.perlinTexture.GetPixel((int)connectedLines[l].p1.X, (int)connectedLines[l].p1.Y).r * perlinScaling;
-
-                                //Debug.Log("WE Got Some WALLS");
-                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, -5, connectedLines[l].p0.Y / scaling));
-                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, -5, connectedLines[l].p1.Y / scaling));
-                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, Height1, connectedLines[l].p0.Y / scaling));
-                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, Height2, connectedLines[l].p1.Y / scaling));
-                            }
-                            else
-                            {
-                                float Height1 = perlinTexture.perlinTexture.GetPixel((int)connectedLines[l].p0.X, (int)connectedLines[l].p0.Y).r * perlinScaling;
-                                float Height2 = perlinTexture.perlinTexture.GetPixel((int)connectedLines[l].p1.X, (int)connectedLines[l].p1.Y).r * perlinScaling;
-
-                                //Debug.Log("WE Got Some WALLS");
-                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, -5, connectedLines[l].p1.Y / scaling));
-                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, -5, connectedLines[l].p0.Y / scaling));
-                                points.Add(new Vector3(connectedLines[l].p1.X / scaling, Height2, connectedLines[l].p1.Y / scaling));
-                                points.Add(new Vector3(connectedLines[l].p0.X / scaling, Height1, connectedLines[l].p0.Y / scaling));
-                            }
-
-
-
-                        }
+                    if (neighboursLines[k].p0 == connectedLines[j].p1 && neighboursLines[k].p1 == connectedLines[j].p0)
+                    {
+                        Debug.Log("afdsf");
+                        valid = false; break;
                     }
 
                 }
 
+                if (!valid) continue;
+
+                //Direction from point p1 to p0
+                Vector2 direction = connectedLines[j].p0 - connectedLines[j].p1;
+                //Direction from the midpoint of p1 and p0 to the center of the region
+                Vector2 directionToCenter = new Vector2(sitePos[i].x * scaling, sitePos[i].z * scaling) - (connectedLines[j].p1 + direction / 2);
+                //Normalize directions
+                direction = Vector2.Normalize(direction);
+                directionToCenter = Vector2.Normalize(directionToCenter);
+                //Find the cross product to see if the point is to the left and right
+                Vector3 temp = Vector3.Cross(new Vector3(direction.X, 0, direction.Y), new Vector3(directionToCenter.X, 0, directionToCenter.Y));
+
+                //Checks to find if p0 is the left vector to generate mesh the right way around
+                if (temp.y < 0)
+                {
+
+                    float Height1 = perlinTexture.perlinTexture.GetPixel((int)connectedLines[j].p0.X, (int)connectedLines[j].p0.Y).r * perlinScaling;
+                    float Height2 = perlinTexture.perlinTexture.GetPixel((int)connectedLines[j].p1.X, (int)connectedLines[j].p1.Y).r * perlinScaling;
+
+                    //Debug.Log("WE Got Some WALLS");
+                    points.Add(new Vector3(connectedLines[j].p0.X / scaling, -5, connectedLines[j].p0.Y / scaling));
+                    points.Add(new Vector3(connectedLines[j].p1.X / scaling, -5, connectedLines[j].p1.Y / scaling));
+                    points.Add(new Vector3(connectedLines[j].p0.X / scaling, Height1, connectedLines[j].p0.Y / scaling));
+                    points.Add(new Vector3(connectedLines[j].p1.X / scaling, Height2, connectedLines[j].p1.Y / scaling));
+                }
+                else
+                {
+                    float Height1 = perlinTexture.perlinTexture.GetPixel((int)connectedLines[j].p0.X, (int)connectedLines[j].p0.Y).r * perlinScaling;
+                    float Height2 = perlinTexture.perlinTexture.GetPixel((int)connectedLines[j].p1.X, (int)connectedLines[j].p1.Y).r * perlinScaling;
+
+                    //Debug.Log("WE Got Some WALLS");
+                    points.Add(new Vector3(connectedLines[j].p1.X / scaling, -5, connectedLines[j].p1.Y / scaling));
+                    points.Add(new Vector3(connectedLines[j].p0.X / scaling, -5, connectedLines[j].p0.Y / scaling));
+                    points.Add(new Vector3(connectedLines[j].p1.X / scaling, Height2, connectedLines[j].p1.Y / scaling));
+                    points.Add(new Vector3(connectedLines[j].p0.X / scaling, Height1, connectedLines[j].p0.Y / scaling));
+                }
             }
+
+
+
         }
 
         List<int> triangles = new List<int>();
