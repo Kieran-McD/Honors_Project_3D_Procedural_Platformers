@@ -810,12 +810,56 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         mesh.vertices = points.ToArray();
         mesh.triangles = triangles.ToArray();
+        pitFall.walls.GetComponent<MeshCollider>().sharedMesh = mesh;
 
-        meshFilter = pitFall.walls.GetComponent<MeshFilter>();
+        meshFilter = pitFall.lava.GetComponent<MeshFilter>();
+        mesh = new Mesh();
+        mesh.Clear();
         meshFilter.mesh = mesh;
 
         points.Clear();
         triangles.Clear();
+
+        List<List<Vector3>> vertices = new List<List<Vector3>>();
+
+        //Create Lava Vertices
+        for(int i = 0; i < sitePos.Count; i++)
+        {
+            List<Vector2> regionPoints = voronoiDiagram.voronoi.Region(new Vector2(sitePos[i].x*scaling, sitePos[i].z*scaling));
+            vertices.Add(new List<Vector3>());
+            for(int j = 0; j < regionPoints.Count; j++)
+            {
+                vertices[i].Add(new Vector3(regionPoints[j].X / scaling, -5f, regionPoints[j].Y / scaling));
+                points.Add(new Vector3(regionPoints[j].X / scaling, -5f, regionPoints[j].Y / scaling));
+            }
+        }
+
+        int currentPointInArray = 0;
+        //Set up lava triangles
+        for(int i = 0; i < vertices.Count; i++)
+        {
+            for(int j = 0; j < vertices[i].Count; j++)
+            {
+                triangles.Add(currentPointInArray + j);
+                triangles.Add(currentPointInArray + 0);
+                if (j == vertices[i].Count - 1)
+                {
+                    triangles.Add(currentPointInArray+1);
+                }
+                else
+                {
+                    triangles.Add(currentPointInArray + j + 1);
+                }
+            }
+            currentPointInArray += vertices[i].Count;
+        }
+
+        mesh.vertices = points.ToArray();
+        mesh.triangles = triangles.ToArray();
+        pitFall.lava.GetComponent<MeshCollider>().sharedMesh = mesh;
+
+        pitFall.platform.transform.localPosition = new Vector3(sitePos[0].x, perlinTexture.perlinTexture.GetPixel((int)(sitePos[0].x * scaling), (int)(sitePos[0].z * scaling)).r * perlinScaling, sitePos[0].z);
+
     }
 
     void CreatePitFall(Vector3 currentNode)
@@ -860,6 +904,8 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
+
+        pitFall.walls.GetComponent<MeshCollider>().sharedMesh = mesh;
 
 
         meshFilter = pitFall.walls.GetComponent<MeshFilter>();
@@ -906,6 +952,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
+        pitFall.lava.GetComponent<MeshCollider>().sharedMesh = mesh;
 
         pitFall.platform.transform.localPosition = new Vector3(currentNode.x, perlinTexture.perlinTexture.GetPixel((int)(currentNode.x * scaling), (int)(currentNode.z * scaling)).r * perlinScaling, currentNode.z);
 

@@ -166,6 +166,7 @@ GameObject:
   - component: {fileID: 4917861103470324256}
   - component: {fileID: 1772130169805129239}
   - component: {fileID: 9173955138926823790}
+  - component: {fileID: 3639760065261094953}
   m_Layer: 0
   m_Name: Lava
   m_TagString: Untagged
@@ -238,6 +239,28 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2379917467387466803}
   m_Mesh: {fileID: 0}
+--- !u!64 &3639760065261094953
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2379917467387466803}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &6973073891792251514
 GameObject:
   m_ObjectHideFlags: 0
@@ -249,6 +272,7 @@ GameObject:
   - component: {fileID: 1320137365060454832}
   - component: {fileID: 7970728498569634798}
   - component: {fileID: 3514436476181903826}
+  - component: {fileID: 1270287209708415199}
   m_Layer: 0
   m_Name: Walls
   m_TagString: Untagged
@@ -320,4 +344,26 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6973073891792251514}
+  m_Mesh: {fileID: 0}
+--- !u!64 &1270287209708415199
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6973073891792251514}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
   m_Mesh: {fileID: 0}
