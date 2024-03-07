@@ -110,11 +110,12 @@ public class VoronoiMeshGenerator : MonoBehaviour
         voronoiDiagram.CreateDiagram();
         pathFinding.Generate();
         pathNodeObjects = pathFinding.currentPath;
+        LevelPathNodeSettings();
         //SpawnPathNodes(voronoiDiagram.pointsForPath);
         WidenPath();
         //Generates the plane for the level
         GeneratePlane(voronoiDiagram.voronoi);
-
+        SpawnLevelObects();
         
 
         //generates the walls for the level
@@ -136,6 +137,8 @@ public class VoronoiMeshGenerator : MonoBehaviour
         List<List<Vector3>> regionPlotPoints = GenerateVertices(tempVoronoi);
         //apply the perlin noise to the plane
         regionPlotPoints = ApplyPerlinNoise(regionPlotPoints);
+
+        //Handall Pitfall Generation
         regionPlotPoints = PitFallVertexMove(regionPlotPoints);
 
         //Debug.Log("Path Nodes: " + pathNodeObjects.Count);      
@@ -964,7 +967,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
 
     }
-        void PlaceScatteredObects()
+    void PlaceScatteredObects()
     {
         GameObject g;
         for (var i = ObjectStorage.transform.childCount - 1; i >= 0; i--)
@@ -986,6 +989,43 @@ public class VoronoiMeshGenerator : MonoBehaviour
             temp.transform.localRotation = Quaternion.Euler(0, Random.Range(0f,360f),0);
         }
 
+    }
+
+    void LevelPathNodeSettings()
+    {
+        for (var i = PathNodeStorage.transform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(PathNodeStorage.transform.GetChild(i).gameObject);
+        }
+        for (int i = 0; i < pathNodeObjects.Count; i++)
+        {
+            if(i % 3 == 0)
+            {
+                pathNodeObjects[i].isPitfall = true;
+            }
+        }
+    }
+
+    void SpawnLevelObects()
+    {
+
+        for(int i = 0; i < pathNodeObjects.Count; i++)
+        {
+            if (pathNodeObjects[i].isStart)
+            {
+                float height = perlinTexture.perlinTexture.GetPixel(pathNodeObjects[i].x, pathNodeObjects[i].y).r * perlinScaling;
+                PlayerSpawner.transform.localPosition = pathNodeObjects[i].transform.localPosition + new Vector3(0,height,0);
+                PlayerSpawner.GetComponentInChildren<SpawnPlayer>().Spawn();
+            }
+
+            if (pathNodeObjects[i].isGoal)
+            {
+                float height = perlinTexture.perlinTexture.GetPixel(pathNodeObjects[i].x, pathNodeObjects[i].y).r * perlinScaling;
+                Instantiate<GameObject>(goalPrefab, PathNodeStorage.transform).transform.localPosition = pathNodeObjects[i].transform.localPosition + new Vector3(0,height,0);
+
+            }
+
+        }     
     }
 
 }

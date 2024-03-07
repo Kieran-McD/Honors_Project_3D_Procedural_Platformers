@@ -25,7 +25,7 @@ public class Grid : MonoBehaviour
             gridObects.Add(Instantiate<GameObject>(pathNodePrefab, this.transform).GetComponent<PathNode>());
             gridObects[i].transform.localPosition = new Vector3(pathNodes[i].X, 0, pathNodes[i].Y);
             gridObects[i].x = (int)pathNodes[i].X;
-            gridObects[i].x = (int)pathNodes[i].Y;
+            gridObects[i].y = (int)pathNodes[i].Y;
         }
 
         for (int i = 0; i < gridObects.Count; i++)
