@@ -13,12 +13,7 @@ public class Grid : MonoBehaviour
     public GameObject pathNodePrefab;
     public void GenerateGrid(List<Vector2> pathNodes, Voronoi voronoi)
     {
-        while (transform.childCount > 0)
-        {
-            DestroyImmediate(transform.GetChild(0).gameObject);
-        }
-
-        gridObects.Clear();
+        ClearGrid();
 
         for (int i = 0; i < pathNodes.Count; i++)
         {
@@ -44,6 +39,15 @@ public class Grid : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ClearGrid()
+    {
+        while (transform.childCount > 0)
+        {
+            DestroyImmediate(transform.GetChild(0).gameObject);
+        }
+        gridObects.Clear();
     }
 
     public void TransformScalePathNodes(float value)

@@ -111,6 +111,7 @@ public class PathFinding : MonoBehaviour
         path.Add(endNode);
         PathNode currentNode = endNode;
         while(currentNode.cameFromNode != null) {
+            currentNode.isLevel = true;
             path.Add(currentNode.cameFromNode);
             currentNode.cameFromNode.NextNode = currentNode;
             currentNode = currentNode.cameFromNode;           

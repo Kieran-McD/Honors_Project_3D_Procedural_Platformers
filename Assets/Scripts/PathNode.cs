@@ -7,6 +7,7 @@ public class PathNode : MonoBehaviour
     public PathNode NextNode;
     public List<PathNode> ConnectedNodes;
 
+    public bool isLevel;
     public bool isObstacle;
     public bool isGoal;
     public bool isStart;
@@ -25,6 +26,7 @@ public class PathNode : MonoBehaviour
     public void ResetNode()
     {
         NextNode = null;
+        isLevel = false;
         isObstacle = false;
         isGoal = false;
         isStart = false;

@@ -12,7 +12,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
     public PathFinding pathFinding;
 
     public GameObject pathNode;
-
     public List<PathNode> pathNodeObjects;
 
     public List<List<Vector3>> regionPlotPoints;
@@ -23,9 +22,8 @@ public class VoronoiMeshGenerator : MonoBehaviour
     public GameObject ObstacleStorage;
     public GameObject PitfallTrapPrefab;
 
-
-    public GameObject PathNodeStorage;
-    public GameObject TestingLinePoint;
+    //public GameObject PathNodeStorage;
+    //public GameObject TestingLinePoint;
     public GameObject PlayerSpawner;
     
     public List<GameObject> randomObject;
@@ -96,15 +94,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
         }
         mesh.normals = normals.ToArray();
         mesh.triangles = GenerateTriangles(regionPlotPoints).ToArray();
-    }
-
-    public void GenerateMesh(Voronoi tempVoronoi)
-    {
-        GeneratePlane(tempVoronoi);
-        GenerateWalls();
-        SetPathSites();
-        availableTerrain.SetUp(sitePositions);
-        PlaceScatteredObects();
     }
 
     public void GenerateMesh()
@@ -383,57 +372,58 @@ public class VoronoiMeshGenerator : MonoBehaviour
         return colourRegions;
     }
 
-    public void SpawnPathNodes(List<Site> sites)
-    {
-        for (var i = PathNodeStorage.transform.childCount - 1; i >= 0; i--)
-        {
-            Destroy(PathNodeStorage.transform.GetChild(i).gameObject);
-        }
+    //public void SpawnPathNodes(List<Site> sites)
+    //{
+    //    for (var i = PathNodeStorage.transform.childCount - 1; i >= 0; i--)
+    //    {
+    //        Destroy(PathNodeStorage.transform.GetChild(i).gameObject);
+    //    }
 
-        pathNodeObjects = new List<PathNode>();
-        //Spawns in the first node
-        PathNode previousNode = Instantiate(pathNode, PathNodeStorage.transform).GetComponent<PathNode>();
-        //Set the position for the node
-        previousNode.transform.localPosition = new Vector3(sites[sites.Count - 1].Coord.X / scaling, perlinTexture.perlinTexture.GetPixel((int)sites[sites.Count - 1].Coord.X, (int)sites[sites.Count - 1].Coord.Y).r * 10f, sites[sites.Count - 1].Coord.Y / scaling);
-        previousNode.x = (int)sites[sites.Count - 1].Coord.X;
-        previousNode.y = (int)sites[sites.Count - 1].Coord.Y;
-        //Add node to list of nodes
-        pathNodeObjects.Add(previousNode);
+    //    pathNodeObjects = new List<PathNode>();
+    //    //Spawns in the first node
+    //    PathNode previousNode = Instantiate(pathNode, PathNodeStorage.transform).GetComponent<PathNode>();
+    //    //Set the position for the node
+    //    previousNode.transform.localPosition = new Vector3(sites[sites.Count - 1].Coord.X / scaling, perlinTexture.perlinTexture.GetPixel((int)sites[sites.Count - 1].Coord.X, (int)sites[sites.Count - 1].Coord.Y).r * 10f, sites[sites.Count - 1].Coord.Y / scaling);
+    //    previousNode.x = (int)sites[sites.Count - 1].Coord.X;
+    //    previousNode.y = (int)sites[sites.Count - 1].Coord.Y;
+    //    //Add node to list of nodes
+    //    pathNodeObjects.Add(previousNode);
 
-        previousNode.isGoal = true;
+    //    previousNode.isGoal = true;
 
-        Instantiate<GameObject>(goalPrefab, PathNodeStorage.transform).transform.localPosition = previousNode.transform.localPosition; 
+    //    Instantiate<GameObject>(goalPrefab, PathNodeStorage.transform).transform.localPosition = previousNode.transform.localPosition; 
 
-        //Spawn rest of the nodes
-        for (int i = sites.Count-2; i > 0; i--)
-        {
+    //    //Spawn rest of the nodes
+    //    for (int i = sites.Count-2; i > 0; i--)
+    //    {
 
-            if(i%3 == 0) previousNode.isPitfall = true;
+    //        if(i%3 == 0) previousNode.isPitfall = true;
 
             
 
-            //Spawns the next node
-            PathNode nextNode = Instantiate(pathNode, PathNodeStorage.transform).GetComponent<PathNode>();
-            //Sets position of node
-            nextNode.transform.localPosition = new Vector3(sites[i].Coord.X / scaling, perlinTexture.perlinTexture.GetPixel((int)sites[i].Coord.X, (int)sites[i].Coord.Y).r * 10f, sites[i].Coord.Y / scaling);
-            //Store node
-            pathNodeObjects.Add(nextNode);
-            //Sets up the rotation of the node
-            nextNode.transform.rotation = Quaternion.LookRotation(previousNode.transform.position - nextNode.transform.position, Vector3.up);
-            //Sets the next node to connect to the previous node
-            nextNode.NextNode = previousNode;
-            //use the next node as the previous node
-            previousNode = nextNode;
-            previousNode.x = (int)sites[sites.Count - 1].Coord.X;
-            previousNode.y = (int)sites[sites.Count - 1].Coord.Y;
-        }
+    //        //Spawns the next node
+    //        PathNode nextNode = Instantiate(pathNode, PathNodeStorage.transform).GetComponent<PathNode>();
+    //        //Sets position of node
+    //        nextNode.transform.localPosition = new Vector3(sites[i].Coord.X / scaling, perlinTexture.perlinTexture.GetPixel((int)sites[i].Coord.X, (int)sites[i].Coord.Y).r * 10f, sites[i].Coord.Y / scaling);
+    //        //Store node
+    //        pathNodeObjects.Add(nextNode);
+    //        //Sets up the rotation of the node
+    //        nextNode.transform.rotation = Quaternion.LookRotation(previousNode.transform.position - nextNode.transform.position, Vector3.up);
+    //        //Sets the next node to connect to the previous node
+    //        nextNode.NextNode = previousNode;
+    //        //use the next node as the previous node
+    //        previousNode = nextNode;
+    //        previousNode.x = (int)sites[sites.Count - 1].Coord.X;
+    //        previousNode.y = (int)sites[sites.Count - 1].Coord.Y;
+    //    }
 
-        //Move the player spawner
-        PlayerSpawner.transform.position = previousNode.transform.position;
-        //Spawn the player
-        PlayerSpawner.GetComponentInChildren<SpawnPlayer>().Spawn();
+    //    //Move the player spawner
+    //    PlayerSpawner.transform.position = previousNode.transform.position;
+    //    //Spawn the player
+    //    PlayerSpawner.GetComponentInChildren<SpawnPlayer>().Spawn();
 
-    }
+    //}
+
     //This is for fun used to move vertices seperatley from each other
     public List<List<Vector3>> MoveVertices(List<List<Vector3>> vertces)
     {
@@ -640,31 +630,13 @@ public class VoronoiMeshGenerator : MonoBehaviour
         for(int i = 0; i < pathNodeObjects.Count; i++)
         {
             List<Vector2> neighbours = voronoiDiagram.voronoi.NeighborSitesForSite(new Vector2(pathNodeObjects[i].transform.localPosition.x*scaling, pathNodeObjects[i].transform.localPosition.z*scaling));
-
-            for(int j = 0; j < neighbours.Count; j++)
+            List<PathNode> connectedNodes = pathNodeObjects[i].ConnectedNodes;
+            for(int j = 0; j < connectedNodes.Count; j++)
             {
-                bool valid = true;
-                for(int k = 0; k < pathNodeExtras.Count; k++)
-                {
-
-                    if (neighbours[j] == new Vector2(pathNodeExtras[k].transform.localPosition.x * scaling, pathNodeExtras[k].transform.localPosition.z * scaling))
-                    {
-                        pathNodeObjects[i].GetComponent<PathNode>().ConnectedNodes.Add(pathNodeExtras[k].GetComponent<PathNode>());
-                        valid = false;
-                    }
-                    
-                }
-
-                if (valid == false) continue;
-
-                PathNode node = Instantiate<GameObject>(pathNode, PathNodeStorage.transform).GetComponent<PathNode>();
-                node.transform.localPosition = new Vector3(neighbours[j].X / scaling, 0 ,neighbours[j].Y / scaling);
-
-                pathNodeObjects[i].GetComponent<PathNode>().ConnectedNodes.Add(node.GetComponent<PathNode>()); 
-                pathNodeExtras.Add(node);
-                finalExtras.Add(node);
+                if (connectedNodes[j].isLevel) continue;
+                connectedNodes[j].isLevel = true;
+                finalExtras.Add(connectedNodes[j]);
             }
-
         }
 
         pathNodeObjects.AddRange(finalExtras);
@@ -1014,10 +986,10 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     void LevelPathNodeSettings()
     {
-        for (var i = PathNodeStorage.transform.childCount - 1; i >= 0; i--)
-        {
-            Destroy(PathNodeStorage.transform.GetChild(i).gameObject);
-        }
+        //for (var i = PathNodeStorage.transform.childCount - 1; i >= 0; i--)
+        //{
+        //    Destroy(PathNodeStorage.transform.GetChild(i).gameObject);
+        //}
         for (int i = 0; i < pathNodeObjects.Count; i++)
         {
             if(i % 3 == 0)
@@ -1042,7 +1014,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             if (pathNodeObjects[i].isGoal)
             {
                 float height = perlinTexture.perlinTexture.GetPixel(pathNodeObjects[i].x, pathNodeObjects[i].y).r * perlinScaling;
-                Instantiate<GameObject>(goalPrefab, PathNodeStorage.transform).transform.localPosition = pathNodeObjects[i].transform.localPosition + new Vector3(0,height,0);
+                Instantiate<GameObject>(goalPrefab, this.transform).transform.localPosition = pathNodeObjects[i].transform.localPosition + new Vector3(0,height,0);
 
             }
 
