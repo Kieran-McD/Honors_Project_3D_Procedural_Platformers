@@ -46,7 +46,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     private void Start()
     {
-        GenerateMesh();
+        GenerateLevel();
     }
 
     private void Update()
@@ -96,30 +96,29 @@ public class VoronoiMeshGenerator : MonoBehaviour
         mesh.triangles = GenerateTriangles(regionPlotPoints).ToArray();
     }
 
-    public void GenerateMesh()
+    public void GenerateLevel()
+    {
+        //Sets up voronoi noise and perlin noise
+        RandomizeNoise();
+        //Sets up the path for the level
+        SetUpPlayableLevel();
+        //Generates the different meshes for the level
+        GenerateLevelMesh();
+        //Sets up the outer area of the main level
+        //SetUpOuterArea();
+    }
+    //Sets up voronoi noise and perlin noise
+    public void RandomizeNoise()
     {
         //Randomizes the perlin texture for terrain transformation
         perlinTexture.RandomizePerlinTexture();
-
-        SetUpPlayableLevel();
-
-        //Generates the plane for the level
-        GeneratePlane(voronoiDiagram.voronoi);
-        SpawnLevelObects();
-        
-        //generates the walls for the level
-        GenerateWalls();    
-
-        SetPathSites();
-
-        availableTerrain.SetUp(sitePositions);
-        PlaceScatteredObects();
-    }
-
-    void SetUpPlayableLevel()
-    {
         //Sets up the voronoi diagram to be used
         voronoiDiagram.CreateDiagram();
+    }
+    //Sets up the path for the level
+    public void SetUpPlayableLevel()
+    {
+
         //Sets up a grid of connected path nodes and generates a path for the level
         pathFinding.Generate();
         //Gets the path for the level
@@ -130,8 +129,24 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //SpawnPathNodes(voronoiDiagram.pointsForPath);
         //Widens the path for the level
         WidenPath();
-    }
 
+        SpawnLevelObects();
+    }
+    //Generates the different meshes for the level
+    public void GenerateLevelMesh()
+    {
+        //Generates the plane for the level
+        GeneratePlane(voronoiDiagram.voronoi);
+        //generates the walls for the level
+        GenerateWalls();
+    }
+    //Sets up the outer area of the main level
+    public void SetUpOuterArea()
+    {
+        SetPathSites();
+        availableTerrain.SetUp(sitePositions);
+        PlaceScatteredObects();
+    }
     public void GeneratePlane(Voronoi tempVoronoi)
     {
         //Set up the mesh to be generated
@@ -974,7 +989,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         for(int i = 0; i < points.Count; i++)
         {
-            if (availableTerrain.perlinTexture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r == 1) continue;
+            if (availableTerrain.perlinTexture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r ==0) continue;
             float yPos = perlinTexture.perlinTexture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r;
             GameObject temp = Instantiate<GameObject>(randomObject[Random.Range(0, randomObject.Count)], ObjectStorage.transform);
             temp.transform.localPosition = new Vector3(points[i].X / scaling, yPos * perlinScaling, points[i].Y / scaling);
@@ -1037,8 +1052,26 @@ public class VoronoiMeshGeneratorEditor : Editor
             VoronoiMeshGenerator colliderCreator = (VoronoiMeshGenerator)target;
             if (GUILayout.Button("Generate New Level Mesh"))
             {
-                colliderCreator.GenerateMesh(); // how do i call this?
+                colliderCreator.GenerateLevel(); // how do i call this?
             }
+
+            //if (GUILayout.Button("Randomize Noise"))
+            //{
+            //    colliderCreator.RandomizeNoise(); // how do i call this?
+            //}
+            //if (GUILayout.Button("Change Path"))
+            //{
+            //    colliderCreator.SetUpPlayableLevel(); // how do i call this?
+            //}
+            //if (GUILayout.Button("Generate Mesh"))
+            //{
+            //    colliderCreator.GenerateLevelMesh(); // how do i call this?
+            //}
+            if (GUILayout.Button("Place Scenery"))
+            {
+                colliderCreator.SetUpOuterArea(); // how do i call this?
+            }
+
         }
         DrawDefaultInspector();
     }

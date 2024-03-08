@@ -30,8 +30,16 @@ public class VoronoiAvailableTerrain : MonoBehaviour
         List<Vector2> vectorOne = new List<Vector2>();
         List<Vector2> vectorTwo = new List<Vector2>();
 
+
+        int minX = width, minY = height, maxX = 0, maxY = 0;
+
         for(int i = 0; i < sites.Count; i++)
         {
+            if (sites[i].X < minX) minX = (int)sites[i].X;
+            if (sites[i].X > maxX) maxX = (int)sites[i].X;
+            if (sites[i].Y < minY) minY = (int)sites[i].Y;
+            if (sites[i].Y > maxY) maxY = (int)sites[i].Y;
+
             center.Add(sites[i]);
             for (int j = 0; j < voronoi.voronoi.Region(center[i]).Count; j++)
             {
@@ -48,9 +56,9 @@ public class VoronoiAvailableTerrain : MonoBehaviour
         }
      
        
-        for (int x = 0; x < width; x++)
+        for (int x = minX; x < maxX; x++)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = minY; y < maxY; y++)
             {
                 Vector2 point = new Vector2(x, y);
                 //float a,b;
@@ -85,17 +93,17 @@ public class VoronoiAvailableTerrain : MonoBehaviour
 
                         if(CheckPointInTriangle(point, center[i], vectorOne[j], vectorTwo[j]))
                         {
-                            texture.SetPixel(x, y, new Color(1, 1, 1));
+                            texture.SetPixel(x, y, new Color(0, 0, 0));
                             pointInTriangle = true;
                             break;
                         }
                     }
-
+                    
                     currentTotal += voronoi.voronoi.Region(center[i]).Count;
                 }
 
                 if (pointInTriangle) continue;
-                else texture.SetPixel(x, y, new Color(0, 0, 0));
+                //else texture.SetPixel(x, y, new Color(0, 0, 0));
             }
         }
 
