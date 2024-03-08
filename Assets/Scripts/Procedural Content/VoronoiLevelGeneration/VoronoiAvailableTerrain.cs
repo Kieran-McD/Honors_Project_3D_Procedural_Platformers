@@ -51,7 +51,7 @@ public class VoronoiAvailableTerrain : MonoBehaviour
                 {
                     vectorOne.Add(region[region.Count - 1] - center[i]);
                     vectorTwo.Add(region[0] - center[i]);
-
+                    //Gets the max boundaries for each triangle
                     minXList.Add(Mathf.Min(Mathf.Min((int)center[i].X, (int)region[region.Count - 1].X), (int)region[0].X));
                     maxXList.Add(Mathf.Max(Mathf.Max((int)center[i].X, (int)region[region.Count - 1].X), (int)region[0].X));
                     minYList.Add(Mathf.Min(Mathf.Min((int)center[i].Y, (int)region[region.Count - 1].Y), (int)region[0].Y));
@@ -61,7 +61,7 @@ public class VoronoiAvailableTerrain : MonoBehaviour
 
                 vectorOne.Add(region[j] - center[i]);
                 vectorTwo.Add(region[j + 1] - center[i]);
-
+                //Gets the max boundaries for each triangle
                 minXList.Add(Mathf.Min(Mathf.Min((int)center[i].X, (int)region[j].X), (int)region[j + 1].X));
                 maxXList.Add(Mathf.Max(Mathf.Max((int)center[i].X, (int)region[j].X), (int)region[j + 1].X));
                 minYList.Add(Mathf.Min(Mathf.Min((int)center[i].Y, (int)region[j].Y), (int)region[j + 1].Y));
@@ -69,7 +69,7 @@ public class VoronoiAvailableTerrain : MonoBehaviour
             }
         }
 
-
+        //Old Version very bad
         //for (int x = minX; x < maxX; x++)
         //{
         //    for (int y = minY; y < maxY; y++)
@@ -125,11 +125,7 @@ public class VoronoiAvailableTerrain : MonoBehaviour
 
 
 
-                //float a,b;
-
-                //float det1, det2, det3;
-
-                //bool pointInTriangle = false;
+        //New Version so much better
         int currentTotal = 0;
         for (int i = 0; i < center.Count; i++)
         {
