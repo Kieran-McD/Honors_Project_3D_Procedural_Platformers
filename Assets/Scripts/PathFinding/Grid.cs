@@ -21,6 +21,14 @@ public class Grid : MonoBehaviour
             gridObects[i].transform.localPosition = new Vector3(pathNodes[i].X, 0, pathNodes[i].Y);
             gridObects[i].x = (int)pathNodes[i].X;
             gridObects[i].y = (int)pathNodes[i].Y;
+
+            List<Vector2> vertices = voronoi.Region(pathNodes[i]);
+
+            for(int j = 0; j < vertices.Count; j++)
+            {
+                if (vertices[j].X == 0 || vertices[j].Y == 0 || vertices[j].X == 512 || vertices[j].Y == 512) gridObects[i].GetComponent<PathNode>().isBorder = true;
+            }
+
         }
 
         for (int i = 0; i < gridObects.Count; i++)

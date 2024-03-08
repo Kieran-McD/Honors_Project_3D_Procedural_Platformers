@@ -43,9 +43,12 @@ public class PathFinding : MonoBehaviour
 
     private List<PathNode> FindPath()
     {
-
+        
         PathNode startNode = grid.gridObects[Random.Range(0, grid.gridObects.Count)];
         PathNode endNode = grid.gridObects[Random.Range(0, grid.gridObects.Count)];
+        while (startNode.isBorder || startNode == endNode) startNode = grid.gridObects[Random.Range(0, grid.gridObects.Count)];
+        while (endNode.isBorder || startNode == endNode) endNode = grid.gridObects[Random.Range(0, grid.gridObects.Count)];
+
         startNode.isStart = true;
         endNode.isGoal = true;
         startNode.isStart = true;
@@ -81,6 +84,7 @@ public class PathFinding : MonoBehaviour
 
             foreach(PathNode neighbourNode in currentNode.ConnectedNodes)
             {
+                if (neighbourNode.isBorder) continue;
                 if (closedList.Contains(neighbourNode)) continue;
 
                 int tentativeGCost = currentNode.gCost + CalculateDistanceCost(currentNode, neighbourNode);

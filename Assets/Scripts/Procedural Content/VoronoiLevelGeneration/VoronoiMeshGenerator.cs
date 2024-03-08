@@ -367,7 +367,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
                     checkForValid = false;
                     for (int j = 0; j < points.Count; j++)
                     {
-                        colourRegions.Add(Color.yellow);
+                        colourRegions.Add(Color.black);
                     }
                     break;
                 }
@@ -376,7 +376,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             if (!checkForValid) continue;
 
             //Sets the regions outside the level to green
-            Color color = Color.green;
+            Color color = Color.white;
             for (int j = 0; j < points.Count; j++)
             {
                 colourRegions.Add(color);

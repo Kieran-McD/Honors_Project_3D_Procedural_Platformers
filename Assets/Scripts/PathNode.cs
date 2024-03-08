@@ -12,6 +12,7 @@ public class PathNode : MonoBehaviour
     public bool isGoal;
     public bool isStart;
     public bool isPitfall;
+    public bool isBorder;
 
     //Used For A* Path Finding
     public int x;
@@ -31,6 +32,7 @@ public class PathNode : MonoBehaviour
         isGoal = false;
         isStart = false;
         isPitfall = false;
+        isBorder = false;
     }
 
     public void CalculateFCost()
@@ -44,7 +46,12 @@ public class PathNode : MonoBehaviour
         {
             for (int i = 0; i < ConnectedNodes.Count; i++)
             {
-                if (ConnectedNodes[i] == NextNode)
+                if (ConnectedNodes[i].isBorder == true || isBorder == true)
+                {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawLine(transform.position, ConnectedNodes[i].transform.position);
+                }
+                else if (ConnectedNodes[i] == NextNode)
                 {
                     Gizmos.color = Color.magenta;
                     Gizmos.DrawLine(transform.position, ConnectedNodes[i].transform.position);
@@ -55,7 +62,7 @@ public class PathNode : MonoBehaviour
                     Gizmos.color = Color.white;
                     Gizmos.DrawLine(transform.position, ConnectedNodes[i].transform.position);
                 }
-               
+                
             }
         }
     }

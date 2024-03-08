@@ -88,7 +88,9 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _PathColour: {r: 0.6541829, g: 0.754717, b: 0.024919916, a: 0}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
+    - _TerrainColour: {r: 0.978407, g: 1, b: 0.051886797, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &558094423834546946
 MonoBehaviour:
