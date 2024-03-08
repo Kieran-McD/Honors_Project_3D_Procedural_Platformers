@@ -26,9 +26,14 @@ public class PathFinding : MonoBehaviour
 
     public void Generate()
     {
-        grid.GenerateGrid(diagram.voronoi.SiteCoords(), diagram.voronoi);
-        currentPath = FindPath();
-        grid.TransformScalePathNodes(4f);
+        currentPath.Clear();
+        currentPath = null;
+        while (currentPath == null)
+        {
+            grid.GenerateGrid(diagram.voronoi.SiteCoords(), diagram.voronoi);
+            currentPath = FindPath();
+            grid.TransformScalePathNodes(4f);
+        }  
     }
 
     public PathFinding(VoronoiDiagram d)
@@ -59,7 +64,7 @@ public class PathFinding : MonoBehaviour
         for(int i = 0; i < grid.gridObects.Count; i++)
         {
             PathNode pathNode = grid.gridObects[i];
-            pathNode.gCost = int.MaxValue;
+            pathNode.gCost = float.MaxValue;
             pathNode.CalculateFCost();
             pathNode.cameFromNode = null;
         }
@@ -87,7 +92,7 @@ public class PathFinding : MonoBehaviour
                 if (neighbourNode.isBorder) continue;
                 if (closedList.Contains(neighbourNode)) continue;
 
-                int tentativeGCost = currentNode.gCost + CalculateDistanceCost(currentNode, neighbourNode);
+                float tentativeGCost = currentNode.gCost + CalculateDistanceCost(currentNode, neighbourNode);
                 if (tentativeGCost < neighbourNode.gCost)
                 {
                     neighbourNode.cameFromNode = currentNode;
@@ -127,11 +132,11 @@ public class PathFinding : MonoBehaviour
     }
     
 
-    private int CalculateDistanceCost(PathNode a, PathNode b)
+    private float CalculateDistanceCost(PathNode a, PathNode b)
     {
-        int xDistance = Mathf.Abs(a.x - b.x);
-        int yDistance = Mathf.Abs(a.y - b.y);
-        int remaining = Mathf.Abs(xDistance - yDistance);
+        float xDistance = Mathf.Abs(a.x - b.x);
+        float yDistance = Mathf.Abs(a.y - b.y);
+        float remaining = Mathf.Abs(xDistance - yDistance);
         return MOVE_DIAGONAL_COST * Mathf.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
     }
 

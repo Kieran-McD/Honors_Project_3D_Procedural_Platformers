@@ -15,12 +15,12 @@ public class PathNode : MonoBehaviour
     public bool isBorder;
 
     //Used For A* Path Finding
-    public int x;
-    public int y;
+    public float x;
+    public float y;
 
-    public int gCost;
-    public int hCost;
-    public int fCost;
+    public float gCost;
+    public float hCost;
+    public float fCost;
 
     public PathNode cameFromNode;
 

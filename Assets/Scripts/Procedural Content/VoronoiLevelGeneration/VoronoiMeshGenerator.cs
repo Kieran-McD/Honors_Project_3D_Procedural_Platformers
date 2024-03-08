@@ -11,30 +11,32 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     public PathFinding pathFinding;
 
-    public GameObject pathNode;
-    public List<PathNode> pathNodeObjects;
+    private List<PathNode> pathNodeObjects;
 
-    public List<List<Vector3>> regionPlotPoints;
+    private List<List<Vector3>> regionPlotPoints;
 
+    //Level Meshes
     public GameObject Floor;
     public GameObject Walls;
-    public GameObject ObjectStorage;
-    public GameObject ObstacleStorage;
-    public GameObject PitfallTrapPrefab;
 
+    public Transform ObjectStorage;
+    public Transform ObstacleStorage;
 
+    //Presets used for level design
     public List<LevelPreset> levelPresets;
     public LevelPreset currentLevelPreset;
+
     //public GameObject PathNodeStorage;
     //public GameObject TestingLinePoint;
     public GameObject PlayerSpawner;
     
-    public List<GameObject> randomObject;
     public PerlinNoise perlinTexture;
 
     public VoronoiAvailableTerrain availableTerrain;
 
+    //Prefabs
     public GameObject goalPrefab;
+    public GameObject PitfallTrapPrefab;
 
     public List<Vector2> sitePositions;
 
@@ -45,7 +47,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
     float[] speed;
 
     public bool moveVertices;
-    public bool randomizeHeights;
 
     private void Start()
     {
@@ -102,7 +103,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
     public void GenerateLevel()
     {
         currentLevelPreset = levelPresets[Random.Range(0, levelPresets.Count)];
-        randomObject = currentLevelPreset.Objects;
 
         ClearStorageObjects();
         //Sets up voronoi noise and perlin noise
@@ -296,13 +296,13 @@ public class VoronoiMeshGenerator : MonoBehaviour
             int randomNum = Random.Range(0, 10);
             List<Vector3> points = new List<Vector3>();
             //Add the center of the region vertic first
-            points.Add(new Vector3(siteCoords[i].X / scaling, randomizeHeights ? 0 : 0, siteCoords[i].Y / scaling));
+            points.Add(new Vector3(siteCoords[i].X / scaling, 0, siteCoords[i].Y / scaling));
             //Get list of all vectors in the region
             List<Vector2> plotPoints = voronoi.Region(siteCoords[i]);
             //Store all the points in the region
             for (int j = 0; j < plotPoints.Count; j++)
             {
-                points.Add(new Vector3(plotPoints[j].X / scaling, randomizeHeights ? 0 : 0, plotPoints[j].Y / scaling));
+                points.Add(new Vector3(plotPoints[j].X / scaling, 0, plotPoints[j].Y / scaling));
                 //Debug.Log("Plot Point: " + (i * plotPoints.Count + j) + " Position: " + points[j]);
             }
             totalPointsSoFar += points.Count;
@@ -582,16 +582,16 @@ public class VoronoiMeshGenerator : MonoBehaviour
         for (int i = 0; i < pathNodeObjects.Count; i++)
         {
             //Get all the connected lines attached to the region
-            List<LineSegment> connectedLines = voronoiDiagram.voronoi.VoronoiBoundarayForSite(new Vector2(pathNodeObjects[i].transform.localPosition.x * scaling, pathNodeObjects[i].transform.localPosition.z * scaling));
+            List<LineSegment> connectedLines = voronoiDiagram.voronoi.VoronoiBoundarayForSite(new Vector2(pathNodeObjects[i].x, pathNodeObjects[i].y));
             //Gets all neigbours attached to the current region
-            List<Vector2> Neighbours = voronoiDiagram.voronoi.NeighborSitesForSite(new Vector2(pathNodeObjects[i].transform.localPosition.x * scaling, pathNodeObjects[i].transform.localPosition.z * scaling));
+            List<Vector2> Neighbours = voronoiDiagram.voronoi.NeighborSitesForSite(new Vector2(pathNodeObjects[i].x, pathNodeObjects[i].y));
             for (int j = 0; j < Neighbours.Count; j++)
             {
                 bool checkForValid = true;
                 for (int k = 0; k < pathNodeObjects.Count; k++)
                 {
                     //Debug.Log("OH Yeah Thats How its Done");
-                    if (Neighbours[j] == new Vector2(pathNodeObjects[k].transform.localPosition.x*scaling, pathNodeObjects[k].transform.localPosition.z*scaling))
+                    if (Neighbours[j] == new Vector2(pathNodeObjects[k].x, pathNodeObjects[k].y))
                     {                     
                         checkForValid = false;
                         break;
@@ -616,7 +616,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
                             //Direction from point p1 to p0
                             Vector2 direction = connectedLines[l].p0 - connectedLines[l].p1;
                             //Direction from the midpoint of p1 and p0 to the center of the region
-                            Vector2 directionToCenter = new Vector2(pathNodeObjects[i].transform.localPosition.x * scaling, pathNodeObjects[i].transform.localPosition.z * scaling)-(connectedLines[l].p1 +direction/2);
+                            Vector2 directionToCenter = new Vector2(pathNodeObjects[i].x, pathNodeObjects[i].y)-(connectedLines[l].p1 +direction/2);
                             //Normalize directions
                             direction = Vector2.Normalize(direction);
                             directionToCenter = Vector2.Normalize(directionToCenter);
@@ -725,7 +725,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         sitePositions = new List<Vector2>();
         for(int i = 0; i < pathNodeObjects.Count; i++)
         {
-            sitePositions.Add(new Vector2(pathNodeObjects[i].transform.localPosition.x*scaling, pathNodeObjects[i].transform.localPosition.z * scaling));
+            sitePositions.Add(new Vector2(pathNodeObjects[i].x, pathNodeObjects[i].y));
         }
     }
 
@@ -997,12 +997,12 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
 
         List<Vector2> points = PoissonDiskSampling.RandomPoints(512, 512, 500);
-
+        List<GameObject> obects = currentLevelPreset.Objects;
         for(int i = 0; i < points.Count; i++)
         {
             if (availableTerrain.perlinTexture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r ==0) continue;
             float yPos = perlinTexture.perlinTexture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r;
-            GameObject temp = Instantiate<GameObject>(randomObject[Random.Range(0, randomObject.Count)], ObjectStorage.transform);
+            GameObject temp = Instantiate<GameObject>(obects[Random.Range(0, obects.Count)], ObjectStorage.transform);
             temp.transform.localPosition = new Vector3(points[i].X / scaling, yPos * perlinScaling, points[i].Y / scaling);
             temp.transform.localRotation = Quaternion.Euler(0, Random.Range(0f,360f),0);
         }
@@ -1031,14 +1031,14 @@ public class VoronoiMeshGenerator : MonoBehaviour
         {
             if (pathNodeObjects[i].isStart)
             {
-                float height = perlinTexture.perlinTexture.GetPixel(pathNodeObjects[i].x, pathNodeObjects[i].y).r * perlinScaling;
+                float height = perlinTexture.perlinTexture.GetPixel((int)pathNodeObjects[i].x, (int)pathNodeObjects[i].y).r * perlinScaling;
                 PlayerSpawner.transform.localPosition = pathNodeObjects[i].transform.localPosition + new Vector3(0,height,0);
                 PlayerSpawner.GetComponentInChildren<SpawnPlayer>().Spawn();
             }
 
             if (pathNodeObjects[i].isGoal)
             {
-                float height = perlinTexture.perlinTexture.GetPixel(pathNodeObjects[i].x, pathNodeObjects[i].y).r * perlinScaling;
+                float height = perlinTexture.perlinTexture.GetPixel((int)pathNodeObjects[i].x, (int)pathNodeObjects[i].y).r * perlinScaling;
                 Instantiate<GameObject>(goalPrefab, ObstacleStorage.transform).transform.localPosition = pathNodeObjects[i].transform.localPosition + new Vector3(0,height,0);
 
             }

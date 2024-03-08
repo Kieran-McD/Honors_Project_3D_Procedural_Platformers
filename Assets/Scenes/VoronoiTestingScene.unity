@@ -579,7 +579,7 @@ MonoBehaviour:
   octaves: 2
   persistance: 0.05
   lacunarity: 1.86
-  perlinTexture: {fileID: 1730152703}
+  perlinTexture: {fileID: 1691499087}
 --- !u!23 &280668661
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -676,24 +676,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   voronoiDiagram: {fileID: 2007234573}
   pathFinding: {fileID: 1070203966}
-  pathNode: {fileID: 6487082539711551649, guid: 49db638293fb68d498ea87dbab6e2478, type: 3}
   pathNodeObjects: []
   Floor: {fileID: 1199818196}
   Walls: {fileID: 965415779}
-  ObjectStorage: {fileID: 496543753}
-  ObstacleStorage: {fileID: 614955654}
-  PitfallTrapPrefab: {fileID: 790256627216700701, guid: 949f80da3d531c74faa3d7cfe48db968, type: 3}
+  ObjectStorage: {fileID: 496543754}
+  ObstacleStorage: {fileID: 614955655}
   levelPresets:
   - {fileID: 11400000, guid: a103e65882f377546b60e452fc808537, type: 2}
   - {fileID: 11400000, guid: 039904ce4a9b5c44da0270bb804c605a, type: 2}
-  currentLevelPreset: {fileID: 0}
+  currentLevelPreset: {fileID: 11400000, guid: a103e65882f377546b60e452fc808537, type: 2}
   PlayerSpawner: {fileID: 686201034}
-  randomObject:
-  - {fileID: 1323490661454885267, guid: e140ffe4aa61d3b4998ec67e932500a9, type: 3}
-  - {fileID: 4098982149129966763, guid: e60e682e6d882584598db27801d71283, type: 3}
   perlinTexture: {fileID: 280668660}
   availableTerrain: {fileID: 232875712}
   goalPrefab: {fileID: 8338110430513759078, guid: 2c2fa59654283ea4eae8006cdd5719bb, type: 3}
+  PitfallTrapPrefab: {fileID: 790256627216700701, guid: 949f80da3d531c74faa3d7cfe48db968, type: 3}
   scaling: 4
   perlinScaling: 10
   moveVertices: 0
@@ -715,7 +711,6 @@ Transform:
   - {fileID: 1199818200}
   - {fileID: 614955655}
   - {fileID: 965415782}
-  - {fileID: 908778739}
   - {fileID: 496543754}
   - {fileID: 686201038}
   m_Father: {fileID: 0}
@@ -1459,37 +1454,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 865285581}
   m_CullTransparentMesh: 1
---- !u!1 &908778738
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 908778739}
-  m_Layer: 0
-  m_Name: PathNodeStorage
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &908778739
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 908778738}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 366831188}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &965415779
 GameObject:
   m_ObjectHideFlags: 0
@@ -2353,17 +2317,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   polygonNumber: 200
   meshGenerator: {fileID: 0}
---- !u!4 &1721634979 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4975703684519191054, guid: 5bf8a3e792a6baa47949528bbd4a188e, type: 3}
-  m_PrefabInstance: {fileID: 650724458}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &1721634981 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 4975703684526148838, guid: 5bf8a3e792a6baa47949528bbd4a188e, type: 3}
-  m_PrefabInstance: {fileID: 650724458}
-  m_PrefabAsset: {fileID: 0}
---- !u!28 &1730152703
+--- !u!28 &1691499087
 Texture2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2411,6 +2365,16 @@ Texture2D:
     offset: 0
     size: 0
     path: 
+--- !u!4 &1721634979 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4975703684519191054, guid: 5bf8a3e792a6baa47949528bbd4a188e, type: 3}
+  m_PrefabInstance: {fileID: 650724458}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1721634981 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 4975703684526148838, guid: 5bf8a3e792a6baa47949528bbd4a188e, type: 3}
+  m_PrefabInstance: {fileID: 650724458}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1855605175
 GameObject:
   m_ObjectHideFlags: 0
