@@ -29,8 +29,10 @@ public class VoronoiAvailableTerrain : MonoBehaviour
         List<Vector2> center = new List<Vector2>();
         List<Vector2> vectorOne = new List<Vector2>();
         List<Vector2> vectorTwo = new List<Vector2>();
-
-
+        List<int> minXList = new List<int>();
+        List<int> minYList = new List<int>();
+        List<int> maxXList = new List<int>();
+        List<int> maxYList = new List<int>();
         int minX = width, minY = height, maxX = 0, maxY = 0;
 
         for(int i = 0; i < sites.Count; i++)
@@ -43,36 +45,104 @@ public class VoronoiAvailableTerrain : MonoBehaviour
             center.Add(sites[i]);
             for (int j = 0; j < voronoi.voronoi.Region(center[i]).Count; j++)
             {
+                List<Vector2> region = voronoi.voronoi.Region(center[i]);
+
                 if (j == voronoi.voronoi.Region(center[i]).Count - 1)
                 {
-                    vectorOne.Add(voronoi.voronoi.Region(center[i])[voronoi.voronoi.Region(center[i]).Count - 1] - center[i]);
-                    vectorTwo.Add(voronoi.voronoi.Region(center[i])[0] - center[i]);
+                    vectorOne.Add(region[region.Count - 1] - center[i]);
+                    vectorTwo.Add(region[0] - center[i]);
+
+                    minXList.Add(Mathf.Min(Mathf.Min((int)center[i].X, (int)region[region.Count - 1].X), (int)region[0].X));
+                    maxXList.Add(Mathf.Max(Mathf.Max((int)center[i].X, (int)region[region.Count - 1].X), (int)region[0].X));
+                    minYList.Add(Mathf.Min(Mathf.Min((int)center[i].Y, (int)region[region.Count - 1].Y), (int)region[0].Y));
+                    maxYList.Add(Mathf.Max(Mathf.Max((int)center[i].Y, (int)region[region.Count - 1].Y), (int)region[0].Y));
                     break;
                 }
 
-                vectorOne.Add(voronoi.voronoi.Region(center[i])[j] - center[i]);
-                vectorTwo.Add(voronoi.voronoi.Region(center[i])[j + 1] - center[i]);
+                vectorOne.Add(region[j] - center[i]);
+                vectorTwo.Add(region[j + 1] - center[i]);
+
+                minXList.Add(Mathf.Min(Mathf.Min((int)center[i].X, (int)region[j].X), (int)region[j + 1].X));
+                maxXList.Add(Mathf.Max(Mathf.Max((int)center[i].X, (int)region[j].X), (int)region[j + 1].X));
+                minYList.Add(Mathf.Min(Mathf.Min((int)center[i].Y, (int)region[j].Y), (int)region[j + 1].Y));
+                maxYList.Add(Mathf.Max(Mathf.Max((int)center[i].Y, (int)region[j].Y), (int)region[j + 1].Y));
             }
         }
-     
-       
-        for (int x = minX; x < maxX; x++)
-        {
-            for (int y = minY; y < maxY; y++)
-            {
-                Vector2 point = new Vector2(x, y);
+
+
+        //for (int x = minX; x < maxX; x++)
+        //{
+        //    for (int y = minY; y < maxY; y++)
+        //    {
+
+        //        Vector2 point = new Vector2(x, y);
+        //        //float a,b;
+
+        //        //float det1, det2, det3;
+
+        //        bool pointInTriangle = false;
+        //        int currentTotal = 0;
+        //        for (int i = 0; i < center.Count; i++)
+        //        {
+
+        //            for (int j = currentTotal; j < voronoi.voronoi.Region(center[i]).Count + currentTotal; j++)
+        //            {
+
+        //                //det1 = point.X * vectorTwo[j].Y - point.Y * vectorTwo[j].X;
+        //                //det2 = center[i].X * vectorTwo[j].Y - center[i].Y * vectorTwo[j].X;
+        //                //det3 = vectorOne[j].X * vectorTwo[j].Y - vectorOne[j].Y * vectorTwo[j].X;
+        //                //a = (det1 - det2) / det3;
+        //                //det1 = point.X * vectorOne[j].Y - point.Y * vectorOne[j].X;
+        //                //det2 = center[i].X * vectorOne[j].Y - center[i].Y * vectorOne[j].X;
+        //                //det3 = vectorOne[j].X * vectorTwo[j].Y - vectorOne[j].Y * vectorTwo[j].X;
+        //                //b = -((det1 - det2) / det3);
+
+
+        //                //if (a >= 0 && b >= 0 && (a + b) <= 1)
+        //                //{
+        //                //    //Debug.Log("Hell yeah this worked like a charm");
+        //                //    texture.SetPixel(x, y, new Color(1, 1, 1));
+        //                //    pointInTriangle = true;
+        //                //    break;
+        //                //}
+
+        //                if (CheckPointInTriangle(point, center[i], vectorOne[j], vectorTwo[j]))
+        //                {
+        //                    texture.SetPixel(x, y, new Color(0, 0, 0));
+        //                    pointInTriangle = true;
+        //                    break;
+        //                }
+        //            }
+        //            if (pointInTriangle) break;
+        //            currentTotal += voronoi.voronoi.Region(center[i]).Count;
+        //        }
+
+               
+        //        //else texture.SetPixel(x, y, new Color(0, 0, 0));
+        //    }
+        //}
+
+
+
+
                 //float a,b;
 
                 //float det1, det2, det3;
 
-                bool pointInTriangle = false;
-                int currentTotal = 0;
-                for(int i = 0; i < center.Count; i++)
+                //bool pointInTriangle = false;
+        int currentTotal = 0;
+        for (int i = 0; i < center.Count; i++)
+        {
+
+            for (int j = 0; j < voronoi.voronoi.Region(center[i]).Count; j++)
+            {
+
+                for (int x = minXList[j + currentTotal]; x <= maxXList[j + currentTotal]; x++)
                 {
-                    
-                    for (int j = currentTotal; j < voronoi.voronoi.Region(center[i]).Count + currentTotal; j++)
+                    for (int y = minYList[j + currentTotal]; y <= maxYList[j + currentTotal]; y++)
                     {
 
+                        Vector2 point = new Vector2(x, y);
                         //det1 = point.X * vectorTwo[j].Y - point.Y * vectorTwo[j].X;
                         //det2 = center[i].X * vectorTwo[j].Y - center[i].Y * vectorTwo[j].X;
                         //det3 = vectorOne[j].X * vectorTwo[j].Y - vectorOne[j].Y * vectorTwo[j].X;
@@ -90,22 +160,24 @@ public class VoronoiAvailableTerrain : MonoBehaviour
                         //    pointInTriangle = true;
                         //    break;
                         //}
-
-                        if(CheckPointInTriangle(point, center[i], vectorOne[j], vectorTwo[j]))
+                        //texture.SetPixel(x, y, new Color(0, 0, 0));
+                        if (CheckPointInTriangle(point, center[i], vectorOne[j + currentTotal], vectorTwo[j + currentTotal]))
                         {
                             texture.SetPixel(x, y, new Color(0, 0, 0));
-                            pointInTriangle = true;
-                            break;
+                            //pointInTriangle = true;
+                            //break;
                         }
                     }
-                    
-                    currentTotal += voronoi.voronoi.Region(center[i]).Count;
+                    //if (pointInTriangle) break;
+                   
                 }
 
-                if (pointInTriangle) continue;
-                //else texture.SetPixel(x, y, new Color(0, 0, 0));
             }
+            currentTotal += voronoi.voronoi.Region(center[i]).Count;
         }
+                //else texture.SetPixel(x, y, new Color(0, 0, 0));
+            
+       
 
         texture.Apply();
 

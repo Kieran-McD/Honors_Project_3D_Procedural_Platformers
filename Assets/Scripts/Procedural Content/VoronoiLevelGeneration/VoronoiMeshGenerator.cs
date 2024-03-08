@@ -105,7 +105,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Generates the different meshes for the level
         GenerateLevelMesh();
         //Sets up the outer area of the main level
-        //SetUpOuterArea();
+        SetUpOuterArea();
     }
     //Sets up voronoi noise and perlin noise
     public void RandomizeNoise()
