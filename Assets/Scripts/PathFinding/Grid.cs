@@ -20,7 +20,7 @@ public class Grid : MonoBehaviour
   
             gridObects.Add(Instantiate<GameObject>(pathNodePrefab, this.transform).GetComponent<PathNode>());
             gridObects[i].transform.localPosition = new Vector3(pathNodes[i].X, 0, pathNodes[i].Y);
-            Debug.Log("Pos: X: " + pathNodes[i].X + " Y: " + pathNodes[i].Y);
+            //Debug.Log("Pos: X: " + pathNodes[i].X + " Y: " + pathNodes[i].Y);
 
             gridObects[i].x = pathNodes[i].X;
             gridObects[i].y = pathNodes[i].Y;

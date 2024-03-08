@@ -119,7 +119,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
     {
         for (var i = ObjectStorage.transform.childCount - 1; i >= 0; i--)
         {
-            Object.Destroy(ObjectStorage.transform.GetChild(i).gameObject);
+            Destroy(ObjectStorage.transform.GetChild(i).gameObject);
         }
 
         for (var i = ObstacleStorage.transform.childCount - 1; i >= 0; i--)
@@ -1004,7 +1004,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
             float yPos = perlinTexture.perlinTexture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r;
             GameObject temp = Instantiate<GameObject>(obects[Random.Range(0, obects.Count)], ObjectStorage.transform);
             temp.transform.localPosition = new Vector3(points[i].X / scaling, yPos * perlinScaling, points[i].Y / scaling);
-            temp.transform.localRotation = Quaternion.Euler(0, Random.Range(0f,360f),0);
+            temp.transform.rotation = Quaternion.Euler(0, Random.Range(0f,360f),0);
         }
 
     }
