@@ -22,6 +22,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
     public GameObject ObstacleStorage;
     public GameObject PitfallTrapPrefab;
 
+
+    public List<LevelPreset> levelPresets;
+    public LevelPreset currentLevelPreset;
     //public GameObject PathNodeStorage;
     //public GameObject TestingLinePoint;
     public GameObject PlayerSpawner;
@@ -98,6 +101,10 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     public void GenerateLevel()
     {
+        currentLevelPreset = levelPresets[Random.Range(0, levelPresets.Count)];
+        randomObject = currentLevelPreset.Objects;
+
+        ClearStorageObjects();
         //Sets up voronoi noise and perlin noise
         RandomizeNoise();
         //Sets up the path for the level
@@ -107,6 +114,20 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Sets up the outer area of the main level
         SetUpOuterArea();
     }
+
+    public void ClearStorageObjects()
+    {
+        for (var i = ObjectStorage.transform.childCount - 1; i >= 0; i--)
+        {
+            Object.Destroy(ObjectStorage.transform.GetChild(i).gameObject);
+        }
+
+        for (var i = ObstacleStorage.transform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(ObstacleStorage.transform.GetChild(i).gameObject);
+        }
+    }
+
     //Sets up voronoi noise and perlin noise
     public void RandomizeNoise()
     {
@@ -206,6 +227,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         //Set the mesh collider for the plane
         Floor.GetComponent<MeshCollider>().sharedMesh = mesh;
+        Floor.GetComponent<MeshRenderer>().sharedMaterial = currentLevelPreset.LevelMat;
         mesh.RecalculateNormals();
     }
 
@@ -521,11 +543,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
                 }
             }
             if (upOne) pointInArray++;
-        }
-
-        for (var i = ObstacleStorage.transform.childCount - 1; i >= 0; i--)
-        {
-            Destroy(ObstacleStorage.transform.GetChild(i).gameObject);
         }
 
         List<List<Vector3>> removePoints = new List<List<Vector3>>();
@@ -977,15 +994,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
     //Places objects to fill the outside of the play area
     void PlaceScatteredObects()
     {
-        for (var i = ObjectStorage.transform.childCount - 1; i >= 0; i--)
-        {
-            Object.Destroy(ObjectStorage.transform.GetChild(i).gameObject);
-        }
 
 
         List<Vector2> points = PoissonDiskSampling.RandomPoints(512, 512, 500);
-
-
 
         for(int i = 0; i < points.Count; i++)
         {

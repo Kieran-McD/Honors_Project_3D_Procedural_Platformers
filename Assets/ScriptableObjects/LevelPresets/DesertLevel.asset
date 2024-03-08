@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b73c4b813a77f624cb5c8e7a5bd5ed84, type: 3}
+  m_Name: DesertLevel
+  m_EditorClassIdentifier: 
+  LevelMat: {fileID: 2100000, guid: 73b779a44dec95648b9efceab5b5155c, type: 2}
+  Objects:
+  - {fileID: 73020470222104122, guid: d65584c88f3eb574cb6d3e00973fbcc1, type: 3}
