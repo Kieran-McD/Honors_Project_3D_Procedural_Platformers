@@ -489,6 +489,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         List<int> pathPoints = new List<int>();
         List<List<Vector3>> regionsConnected = new List<List<Vector3>>();
         List<List<PathNode>> pitfallNodes = new List<List<PathNode>>();
+
         int pointInArray = 0;
         //Find all regions that are set to pitfalls
         for (int i = 0; i < vertices.Count; i++)
@@ -1057,7 +1058,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //}
         for (int i = 0; i < pathNodeObjects.Count; i++)
         {
-            if(i % 3 == 0)
+            if(i % 2 == 0)
             {
                 pathNodeObjects[i].isPitfall = true;
             }
