@@ -1058,7 +1058,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //}
         for (int i = 0; i < pathNodeObjects.Count; i++)
         {
-            if(i % 2 == 0)
+            if(i % 3 == 0)
             {
                 pathNodeObjects[i].isPitfall = true;
             }

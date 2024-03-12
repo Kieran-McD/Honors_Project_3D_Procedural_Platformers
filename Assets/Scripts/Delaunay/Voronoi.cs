@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+//The MIT License (MIT)
 
+//Copyright (c) 2014 PouletFrit
 namespace csDelaunay {
 
 	public class Voronoi {
