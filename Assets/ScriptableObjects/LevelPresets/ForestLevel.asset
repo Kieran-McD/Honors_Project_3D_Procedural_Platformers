@@ -16,3 +16,5 @@ MonoBehaviour:
   Objects:
   - {fileID: 1323490661454885267, guid: e140ffe4aa61d3b4998ec67e932500a9, type: 3}
   - {fileID: 4098982149129966763, guid: e60e682e6d882584598db27801d71283, type: 3}
+  PerlinHeightScale: 5
+  ObjectDensity: 2000

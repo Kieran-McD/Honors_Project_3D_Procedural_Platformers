@@ -6,10 +6,10 @@ using UnityEditor;
 
 public class VoronoiMeshGenerator : MonoBehaviour
 {
-    
-    public VoronoiDiagram voronoiDiagram;
-
-    public PathFinding pathFinding;
+    [SerializeField]
+    private VoronoiDiagram voronoiDiagram;
+    [SerializeField]
+    private PathFinding pathFinding;
 
     private List<PathNode> pathNodeObjects;
 
@@ -18,7 +18,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
     //Level Meshes
     public GameObject Floor;
     public GameObject Walls;
-
+    //Storage For Level Objects
     public Transform ObjectStorage;
     public Transform ObstacleStorage;
 
@@ -27,26 +27,24 @@ public class VoronoiMeshGenerator : MonoBehaviour
     public LevelPreset currentLevelPreset;
 
     //public GameObject PathNodeStorage;
-    //public GameObject TestingLinePoint;
     public GameObject PlayerSpawner;
     
     public PerlinNoise perlinTexture;
 
-    public VoronoiAvailableTerrain availableTerrain;
+    [SerializeField]
+    private VoronoiAvailableTerrain availableTerrain;
 
     //Prefabs
     public GameObject goalPrefab;
     public GameObject PitfallTrapPrefab;
 
-    public List<Vector2> sitePositions;
+    private List<Vector2> sitePositions;
 
     [SerializeField]
     float scaling = 1f;
-    [SerializeField]
-    float perlinScaling = 10f;
-    float[] speed;
 
-    public bool moveVertices;
+    private float perlinScaling = 10f;
+    //float[] speed;
 
     private void Start()
     {
@@ -55,7 +53,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     private void Update()
     {
-        if(moveVertices)UpdateVertices();
+        //if(moveVertices)UpdateVertices();
     }
 
     public void GeneratePlane()
@@ -89,7 +87,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Debug.Log("Total Vertices: " + vertices.Count);
 
         mesh.vertices = vertices.ToArray();
-        speed = new float[mesh.vertices.Length];
+        //speed = new float[mesh.vertices.Length];
         List<Vector3> normals = new List<Vector3>();
 
         for (int i = 0; i < vertices.Count; i++)
@@ -103,16 +101,18 @@ public class VoronoiMeshGenerator : MonoBehaviour
     public void GenerateLevel()
     {
         currentLevelPreset = levelPresets[Random.Range(0, levelPresets.Count)];
+        perlinScaling = currentLevelPreset.PerlinHeightScale;
 
         ClearStorageObjects();
         //Sets up voronoi noise and perlin noise
         RandomizeNoise();
         //Sets up the path for the level
         SetUpPlayableLevel();
-        //Generates the different meshes for the level
-        GenerateLevelMesh();
         //Sets up the outer area of the main level
         SetUpOuterArea();
+        //Generates the different meshes for the level
+        GenerateLevelMesh();
+
     }
 
     public void ClearStorageObjects()
@@ -211,7 +211,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         mesh.colors = GenerateColourRegions(regionPlotPoints).ToArray();
 
         //Speed storage used to move the vertices up and down
-        speed = new float[mesh.vertices.Length];
+        //speed = new float[mesh.vertices.Length];
         
         List<Vector3> normals = new List<Vector3>();
         //Se up normals for the vertices
@@ -255,32 +255,32 @@ public class VoronoiMeshGenerator : MonoBehaviour
         mesh.RecalculateNormals();
     }
 
-    void UpdateVertices()
-    {
-        Vector3[] vertices =  Floor.GetComponent<MeshFilter>().mesh.vertices;
+    //void UpdateVertices()
+    //{
+    //    Vector3[] vertices =  Floor.GetComponent<MeshFilter>().mesh.vertices;
     
-        for(int i = 0; i < vertices.Length; i++)
-        {
-            if (speed[i] == 0f)
-            {
-                speed[i] = 5f;
-            }
+    //    for(int i = 0; i < vertices.Length; i++)
+    //    {
+    //        if (speed[i] == 0f)
+    //        {
+    //            speed[i] = 5f;
+    //        }
 
-            if (speed[i] >0f && vertices[i].y > 10f)
-            {
-                speed[i] = -5f;
-            }
-            else if (speed[i] < 0f && vertices[i].y < 0f)
-            {
-                speed[i] = 5f;
-            }
-            vertices[i] = new Vector3(vertices[i].x, vertices[i].y + Time.deltaTime * speed[i], vertices[i].z);
-        }
+    //        if (speed[i] >0f && vertices[i].y > 10f)
+    //        {
+    //            speed[i] = -5f;
+    //        }
+    //        else if (speed[i] < 0f && vertices[i].y < 0f)
+    //        {
+    //            speed[i] = 5f;
+    //        }
+    //        vertices[i] = new Vector3(vertices[i].x, vertices[i].y + Time.deltaTime * speed[i], vertices[i].z);
+    //    }
 
-        Floor.GetComponent<MeshCollider>().sharedMesh = Floor.GetComponent<MeshFilter>().mesh;
-        Floor.GetComponent<MeshFilter>().mesh.vertices = vertices;
-        Floor.GetComponent<MeshFilter>().mesh.RecalculateNormals();
-    }
+    //    Floor.GetComponent<MeshCollider>().sharedMesh = Floor.GetComponent<MeshFilter>().mesh;
+    //    Floor.GetComponent<MeshFilter>().mesh.vertices = vertices;
+    //    Floor.GetComponent<MeshFilter>().mesh.RecalculateNormals();
+    //}
 
     List<List<Vector3>> GenerateVertices(Voronoi voronoi)
     {    
@@ -488,8 +488,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         List<int> regions = new List<int>();
         List<int> pathPoints = new List<int>();
         List<List<Vector3>> regionsConnected = new List<List<Vector3>>();
-
-
+        List<List<PathNode>> pitfallNodes = new List<List<PathNode>>();
         int pointInArray = 0;
         //Find all regions that are set to pitfalls
         for (int i = 0; i < vertices.Count; i++)
@@ -500,6 +499,10 @@ public class VoronoiMeshGenerator : MonoBehaviour
                 {
                     regionsConnected.Add(new List<Vector3>());
                     regionsConnected[pointInArray].Add(vertices[i][0]);
+
+                    pitfallNodes.Add(new List<PathNode>());
+                    pitfallNodes[pointInArray].Add(pathNodeObjects[j]);
+
                     pointInArray++;
                     //Stores region point in array
                     regions.Add(i);
@@ -521,7 +524,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
                 {
                     if (vertices[i][0].x == connectedNodes[k].transform.localPosition.x && vertices[i][0].z == connectedNodes[k].transform.localPosition.z && !connectedNodes[k].NextNode && !connectedNodes[k].isGoal)
                     {
+                        connectedNodes[k].isPitfall = true;
                         regions.Add(i);
+                        pitfallNodes[j].Add(connectedNodes[k]);
                     }
                 }
             }
@@ -545,6 +550,31 @@ public class VoronoiMeshGenerator : MonoBehaviour
             if (upOne) pointInArray++;
         }
 
+        //Stores connected pitfall regions used for pitfall wall generation
+        List<List<Vector3>> connectedPitfallSitePos = new List<List<Vector3>>();
+        for (int i = 0; i < pathPoints.Count; i++)
+        {
+            for(int j = 0; j < pitfallNodes.Count; j++)
+            {
+                connectedPitfallSitePos.Add(new List<Vector3>());
+                for (int k = 0; k < pitfallNodes[j].Count; k++)
+                {
+                    List<PathNode> con = pitfallNodes[j][k].ConnectedNodes;
+                    //checks all connected node if pitfall node
+                    for(int l = 0; l < con.Count; l++)
+                    {
+                        //checks if the node isnt apart of the current pitfall and if the node is a pitfall
+                        if (con[l].isPitfall && !pitfallNodes[j].Contains(con[l]) && !connectedPitfallSitePos[j].Contains(con[l].transform.localPosition))
+                        {                         
+                            connectedPitfallSitePos[j].Add(con[l].transform.localPosition);
+                        }
+                    }
+
+                }
+            }
+        }
+
+
         List<List<Vector3>> removePoints = new List<List<Vector3>>();
         for (int i = 0; i < regions.Count; i++)
         {
@@ -561,7 +591,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         for(int i = 0; i < regionsConnected.Count; i++)
         {
-            CreatePitFall(regionsConnected[i]);
+            CreatePitFall(regionsConnected[i], connectedPitfallSitePos[i]);
         }
 
         for (var i = removePoints.Count - 1; i >= 0; i--)
@@ -730,7 +760,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
     }
 
     //Used to create a pitfall combining multiple regions
-    void CreatePitFall(List<Vector3> sitePos)
+    void CreatePitFall(List<Vector3> sitePos, List<Vector3> connectedPitfallSites = null)
     {
         List<Vector3> points = new List<Vector3>();
 
@@ -741,7 +771,11 @@ public class VoronoiMeshGenerator : MonoBehaviour
         mesh.Clear();
         meshFilter.mesh = mesh;
 
-
+        List<Vector3> sitePosChecks = new List<Vector3>();
+        sitePosChecks.AddRange(sitePos);
+        //Checks if there are any connected pitfall sites
+        if(connectedPitfallSites!= null) sitePosChecks.AddRange(connectedPitfallSites);
+        Debug.Log("Connected Pitfalls: " + sitePosChecks.Count + " CurrentPitfallRegions: " + sitePos.Count);
         //Loops through all path nodes to find each region vector
         for (int i = 0; i < sitePos.Count; i++)
         {
@@ -750,12 +784,12 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
             List<LineSegment> neighboursLines = new List<LineSegment>();
 
-            for (int j = 0; j < sitePos.Count; j++)
+            for (int j = 0; j < sitePosChecks.Count; j++)
             {
 
-                if (sitePos[i] == sitePos[j]) continue;
+                if (sitePos[i] == sitePosChecks[j]) continue;
 
-                neighboursLines.AddRange(voronoiDiagram.voronoi.VoronoiBoundarayForSite(new Vector2(sitePos[j].x * scaling, sitePos[j].z * scaling)));
+                neighboursLines.AddRange(voronoiDiagram.voronoi.VoronoiBoundarayForSite(new Vector2(sitePosChecks[j].x * scaling, sitePosChecks[j].z * scaling)));
             }
 
             for (int j = 0; j < connectedLines.Count; j++)
@@ -996,11 +1030,11 @@ public class VoronoiMeshGenerator : MonoBehaviour
     {
 
 
-        List<Vector2> points = PoissonDiskSampling.RandomPoints(512, 512, 500);
+        List<Vector2> points = PoissonDiskSampling.RandomPoints(512, 512, currentLevelPreset.ObjectDensity);
         List<GameObject> obects = currentLevelPreset.Objects;
         for(int i = 0; i < points.Count; i++)
         {
-            if (availableTerrain.perlinTexture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r ==0) continue;
+            if (availableTerrain.Texture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r ==0) continue;
             float yPos = perlinTexture.perlinTexture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r;
             GameObject temp = Instantiate<GameObject>(obects[Random.Range(0, obects.Count)], ObjectStorage.transform);
             temp.transform.localPosition = new Vector3(points[i].X / scaling, yPos * perlinScaling, points[i].Y / scaling);

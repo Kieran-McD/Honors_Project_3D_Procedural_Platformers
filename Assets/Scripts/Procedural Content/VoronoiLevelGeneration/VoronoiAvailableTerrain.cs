@@ -7,9 +7,10 @@ public class VoronoiAvailableTerrain : MonoBehaviour
     public int width = 512;
     public int height = 512;
 
-    public Texture2D perlinTexture;
-    public Renderer rend;
-    public VoronoiDiagram diagram;
+    public Texture2D Texture;
+    private Renderer rend;
+    [SerializeField]
+    private VoronoiDiagram diagram;
 
     public void Awake()
     {
@@ -18,29 +19,34 @@ public class VoronoiAvailableTerrain : MonoBehaviour
 
     public void SetUp(List<Vector2> sitePositions)
     {
-        perlinTexture = CreateTexture(diagram, sitePositions);
-        rend.material.mainTexture = perlinTexture;
+        Texture = CreateTexture(diagram, sitePositions);
+        rend.material.mainTexture = Texture;
     }
 
     public Texture2D CreateTexture(VoronoiDiagram voronoi, List<Vector2> sites)
     {
         Texture2D texture = new Texture2D(width, height);
 
+        //Center point for each region
         List<Vector2> center = new List<Vector2>();
+        //Direction vector for the triangle
         List<Vector2> vectorOne = new List<Vector2>();
         List<Vector2> vectorTwo = new List<Vector2>();
+        //Stores each of the boundaries of the triangles
         List<int> minXList = new List<int>();
         List<int> minYList = new List<int>();
         List<int> maxXList = new List<int>();
         List<int> maxYList = new List<int>();
-        int minX = width, minY = height, maxX = 0, maxY = 0;
+        
+        //int minX = width, minY = height, maxX = 0, maxY = 0;
 
         for(int i = 0; i < sites.Count; i++)
         {
-            if (sites[i].X < minX) minX = (int)sites[i].X;
-            if (sites[i].X > maxX) maxX = (int)sites[i].X;
-            if (sites[i].Y < minY) minY = (int)sites[i].Y;
-            if (sites[i].Y > maxY) maxY = (int)sites[i].Y;
+            ////Checks for the max and min boundary for the level
+            //if (sites[i].X < minX) minX = (int)sites[i].X;
+            //if (sites[i].X > maxX) maxX = (int)sites[i].X;
+            //if (sites[i].Y < minY) minY = (int)sites[i].Y;
+            //if (sites[i].Y > maxY) maxY = (int)sites[i].Y;
 
             center.Add(sites[i]);
             for (int j = 0; j < voronoi.voronoi.Region(center[i]).Count; j++)
@@ -49,8 +55,10 @@ public class VoronoiAvailableTerrain : MonoBehaviour
 
                 if (j == voronoi.voronoi.Region(center[i]).Count - 1)
                 {
+                    //Gets the vector direction from the center point
                     vectorOne.Add(region[region.Count - 1] - center[i]);
                     vectorTwo.Add(region[0] - center[i]);
+
                     //Gets the max boundaries for each triangle
                     minXList.Add(Mathf.Min(Mathf.Min((int)center[i].X, (int)region[region.Count - 1].X), (int)region[0].X));
                     maxXList.Add(Mathf.Max(Mathf.Max((int)center[i].X, (int)region[region.Count - 1].X), (int)region[0].X));
@@ -58,9 +66,10 @@ public class VoronoiAvailableTerrain : MonoBehaviour
                     maxYList.Add(Mathf.Max(Mathf.Max((int)center[i].Y, (int)region[region.Count - 1].Y), (int)region[0].Y));
                     break;
                 }
-
+                //Gets the vector direction from the center point
                 vectorOne.Add(region[j] - center[i]);
                 vectorTwo.Add(region[j + 1] - center[i]);
+
                 //Gets the max boundaries for each triangle
                 minXList.Add(Mathf.Min(Mathf.Min((int)center[i].X, (int)region[j].X), (int)region[j + 1].X));
                 maxXList.Add(Mathf.Max(Mathf.Max((int)center[i].X, (int)region[j].X), (int)region[j + 1].X));
@@ -69,6 +78,7 @@ public class VoronoiAvailableTerrain : MonoBehaviour
             }
         }
 
+        #region old method
         //Old Version very bad
         //for (int x = minX; x < maxX; x++)
         //{
@@ -117,19 +127,18 @@ public class VoronoiAvailableTerrain : MonoBehaviour
         //            currentTotal += voronoi.voronoi.Region(center[i]).Count;
         //        }
 
-               
+
         //        //else texture.SetPixel(x, y, new Color(0, 0, 0));
         //    }
         //}
 
-
+        #endregion
 
 
         //New Version so much better
         int currentTotal = 0;
         for (int i = 0; i < center.Count; i++)
         {
-
             for (int j = 0; j < voronoi.voronoi.Region(center[i]).Count; j++)
             {
 
@@ -139,24 +148,7 @@ public class VoronoiAvailableTerrain : MonoBehaviour
                     {
 
                         Vector2 point = new Vector2(x, y);
-                        //det1 = point.X * vectorTwo[j].Y - point.Y * vectorTwo[j].X;
-                        //det2 = center[i].X * vectorTwo[j].Y - center[i].Y * vectorTwo[j].X;
-                        //det3 = vectorOne[j].X * vectorTwo[j].Y - vectorOne[j].Y * vectorTwo[j].X;
-                        //a = (det1 - det2) / det3;
-                        //det1 = point.X * vectorOne[j].Y - point.Y * vectorOne[j].X;
-                        //det2 = center[i].X * vectorOne[j].Y - center[i].Y * vectorOne[j].X;
-                        //det3 = vectorOne[j].X * vectorTwo[j].Y - vectorOne[j].Y * vectorTwo[j].X;
-                        //b = -((det1 - det2) / det3);
-
-
-                        //if (a >= 0 && b >= 0 && (a + b) <= 1)
-                        //{
-                        //    //Debug.Log("Hell yeah this worked like a charm");
-                        //    texture.SetPixel(x, y, new Color(1, 1, 1));
-                        //    pointInTriangle = true;
-                        //    break;
-                        //}
-                        //texture.SetPixel(x, y, new Color(0, 0, 0));
+                       
                         if (CheckPointInTriangle(point, center[i], vectorOne[j + currentTotal], vectorTwo[j + currentTotal]))
                         {
                             texture.SetPixel(x, y, new Color(0, 0, 0));
@@ -164,22 +156,19 @@ public class VoronoiAvailableTerrain : MonoBehaviour
                             //break;
                         }
                     }
-                    //if (pointInTriangle) break;
                    
                 }
 
             }
             currentTotal += voronoi.voronoi.Region(center[i]).Count;
         }
-                //else texture.SetPixel(x, y, new Color(0, 0, 0));
-            
        
-
         texture.Apply();
 
         return texture;
     }
 
+    //Checks if a point is within the triangle
     public bool CheckPointInTriangle(Vector2 point, Vector2 trianglePoint ,Vector2 vectorOne, Vector2 vectorTwo)
     {
         float det1, det2, det3, a, b;
