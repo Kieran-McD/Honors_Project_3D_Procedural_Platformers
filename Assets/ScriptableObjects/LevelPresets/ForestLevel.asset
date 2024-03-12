@@ -15,7 +15,9 @@ MonoBehaviour:
   LevelMat: {fileID: 2100000, guid: f2850cfa625590d40bd79c17b67806b4, type: 2}
   WaterMat: {fileID: 2100000, guid: 080c5a79887b2184d8ff8cefd95c5f80, type: 2}
   Objects:
-  - {fileID: 1323490661454885267, guid: e140ffe4aa61d3b4998ec67e932500a9, type: 3}
-  - {fileID: 4098982149129966763, guid: e60e682e6d882584598db27801d71283, type: 3}
+  - Object: {fileID: 1323490661454885267, guid: e140ffe4aa61d3b4998ec67e932500a9, type: 3}
+    Radius: 64
+  - Object: {fileID: 4098982149129966763, guid: e60e682e6d882584598db27801d71283, type: 3}
+    Radius: 256
   PerlinHeightScale: 5
   ObjectDensity: 2000

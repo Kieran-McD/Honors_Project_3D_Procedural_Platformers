@@ -1035,19 +1035,31 @@ public class VoronoiMeshGenerator : MonoBehaviour
     //Places objects to fill the outside of the play area
     void PlaceScatteredObects()
     {
+        // List<UnityEngine.Vector2> points = PoissonDiscSampling.GeneratePoints(8, new UnityEngine.Vector2(512,512), 30);
+        // //List<Vector2> points = PoissonDiskSampling.RandomPoints(512, 512, currentLevelPreset.ObjectDensity);
+        //// List<GameObject> obects = currentLevelPreset.Objects;
+        // for(int i = 0; i < points.Count; i++)
+        // {
+        //     if (availableTerrain.Texture.GetPixel((int)(points[i].x), (int)(points[i].y)).r ==0) continue;
+        //     float yPos = perlinTexture.perlinTexture.GetPixel((int)(points[i].x), (int)(points[i].y)).r;
+        //     GameObject temp = Instantiate<GameObject>(obects[Random.Range(0, obects.Count)], ObjectStorage.transform);
+        //     temp.transform.localPosition = new Vector3(points[i].x / scaling, yPos * perlinScaling, points[i].y / scaling);
+        //     temp.transform.rotation = Quaternion.Euler(0, Random.Range(0f,360f),0);
+        // }
 
-
-        List<Vector2> points = PoissonDiskSampling.RandomPoints(512, 512, currentLevelPreset.ObjectDensity);
-        List<GameObject> obects = currentLevelPreset.Objects;
-        for(int i = 0; i < points.Count; i++)
+        for (int i = 0; i < currentLevelPreset.Objects.Count; i++)
         {
-            if (availableTerrain.Texture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r ==0) continue;
-            float yPos = perlinTexture.perlinTexture.GetPixel((int)(points[i].X), (int)(points[i].Y)).r;
-            GameObject temp = Instantiate<GameObject>(obects[Random.Range(0, obects.Count)], ObjectStorage.transform);
-            temp.transform.localPosition = new Vector3(points[i].X / scaling, yPos * perlinScaling, points[i].Y / scaling);
-            temp.transform.rotation = Quaternion.Euler(0, Random.Range(0f,360f),0);
+            DiscObject currentObject = currentLevelPreset.Objects[i];
+            List<UnityEngine.Vector2> points = PoissonDiscSampling.GeneratePoints(currentObject.Radius / scaling, new UnityEngine.Vector2(512, 512), 30);
+            for (int j = 0; j < points.Count; j++)
+            {
+                if (availableTerrain.Texture.GetPixel((int)(points[j].x), (int)(points[j].y)).r == 0) continue;
+                float yPos = perlinTexture.perlinTexture.GetPixel((int)(points[j].x), (int)(points[j].y)).r;
+                GameObject temp = Instantiate<GameObject>(currentObject.Object, ObjectStorage.transform);
+                temp.transform.localPosition = new Vector3(points[j].x / scaling, yPos * perlinScaling, points[j].y / scaling);
+                temp.transform.rotation = Quaternion.Euler(0, Random.Range(0f, 360f), 0);
+            }
         }
-
     }
 
     void LevelPathNodeSettings()
