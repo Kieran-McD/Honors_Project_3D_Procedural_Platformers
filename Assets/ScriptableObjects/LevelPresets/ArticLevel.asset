@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: ArticLevel
   m_EditorClassIdentifier: 
   LevelMat: {fileID: 2100000, guid: 0cdac14c93ed58c46a8d30b8e67c5ade, type: 2}
+  WaterMat: {fileID: 2100000, guid: d269eee57cf8b7746bf9dd848e04c45f, type: 2}
   Objects:
   - {fileID: 1323490661454885267, guid: e140ffe4aa61d3b4998ec67e932500a9, type: 3}
   - {fileID: 1500310969158212397, guid: 1f73c7e234990bd48bb6690c62b17855, type: 3}
   PerlinHeightScale: 15
+  ObjectDensity: 500

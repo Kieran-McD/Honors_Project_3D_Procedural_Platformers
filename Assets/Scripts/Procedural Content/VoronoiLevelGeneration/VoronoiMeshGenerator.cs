@@ -763,7 +763,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
     void CreatePitFall(List<Vector3> sitePos, List<Vector3> connectedPitfallSites = null)
     {
         List<Vector3> points = new List<Vector3>();
-
+        List<UnityEngine.Vector2> UVCord = new List<UnityEngine.Vector2>();
         PitFall pitFall = Instantiate<GameObject>(PitfallTrapPrefab, ObstacleStorage.transform).GetComponent<PitFall>();
         
         MeshFilter meshFilter = pitFall.walls.GetComponent<MeshFilter>();
@@ -874,7 +874,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         mesh.vertices = points.ToArray();
         mesh.triangles = triangles.ToArray();
         pitFall.walls.GetComponent<MeshCollider>().sharedMesh = mesh;
-
+        pitFall.walls.GetComponent<MeshRenderer>().sharedMaterial = currentLevelPreset.LevelMat;
         meshFilter = pitFall.lava.GetComponent<MeshFilter>();
         mesh = new Mesh();
         mesh.Clear();
@@ -882,21 +882,26 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         points.Clear();
         triangles.Clear();
-
+        UVCord.Clear();
         //Used to seperate each of the regions that are used for the pitfall
         List<List<Vector3>> vertices = new List<List<Vector3>>();
+
+        float LavaDepth = -2f;
 
         //Create Lava Vertices
         for(int i = 0; i < sitePos.Count; i++)
         {
             List<Vector2> regionPoints = voronoiDiagram.voronoi.Region(new Vector2(sitePos[i].x*scaling, sitePos[i].z*scaling));
             vertices.Add(new List<Vector3>());
-            vertices[i].Add(new Vector3(sitePos[i].x, -5f, sitePos[i].z));
-            points.Add(new Vector3(sitePos[i].x, -5f, sitePos[i].z));
+            vertices[i].Add(new Vector3(sitePos[i].x, LavaDepth, sitePos[i].z));
+            points.Add(new Vector3(sitePos[i].x, LavaDepth, sitePos[i].z));
+
+            UVCord.Add(new UnityEngine.Vector2(sitePos[i].x * scaling, sitePos[i].z * scaling) / 512f);
             for (int j = 0; j < regionPoints.Count; j++)
             {
-                vertices[i].Add(new Vector3(regionPoints[j].X / scaling, -5f, regionPoints[j].Y / scaling));
-                points.Add(new Vector3(regionPoints[j].X / scaling, -5f, regionPoints[j].Y / scaling));
+                vertices[i].Add(new Vector3(regionPoints[j].X / scaling, LavaDepth, regionPoints[j].Y / scaling));
+                points.Add(new Vector3(regionPoints[j].X / scaling, LavaDepth, regionPoints[j].Y / scaling));
+                UVCord.Add(new UnityEngine.Vector2(regionPoints[j].X, regionPoints[j].Y) / 512f);
             }
         }
 
@@ -922,8 +927,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Set up the mesh
         mesh.vertices = points.ToArray();
         mesh.triangles = triangles.ToArray();
+        mesh.uv = UVCord.ToArray();
         pitFall.lava.GetComponent<MeshCollider>().sharedMesh = mesh;
-
+        pitFall.lava.GetComponent<MeshRenderer>().sharedMaterial = currentLevelPreset.WaterMat;
         pitFall.platform.transform.localPosition = new Vector3(sitePos[0].x, perlinTexture.perlinTexture.GetPixel((int)(sitePos[0].x * scaling), (int)(sitePos[0].z * scaling)).r * perlinScaling, sitePos[0].z);
 
     }

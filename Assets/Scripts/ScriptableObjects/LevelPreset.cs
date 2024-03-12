@@ -7,6 +7,7 @@ using UnityEngine;
 public class LevelPreset : ScriptableObject
 {
     public Material LevelMat;
+    public Material WaterMat;
     public List<GameObject> Objects;
     public float PerlinHeightScale = 10f;
     public int ObjectDensity = 500;

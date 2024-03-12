@@ -11,6 +11,9 @@ public class VoronoiDiagram : MonoBehaviour
     // The number of polygons/sites we want
     [Range(5, 1000)]
     public int polygonNumber = 200;
+    [Range(0, 15)]
+    public int floydRelaxationIterations = 5; 
+
 
     // This is where we will store the resulting data
     private Dictionary<Vector2, Site> sites;
@@ -43,7 +46,7 @@ public class VoronoiDiagram : MonoBehaviour
 
         // There is a two ways you can create the voronoi diagram: with or without the lloyd relaxation
         // Here I used it with 2 iterations of the lloyd relaxation
-        voronoi = new Voronoi(points, bounds, 5);
+        voronoi = new Voronoi(points, bounds, floydRelaxationIterations);
 
         // But you could also create it without lloyd relaxtion and call that function later if you want
         //Voronoi voronoi = new Voronoi(points,bounds);
