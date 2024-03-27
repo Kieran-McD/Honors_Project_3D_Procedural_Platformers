@@ -1092,8 +1092,10 @@ public class VoronoiMeshGenerator : MonoBehaviour
             if (pathNodeObjects[i].isGoal)
             {
                 float height = perlinTexture.perlinTexture.GetPixel((int)pathNodeObjects[i].x, (int)pathNodeObjects[i].y).r * perlinScaling;
-                Instantiate<GameObject>(goalPrefab, ObstacleStorage.transform).transform.localPosition = pathNodeObjects[i].transform.localPosition + new Vector3(0,height,0);
 
+                //Instantiate<GameObject>(goalPrefab, ObstacleStorage.transform).transform.localPosition = pathNodeObjects[i].transform.localPosition + new Vector3(0, height, 0);
+                goalPrefab.transform.parent = transform;
+                goalPrefab.transform.localPosition = pathNodeObjects[i].transform.localPosition + new Vector3(0, height, 0);
             }
 
         }     

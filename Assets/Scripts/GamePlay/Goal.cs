@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Events;
 
 public class Goal : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class Goal : MonoBehaviour
     float speed = 4f;
 
     TextMeshProUGUI text;
+
+    public UnityEvent func;
+
     private void Start()
     {
         startPos = transform.localPosition;
@@ -58,5 +62,6 @@ public class Goal : MonoBehaviour
 
         GetComponent<MeshRenderer>().enabled = false;
         StartCoroutine(DisplayText());
+        func.Invoke();      
     }
 }

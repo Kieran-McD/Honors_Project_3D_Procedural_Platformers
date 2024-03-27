@@ -153,14 +153,16 @@ MonoBehaviour:
   speed: 21.7
   frames: 10
   roll: 1
-  pitch: 0
+  pitch: 1
   freq: 0.2
   turnValue: 0
   onlyUp: 0
   maxPerlinHorizontalRotation: 2.5
   maxPerlinVerticalRotation: 1
   isMoving: 1
+  finalPoint: 0
   pathGenerator: {fileID: 0}
+  levelGeneratorVoronoi: {fileID: 0}
   followPoint: {fileID: 0}
 --- !u!135 &1466920468797242238
 SphereCollider:
