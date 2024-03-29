@@ -875,7 +875,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
         mesh.vertices = points.ToArray();
         mesh.triangles = triangles.ToArray();
         pitFall.walls.GetComponent<MeshCollider>().sharedMesh = mesh;
-        pitFall.walls.GetComponent<MeshRenderer>().sharedMaterial = currentLevelPreset.LevelMat;
         meshFilter = pitFall.lava.GetComponent<MeshFilter>();
         mesh = new Mesh();
         mesh.Clear();

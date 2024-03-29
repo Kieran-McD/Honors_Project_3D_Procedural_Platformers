@@ -44,6 +44,7 @@ public class VoronoiDiagram : MonoBehaviour
         // but like that it allows you to run the delaunay library outside of unity (which mean also in another tread)
         Rectf bounds = new Rectf(0, 0, 512, 512);
 
+        
         // There is a two ways you can create the voronoi diagram: with or without the lloyd relaxation
         // Here I used it with 2 iterations of the lloyd relaxation
         voronoi = new Voronoi(points, bounds, floydRelaxationIterations);
@@ -64,11 +65,6 @@ public class VoronoiDiagram : MonoBehaviour
 
         DisplayVoronoiDiagram();
 
-    }
-        IEnumerator waiter()
-    {
-        //Wait for 4 seconds
-        yield return new WaitForSeconds(0.2f);
     }
 
 
