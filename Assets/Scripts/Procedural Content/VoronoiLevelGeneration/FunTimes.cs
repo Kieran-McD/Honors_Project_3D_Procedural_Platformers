@@ -3,8 +3,6 @@ using UnityEditor;
 using System.Collections.Generic;
 using Vector2 = System.Numerics.Vector2;
 using csDelaunay;
-using System.Collections;
-
 public class VoronoiDiagram : MonoBehaviour
 {
 
@@ -18,10 +16,25 @@ public class VoronoiDiagram : MonoBehaviour
     // This is where we will store the resulting data
     private Dictionary<Vector2, Site> sites;
     private List<Edge> edges;
+    public List<UnityEngine.Vector2> points;
     public List<Site> pointsForPath;
+
 
     public Voronoi voronoi;
     public VoronoiMeshGenerator meshGenerator;
+
+    private void Awake()
+    {
+        if(points.Count > 0)
+        {
+            CreateDiagram();
+        }
+        else
+        {
+            CreateRandomizeDiagram();
+        }
+      
+    }
 
     void Start()
     {
@@ -34,11 +47,18 @@ public class VoronoiDiagram : MonoBehaviour
     }
 
 
+    
+    public void RandomizePoints()
+    {
+        points = new List<UnityEngine.Vector2>();
+        points = CreateRandomPoint();
+    }
+
     public void CreateDiagram()
     {
+        if (points.Count < 1) return;
         // Create your sites (lets call that the center of your polygons)
-        List<Vector2> points = CreateRandomPoint();
-
+        //points = CreateRandomPoint();
         // Create the bounds of the voronoi diagram
         // Use Rectf instead of Rect; it's a struct just like Rect and does pretty much the same,
         // but like that it allows you to run the delaunay library outside of unity (which mean also in another tread)
@@ -47,7 +67,7 @@ public class VoronoiDiagram : MonoBehaviour
         
         // There is a two ways you can create the voronoi diagram: with or without the lloyd relaxation
         // Here I used it with 2 iterations of the lloyd relaxation
-        voronoi = new Voronoi(points, bounds, floydRelaxationIterations);
+        voronoi = new Voronoi(TranslateVector2(points), bounds, floydRelaxationIterations);
 
         // But you could also create it without lloyd relaxtion and call that function later if you want
         //Voronoi voronoi = new Voronoi(points,bounds);
@@ -63,25 +83,53 @@ public class VoronoiDiagram : MonoBehaviour
         edges = voronoi.Edges;
         pointsForPath = PathFindingAStar(voronoi);
 
-        DisplayVoronoiDiagram();
+        //DisplayVoronoiDiagram();
 
     }
 
-
-    private List<Vector2> CreateRandomPoint()
+    public void CreateRandomizeDiagram()
     {
+        RandomizePoints();
+        CreateDiagram();
+    }
 
+    private List<Vector2> TranslateVector2(List<UnityEngine.Vector2> p)
+    {
+        List<Vector2> newPoints = new List<Vector2>();
+        for(int i = 0; i < p.Count; i++)
+        {
+            newPoints.Add(new Vector2(p[i].x, p[i].y));
+        }
+        return newPoints;
+    }
+
+    //private List<Vector2> CreateRandomPoint()
+    //{
+
+    //    // Use Vector2f, instead of Vector2
+    //    // Vector2f is pretty much the same than Vector2, but like you could run Voronoi in another thread
+    //    List<Vector2> points = new List<Vector2>();
+    //    for (int i = 0; i < polygonNumber; i++)
+    //    {
+    //        points.Add(new Vector2(Random.Range(0, 512), Random.Range(0, 512)));
+    //    }
+
+    //    return points;
+    //}
+
+
+    private List<UnityEngine.Vector2> CreateRandomPoint()
+    {
         // Use Vector2f, instead of Vector2
         // Vector2f is pretty much the same than Vector2, but like you could run Voronoi in another thread
-        List<Vector2> points = new List<Vector2>();
+        List<UnityEngine.Vector2> points = new List<UnityEngine.Vector2>();
         for (int i = 0; i < polygonNumber; i++)
         {
-            points.Add(new Vector2(Random.Range(0, 512), Random.Range(0, 512)));
+            points.Add(new UnityEngine.Vector2(Random.Range(0, 512), Random.Range(0, 512)));
         }
 
         return points;
     }
-
     // Here is a very simple way to display the result using a simple bresenham line algorithm
     // Just attach this script to a quad
     private void DisplayVoronoiDiagram()
@@ -224,11 +272,27 @@ public class VoronoiDiagramEditor : Editor
             GUILayout.TextField("Dont Press Button To Much Bad Idea");
 
             VoronoiDiagram colliderCreator = (VoronoiDiagram)target;
-            if (GUILayout.Button("Create Diagram"))
+            if (GUILayout.Button("Create Randomize Diagram"))
+            {
+                colliderCreator.CreateRandomizeDiagram(); // how do i call this?
+            }
+            if (GUILayout.Button("Create  Diagram"))
             {
                 colliderCreator.CreateDiagram(); // how do i call this?
             }
-        }    
+        }
+        else
+        {
+            VoronoiDiagram colliderCreator = (VoronoiDiagram)target;
+            if (GUILayout.Button("Create Points for Diagram"))
+            {
+                colliderCreator.RandomizePoints(); // how do i call this?
+            }
+            if(GUILayout.Button("Create  Diagram"))
+            {
+                colliderCreator.CreateDiagram(); // how do i call this?
+            }
+        }
         DrawDefaultInspector();
     }
 }

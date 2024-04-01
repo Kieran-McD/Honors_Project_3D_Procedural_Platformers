@@ -100,12 +100,10 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     public void GenerateLevel()
     {
-        currentLevelPreset = levelPresets[Random.Range(0, levelPresets.Count)];
+        ClearStorageObjects();
+
         perlinScaling = currentLevelPreset.PerlinHeightScale;
 
-        ClearStorageObjects();
-        //Sets up voronoi noise and perlin noise
-        RandomizeNoise();
         //Sets up the path for the level
         SetUpPlayableLevel();
         //Sets up the outer area of the main level
@@ -113,6 +111,22 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Generates the different meshes for the level
         GenerateLevelMesh();
 
+    }
+
+    public void GenerateRandomLevel()
+    {
+        ClearStorageObjects();
+        //Sets up voronoi noise and perlin noise
+        RandomizeNoise();
+
+        perlinScaling = currentLevelPreset.PerlinHeightScale;
+
+        //Sets up the path for the level
+        SetUpPlayableLevel();
+        //Sets up the outer area of the main level
+        SetUpOuterArea();
+        //Generates the different meshes for the level
+        GenerateLevelMesh();
     }
 
     public void ClearStorageObjects()
@@ -131,6 +145,8 @@ public class VoronoiMeshGenerator : MonoBehaviour
     //Sets up voronoi noise and perlin noise
     public void RandomizeNoise()
     {
+        currentLevelPreset = levelPresets[Random.Range(0, levelPresets.Count)];
+
         //Randomizes the perlin texture for terrain transformation
         perlinTexture.RandomizePerlinTexture();
         //Sets up the voronoi diagram to be used
@@ -1119,7 +1135,10 @@ public class VoronoiMeshGeneratorEditor : Editor
             {
                 colliderCreator.GenerateLevel(); // how do i call this?
             }
-
+            if(GUILayout.Button("Generate Random Level"))
+            {
+                colliderCreator.GenerateRandomLevel();
+            }
             //if (GUILayout.Button("Randomize Noise"))
             //{
             //    colliderCreator.RandomizeNoise(); // how do i call this?
