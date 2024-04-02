@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -102,16 +103,58 @@ public class PathGenerator : MonoBehaviour
     {
         List<Vector3> vertices = new List<Vector3>();
 
+        Vector3 pos = new Vector3();
+        Vector3 right = new Vector3();
+
         //Generate all the vertices along the point
         for (int i = 0; i < pathPointTransforms.Count; i++)
         {
-            Vector3 pos = pathPointTransforms[i].position;
-            Vector3 right = pathPointTransforms[i].right;
+            pos = pathPointTransforms[i].position;
+            right = pathPointTransforms[i].right;
             vertices.Add(pos - (right * pathWidth / 2f));
             Instantiate<GameObject>(pathPointPrefab, vertices[vertices.Count - 1], Quaternion.identity, transform);
             vertices.Add(pos + (right * pathWidth / 2f));
             Instantiate<GameObject>(pathPointPrefab, vertices[vertices.Count - 1], Quaternion.identity, transform);
+
+            pos = pos - new Vector3(0,0.5f,0);
+
+            vertices.Add(pos + (right * pathWidth / 2f));
+            vertices.Add(pos - (right * pathWidth / 2f));
+
+            pos = pos + new Vector3(0, 0.5f, 0);
+
+            vertices.Add(pos - (right * pathWidth / 2f));
+            vertices.Add(pos + (right * pathWidth / 2f));
+
+            pos = pos - new Vector3(0, 0.5f, 0);
+
+            vertices.Add(pos + (right * pathWidth / 2f));
+            vertices.Add(pos - (right * pathWidth / 2f));
         }
+
+        //GENERATE VERTICES FOR FORWARD AND BACK VERTICES
+        //Back Vertices
+        pos = pathPointTransforms[0].position;
+        right = pathPointTransforms[0].right;
+        vertices.Add(pos - (right * pathWidth / 2f));
+        vertices.Add(pos + (right * pathWidth / 2f));
+
+        pos = pos - new Vector3(0, 0.5f, 0);
+
+        vertices.Add(pos + (right * pathWidth / 2f));
+        vertices.Add(pos - (right * pathWidth / 2f));
+
+        //Forward Vertices
+        pos = pathPointTransforms[pathPointTransforms.Count-1].position;
+        right = pathPointTransforms[pathPointTransforms.Count - 1].right;
+        vertices.Add(pos - (right * pathWidth / 2f));
+        vertices.Add(pos + (right * pathWidth / 2f));
+
+        pos = pos - new Vector3(0, 0.5f, 0);
+
+        vertices.Add(pos + (right * pathWidth / 2f));
+        vertices.Add(pos - (right * pathWidth / 2f));
+
 
         return vertices;
     }
@@ -125,8 +168,25 @@ public class PathGenerator : MonoBehaviour
         {
             normals.Add(pathPointTransforms[i].up);
             normals.Add(pathPointTransforms[i].up);
-        }
 
+            normals.Add(-pathPointTransforms[i].up);
+            normals.Add(-pathPointTransforms[i].up);
+
+            normals.Add(-pathPointTransforms[i].right);
+            normals.Add(pathPointTransforms[i].right);
+
+            normals.Add(pathPointTransforms[i].right);
+            normals.Add(-pathPointTransforms[i].right);
+        }
+        //GENERATE NORMALS FOR FORWAD AND BACK OF PATH
+        normals.Add(-pathPointTransforms[0].forward);
+        normals.Add(-pathPointTransforms[0].forward);
+        normals.Add(-pathPointTransforms[0].forward);
+        normals.Add(-pathPointTransforms[0].forward);
+        normals.Add(pathPointTransforms[pathPointTransforms.Count-1].forward);
+        normals.Add(pathPointTransforms[pathPointTransforms.Count-1].forward);
+        normals.Add(pathPointTransforms[pathPointTransforms.Count - 1].forward);
+        normals.Add(pathPointTransforms[pathPointTransforms.Count - 1].forward);
         return normals;
     }
 
@@ -137,16 +197,76 @@ public class PathGenerator : MonoBehaviour
 
         for (int i = 0; i < pathPointTransforms.Count - 1; i++)
         {
-            //Generate the first triangle
-            triangles.Add(i * 2);
-            triangles.Add(i * 2 + 3);
-            triangles.Add(i * 2 + 1);
+
+            //GENERATE TOP QAUD
+            //Generate top first Triangle
+            triangles.Add(i * 8);
+            triangles.Add(i * 8 + 9);
+            triangles.Add(i * 8 + 1);
 
             //Generate the second triangle
-            triangles.Add(i * 2);
-            triangles.Add(i * 2 + 2);
-            triangles.Add(i * 2 + 3);
+            triangles.Add(i * 8);
+            triangles.Add(i * 8 + 8);
+            triangles.Add(i * 8 + 9);
+
+            //GENERATE BOTTOM QUAD
+            //Generate the first triangle
+            triangles.Add(i * 8 + 2);
+            triangles.Add(i * 8 + 11);
+            triangles.Add(i * 8 + 3);
+
+            //Generate the second triangle
+            triangles.Add(i * 8 + 2);
+            triangles.Add(i * 8 + 10);
+            triangles.Add(i * 8 + 11);
+
+            //GENERATE LEFT QUAD
+            //Generate the first triangle
+            triangles.Add(i * 8 + 4);
+            triangles.Add(i * 8 + 15);
+            triangles.Add(i * 8 + 12);
+
+            //Generate the second triangle
+            triangles.Add(i * 8 + 4);
+            triangles.Add(i * 8 + 7);
+            triangles.Add(i * 8 + 15);
+
+            //GENERATE Right QUAD
+            //Generate the first triangle
+            triangles.Add(i * 8 + 5);
+            triangles.Add(i * 8 + 13);
+            triangles.Add(i * 8 + 14);
+
+            //Generate the second triangle
+            triangles.Add(i * 8 + 5);
+            triangles.Add(i * 8 + 14);
+            triangles.Add(i * 8 + 6);
         }
+
+        //GENERATE BACK QUAD
+        int index = pathPointTransforms.Count;
+        //Generate top first Triangle
+        triangles.Add(index * 8);
+        triangles.Add(index * 8 + 1);
+        triangles.Add(index * 8 + 2);
+
+        //Generate the second triangle
+        triangles.Add(index * 8);
+        triangles.Add(index * 8 + 2);
+        triangles.Add(index * 8 + 3);
+
+        //GENERATE FRONT QUAD
+        //Generate top first Triangle
+        triangles.Add(index * 8 + 4);
+        triangles.Add(index * 8 + 6);
+        triangles.Add(index * 8 + 5);
+
+        //Generate the second triangle
+        triangles.Add(index * 8 + 4);
+        triangles.Add(index * 8 + 7);
+        triangles.Add(index * 8 + 6);
+
+
         return triangles;
     }
 
