@@ -42,6 +42,8 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     [SerializeField]
     float scaling = 1f;
+    [SerializeField]
+    int seed = 0;
 
     private float perlinScaling = 10f;
     //float[] speed;
@@ -100,6 +102,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     public void GenerateLevel()
     {
+        UnityEngine.Random.InitState(seed);
         ClearStorageObjects();
 
         perlinScaling = currentLevelPreset.PerlinHeightScale;
@@ -115,18 +118,12 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     public void GenerateRandomLevel()
     {
-        ClearStorageObjects();
-        //Sets up voronoi noise and perlin noise
+        seed = Random.Range(0, 10000);
+        UnityEngine.Random.InitState(0);
+
         RandomizeNoise();
 
-        perlinScaling = currentLevelPreset.PerlinHeightScale;
-
-        //Sets up the path for the level
-        SetUpPlayableLevel();
-        //Sets up the outer area of the main level
-        SetUpOuterArea();
-        //Generates the different meshes for the level
-        GenerateLevelMesh();
+        GenerateLevel();
     }
 
     public void ClearStorageObjects()
