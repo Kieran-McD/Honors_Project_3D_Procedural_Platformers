@@ -28,6 +28,7 @@ public class PerlinWorm : MonoBehaviour
 
 	public float turnValue = 0;
 	public bool onlyUp = false;
+	public bool onlyLeft = false;
 
 	public float maxPerlinHorizontalRotation =5f;
 	public float maxPerlinVerticalRotation=5f;
@@ -93,7 +94,11 @@ public class PerlinWorm : MonoBehaviour
             noise2 -= 1;
             noise2 /= 2f;
         }
-
+		if (onlyLeft)
+		{
+			noise -= 1;
+			noise /= 2f;
+		}
 
         if (noise < min)
         {
@@ -125,7 +130,9 @@ public class PerlinWorm : MonoBehaviour
             //transform.rotation *= Quaternion.AngleAxis(turn2, transform.right);
             turnValue = (turn2) / 360f;
 
-            transform.rotation = Quaternion.Euler(turn2 + transform.eulerAngles.x, transform.rotation.eulerAngles.y, transform.eulerAngles.z);
+			transform.rotation = Quaternion.Euler(turn2, transform.rotation.eulerAngles.y, transform.eulerAngles.z);
+
+            //transform.rotation = Quaternion.Euler(turn2 + transform.eulerAngles.x, transform.rotation.eulerAngles.y, transform.eulerAngles.z);
 		}
            
         // (0, 0, turn);// = Quaternion.AngleAxis(heading, transform.forward);// Quaternion.Euler (0, 0, heading) * direction;

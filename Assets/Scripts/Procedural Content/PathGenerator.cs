@@ -178,6 +178,7 @@ public class PathGenerator : MonoBehaviour
             normals.Add(pathPointTransforms[i].right);
             normals.Add(-pathPointTransforms[i].right);
         }
+
         //GENERATE NORMALS FOR FORWAD AND BACK OF PATH
         normals.Add(-pathPointTransforms[0].forward);
         normals.Add(-pathPointTransforms[0].forward);

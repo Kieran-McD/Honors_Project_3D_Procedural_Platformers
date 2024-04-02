@@ -117,8 +117,8 @@ public class LevelGenerator : MonoBehaviour
 
                 //LOOK INTO BETTER METHOD FOR SPAWNING OBSTABVLES IN
                 //ob.transform.position = exit.position + exit.forward * ob.GetComponent<Obstacle>().exit.transform.localPosition.z - exit.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;
-                ob.transform.position = exit.position - exit.forward * ob.GetComponent<Obstacle>().entry.transform.localPosition.z - exit.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;
                 ob.transform.rotation = Quaternion.Euler(0, exit.rotation.eulerAngles.y, 0);
+                ob.transform.position = exit.position - ob.transform.forward * ob.GetComponent<Obstacle>().entry.transform.localPosition.z - ob.transform.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;
 
                 //Start Path generation
                 pathGenerator.StartPathGenerator(ob.GetComponent<Obstacle>().exit.position, ob.transform.rotation, totalPointsForPath);

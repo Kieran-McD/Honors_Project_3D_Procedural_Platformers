@@ -157,8 +157,9 @@ MonoBehaviour:
   freq: 0.2
   turnValue: 0
   onlyUp: 1
+  onlyLeft: 0
   maxPerlinHorizontalRotation: 7.5
-  maxPerlinVerticalRotation: 0.5
+  maxPerlinVerticalRotation: 30
   isMoving: 1
   finalPoint: 0
   pathGenerator: {fileID: 0}
