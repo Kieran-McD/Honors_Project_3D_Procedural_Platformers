@@ -12,18 +12,24 @@ public class PerlinWormPath : PerlinWorm
 
     public Transform followPoint;
 
-    public new void Start()
+
+    public new void Awake()
     {
-        levelGeneratorVoronoi = FindAnyObjectByType<LevelGeneratorVoronoi>();
-        base.Start();
+        base.Awake();
     }
+
+    //public new void Start()
+    //{
+    //    //levelGeneratorVoronoi = FindAnyObjectByType<LevelGeneratorVoronoi>();
+    //    //base.Start();
+    //}
 
     public new void Update()
     {
         if (isMoving)
         {
             base.Update();
-            MagnetizeToPoint();
+            //MagnetizeToPoint();
         }    
     }
 

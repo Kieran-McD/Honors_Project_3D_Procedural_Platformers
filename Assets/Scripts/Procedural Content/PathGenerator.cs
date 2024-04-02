@@ -40,15 +40,20 @@ public class PathGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //UpdateWorm();
+    }
+
+    public void UpdateWorm()
+    {
         if (currentWorm.IsUnityNull() || isFinished == true) return;
-        tick += Time.deltaTime;
-        tick += 1 * Mathf.Abs(((float)currentWorm.GetComponent<PerlinWormPath>().turnValue)) * Time.deltaTime;
+        currentWorm.GetComponent<PerlinWorm>().PerlinWormLogic();
+        tick += 1;
+        tick += 1 * Mathf.Abs(((float)currentWorm.GetComponent<PerlinWormPath>().turnValue));
 
         Debug.DrawRay(currentWorm.position + Vector3.up * 2, Vector3.down);
         if (tick > pointSpawnRate)
         {
             Transform currentPoint = Instantiate<GameObject>(pathPointPrefab, currentWorm.position, currentWorm.rotation, transform).transform;
-
             pathPointTransforms.Add(currentPoint);
             tick = 0;
         }
@@ -83,7 +88,7 @@ public class PathGenerator : MonoBehaviour
         //Generates the vertices
         List<Vector3> vertices = GenerateVertices();
         mesh.vertices = vertices.ToArray();
-        mesh.normals = GenerateNormals().ToArray();
+        mesh.normals = GenerateNormals(vertices).ToArray();
         //Sets up the indices
         mesh.triangles = GenerateTriangles(vertices).ToArray();
 
@@ -107,10 +112,11 @@ public class PathGenerator : MonoBehaviour
             vertices.Add(pos + (right * pathWidth / 2f));
             Instantiate<GameObject>(pathPointPrefab, vertices[vertices.Count - 1], Quaternion.identity, transform);
         }
+
         return vertices;
     }
 
-    List<Vector3> GenerateNormals()
+    List<Vector3> GenerateNormals(List<Vector3> vertices)
     {
         List<Vector3> normals = new List<Vector3>();
 
@@ -120,6 +126,7 @@ public class PathGenerator : MonoBehaviour
             normals.Add(pathPointTransforms[i].up);
             normals.Add(pathPointTransforms[i].up);
         }
+
         return normals;
     }
 
@@ -140,7 +147,6 @@ public class PathGenerator : MonoBehaviour
             triangles.Add(i * 2 + 2);
             triangles.Add(i * 2 + 3);
         }
-
         return triangles;
     }
 

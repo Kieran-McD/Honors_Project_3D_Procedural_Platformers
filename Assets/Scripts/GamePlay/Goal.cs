@@ -13,11 +13,12 @@ public class Goal : MonoBehaviour
 
     TextMeshProUGUI text;
 
+    public Transform collectable;
     public UnityEvent func;
 
     private void Start()
     {
-        startPos = transform.localPosition;
+        startPos = collectable.localPosition;
         text = FindFirstObjectByType<YouWinText>().GetComponent<TextMeshProUGUI>();
         text.color = text.color - new Color(0, 0, 0, 1f);
     }
@@ -28,9 +29,9 @@ public class Goal : MonoBehaviour
 
         updateYPos = new Vector3(0, Mathf.Sin(Time.time * speed) * yOffSet, 0);
 
-        transform.localPosition = startPos + updateYPos;
+        collectable.localPosition = startPos + updateYPos;
 
-        transform.rotation =  Quaternion.Euler(0, Time.time * 180, 0);
+        collectable.rotation =  Quaternion.Euler(0, Time.time * 180, 0);
 
     }
 

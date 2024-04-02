@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
@@ -29,10 +29,15 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField]
     bool reset = false;
 
+    [SerializeField]
+    int seed = 0;
+
     // Start is called before the first frame update
     void Start()
     {
+        UnityEngine.Random.InitState(seed);
         pathGenerator.StartPathGenerator(pathGenerator.transform.position, pathGenerator.transform.rotation, totalPointsForPath);
+        GenerateLevel();
     }
 
     // Update is called once per frame
@@ -43,7 +48,7 @@ public class LevelGenerator : MonoBehaviour
             Restart();
         }
 
-        GenerateLevel();
+        //GenerateLevel();
     }
 
     public void Restart()
@@ -52,66 +57,78 @@ public class LevelGenerator : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-     
+        UnityEngine.Random.InitState(seed);
         pathGenerator.ClearPathGenerator();
         pathGenerator.StartPathGenerator(pathGenerator.transform.position, pathGenerator.transform.rotation, totalPointsForPath);
         reset = false;
         isFinished = false;
         amountPaths = 0;
+        GenerateLevel();
     }
 
     void GenerateLevel()
-    {
+    {      
         if (isFinished == true) return;
-        //Checks if the path has finished generating
-        if (pathGenerator.GetIsFinished())
+
+        while (!isFinished)
         {
-            //Checks for a level object to store the path into
-            if (levelTransform != null)
+            //Checks if the path has finished generating
+            if (pathGenerator.GetIsFinished())
             {
-                pathGenerator.GetCurrentPath().transform.parent = levelTransform;
-            }
-
-            Transform exit = pathGenerator.GetCurrentPath().GetComponent<Path>().exit.transform;
-            GameObject ob = null;
-            amountPaths++;
-            if (amountPaths >= totalPaths)
-            {
-                isFinished = true;
-                //Checks for a level object to store the goal
+                //Checks for a level object to store the path into
                 if (levelTransform != null)
-                    ob = Instantiate<GameObject>(goal, levelTransform);
+                {
+                    pathGenerator.GetCurrentPath().transform.parent = levelTransform;
+                }
+
+                Transform exit = pathGenerator.GetCurrentPath().GetComponent<Path>().exit.transform;
+                GameObject ob = null;
+                amountPaths++;
+                if (amountPaths >= totalPaths)
+                {
+                    isFinished = true;
+                    //Checks for a level object to store the goal
+                    if (levelTransform != null)
+                        ob = Instantiate<GameObject>(goal, levelTransform);
+                    else
+                        ob = Instantiate<GameObject>(goal);
+                    ob.transform.position = exit.position - new Vector3(0, 0,0);
+                    ob.transform.rotation = Quaternion.Euler(0, exit.rotation.eulerAngles.y + 90, 0);
+                    pathGenerator.ClearPathGenerator();
+                    return;
+                }
+                //Gets a random obstacle to spawn
+                ob = obstacles.GetRandomObstacle();
+
+                if (ob == null)
+                {
+                    pathGenerator.StartPathGenerator(exit.position, exit.rotation, totalPointsForPath);
+                    return;
+                }
+                //Checks for a level object to store the obstacle
+                if (levelTransform != null)
+                    ob = Instantiate<GameObject>(ob, levelTransform);
                 else
-                    ob = Instantiate<GameObject>(goal);
-                ob.transform.position = exit.position;
+                    ob = Instantiate<GameObject>(ob);
+
+                //LOOK INTO BETTER METHOD FOR SPAWNING OBSTABVLES IN
+                //ob.transform.position = exit.position + exit.forward * ob.GetComponent<Obstacle>().exit.transform.localPosition.z - exit.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;
+                ob.transform.position = exit.position - exit.forward * ob.GetComponent<Obstacle>().entry.transform.localPosition.z - exit.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;
                 ob.transform.rotation = Quaternion.Euler(0, exit.rotation.eulerAngles.y, 0);
-                pathGenerator.ClearPathGenerator();
-                return;
-            }
-            //Gets a random obstacle to spawn
-            ob = obstacles.GetRandomObstacle();
 
-            if (ob == null)
-            {
-                pathGenerator.StartPathGenerator(exit.position, exit.rotation, totalPointsForPath);
-                return;
+                //Start Path generation
+                pathGenerator.StartPathGenerator(ob.GetComponent<Obstacle>().exit.position, ob.transform.rotation, totalPointsForPath);
+                //SplitPath(exit.position, exit.rotation);
+
             }
-            //Checks for a level object to store the obstacle
-            if (levelTransform != null)
-                ob = Instantiate<GameObject>(ob, levelTransform);
             else
-                ob = Instantiate<GameObject>(ob);
-
-            //LOOK INTO BETTER METHOD FOR SPAWNING OBSTABVLES IN
-            //ob.transform.position = exit.position + exit.forward * ob.GetComponent<Obstacle>().exit.transform.localPosition.z - exit.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;
-            ob.transform.position = exit.position - exit.forward * ob.GetComponent<Obstacle>().entry.transform.localPosition.z - exit.up * ob.GetComponent<Obstacle>().exit.transform.localPosition.y;
-            ob.transform.rotation = Quaternion.Euler(0, exit.rotation.eulerAngles.y, 0);
-
-            //Start Path generation
-            pathGenerator.StartPathGenerator(ob.GetComponent<Obstacle>().exit.position, ob.transform.rotation, totalPointsForPath);
-
-            //SplitPath(exit.position, exit.rotation);
-
+            {
+                while (!pathGenerator.GetIsFinished())
+                {
+                    Debug.Log("I was here");
+                    pathGenerator.UpdateWorm();
+                }
+            }
         }
     }
 
@@ -134,3 +151,40 @@ public class LevelGenerator : MonoBehaviour
     }
 
 }
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(LevelGenerator))]
+public class LevelGeneratorEditor : Editor
+{
+
+    // some declaration missing??
+
+    override public void OnInspectorGUI()
+    {
+        if (Application.isPlaying)
+        {
+            GUILayout.TextField("Dont Press Button To Much Bad Idea");
+
+            LevelGenerator colliderCreator = (LevelGenerator)target;
+            if (GUILayout.Button("Generate New Level"))
+            {
+                colliderCreator.Restart(); // how do i call this?
+            }
+        }
+        else
+        {
+            GUILayout.TextField("Dont Press Button To Much Bad Idea");
+
+            LevelGenerator colliderCreator = (LevelGenerator)target;
+
+            if (GUILayout.Button("Generate New Level"))
+            {
+                colliderCreator.Restart(); // how do i call this?
+            }
+        }
+       
+        DrawDefaultInspector();
+    }
+}
+
+#endif

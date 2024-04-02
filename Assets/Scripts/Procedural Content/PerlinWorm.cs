@@ -39,7 +39,7 @@ public class PerlinWorm : MonoBehaviour
 		return new Vector2(min, max);
 	}
 
-	void Awake()
+	protected void Awake()
 	{
 		// defaults
 		if (speed == 0)
@@ -47,37 +47,36 @@ public class PerlinWorm : MonoBehaviour
 			speed = Random.Range( 2.0f, 5.0f);
 			frames = Random.Range( 10, 100);
 		}
-	}
+        SpawnedRotation = transform.rotation.eulerAngles.y;
+        randA = Random.value * 5000.0f;
+        randB = 10000 + Random.value * 2500.0f;
 
-	public void Start()
-	{
-		SpawnedRotation = transform.rotation.eulerAngles.y;
-		randA = Random.value * 5000.0f;
-		randB = 10000 + Random.value * 2500.0f;
+        Debug.Log("Random A: " + randA + " Random B: " + randB);
 
-		lr = GetComponent<LineRenderer>();
-		lr.useWorldSpace = true;
+        lr = GetComponent<LineRenderer>();
+        lr.useWorldSpace = true;
 
-		lr.startColor = Random.ColorHSV();
-		lr.endColor = Random.ColorHSV();
+        lr.startColor = Random.ColorHSV();
+        lr.endColor = Random.ColorHSV();
 
-		positions = new Vector3[frames];
+        positions = new Vector3[frames];
 
-		var position = transform.position;
+        var position = transform.position;
 
-		for (int i = 0; i < positions.Length; i++)
-		{
-			positions[i] = position;
-		}
+        for (int i = 0; i < positions.Length; i++)
+        {
+            positions[i] = position;
+        }
 
-		DrivePositions();
-	}
+        DrivePositions();
+    }
+
 	protected void Update ()
 	{
-		PerlinWormLogic();
+		//PerlinWormLogic();
 	}
 
-	void PerlinWormLogic()
+	public void PerlinWormLogic()
 	{
 		float x = transform.position.x;
 		float y = transform.position.y;
@@ -112,7 +111,7 @@ public class PerlinWorm : MonoBehaviour
         //transform.rotation = Quaternion.identity;
         if (roll)
 		{
-			turnValue = (turn * Time.deltaTime)/360f;
+			turnValue = (turn)/360f;
 			//Debug.Log(turnValue);
 			//transform.rotation = Quaternion.AngleAxis(turn, transform.forward);
 			transform.rotation = Quaternion.Euler(transform.eulerAngles.x, turn + transform.eulerAngles.y, transform.eulerAngles.z);
@@ -124,20 +123,20 @@ public class PerlinWorm : MonoBehaviour
         if (pitch)
         {
             //transform.rotation *= Quaternion.AngleAxis(turn2, transform.right);
-            turnValue = (turn2 * Time.deltaTime) / 360f;
+            turnValue = (turn2) / 360f;
 
             transform.rotation = Quaternion.Euler(turn2 + transform.eulerAngles.x, transform.rotation.eulerAngles.y, transform.eulerAngles.z);
 		}
            
         // (0, 0, turn);// = Quaternion.AngleAxis(heading, transform.forward);// Quaternion.Euler (0, 0, heading) * direction;
         //transform.Rotate(heading2, 0, 0);
-        transform.position += transform.forward * (speed * Time.deltaTime);
+        transform.position += transform.forward * (speed);
 
-		for (int i = 0; i < positions.Length - 1; i++)
-		{
-			positions[i] = positions[i + 1];
-		}
-		positions[positions.Length - 1] = transform.position;
+		//for (int i = 0; i < positions.Length - 1; i++)
+		//{
+		//	positions[i] = positions[i + 1];
+		//}
+		//positions[positions.Length - 1] = transform.position;
 
 		//CheckOffscreen();
 
@@ -146,8 +145,8 @@ public class PerlinWorm : MonoBehaviour
 
 	void DrivePositions()
 	{
-		lr.positionCount = positions.Length;
-		lr.SetPositions( positions);
+		//lr.positionCount = positions.Length;
+		//lr.SetPositions( positions);
 	}
 
 	void CheckOffscreen()
