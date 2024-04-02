@@ -114,7 +114,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1888158806284534293}
-  - component: {fileID: 6962083666090314934}
   m_Layer: 0
   m_Name: Goal
   m_TagString: Untagged
@@ -130,8 +129,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3655032058997271801}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0.91168356, z: 0, w: 0.41089302}
+  m_LocalPosition: {x: 111.77963, y: 21.235739, z: 67.655716}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -140,22 +139,6 @@ Transform:
   - {fileID: 5070004823394875587}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6962083666090314934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3655032058997271801}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21b1f7c0517f0644c908c99c31f5bda2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  collectable: {fileID: 4484035548338151018}
-  func:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &5196704564002656026
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,6 +151,7 @@ GameObject:
   - component: {fileID: 6481842272545741391}
   - component: {fileID: 869254192788681203}
   - component: {fileID: 5491378680413143419}
+  - component: {fileID: 2397174086227187993}
   m_Layer: 7
   m_Name: GoalObject
   m_TagString: Untagged
@@ -261,6 +245,22 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2397174086227187993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5196704564002656026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21b1f7c0517f0644c908c99c31f5bda2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collectable: {fileID: 4484035548338151018}
+  func:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6307932930345338108
 GameObject:
   m_ObjectHideFlags: 0

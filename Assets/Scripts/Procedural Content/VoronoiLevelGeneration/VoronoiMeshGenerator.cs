@@ -103,6 +103,9 @@ public class VoronoiMeshGenerator : MonoBehaviour
     public void GenerateLevel()
     {
         UnityEngine.Random.InitState(seed);
+
+        RandomizeNoise();
+
         ClearStorageObjects();
 
         perlinScaling = currentLevelPreset.PerlinHeightScale;
@@ -119,9 +122,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
     public void GenerateRandomLevel()
     {
         seed = Random.Range(0, 10000);
-        UnityEngine.Random.InitState(0);
-
-        RandomizeNoise();
+        UnityEngine.Random.InitState(seed);
 
         GenerateLevel();
     }
@@ -147,7 +148,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Randomizes the perlin texture for terrain transformation
         perlinTexture.RandomizePerlinTexture();
         //Sets up the voronoi diagram to be used
-        voronoiDiagram.CreateDiagram();
+        voronoiDiagram.CreateRandomizeDiagram();
     }
     //Sets up the path for the level
     public void SetUpPlayableLevel()

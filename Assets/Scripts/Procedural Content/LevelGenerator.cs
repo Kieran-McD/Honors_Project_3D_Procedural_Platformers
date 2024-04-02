@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -86,12 +87,15 @@ public class LevelGenerator : MonoBehaviour
                 amountPaths++;
                 if (amountPaths >= totalPaths)
                 {
+                  
                     isFinished = true;
+
                     //Checks for a level object to store the goal
                     if (levelTransform != null)
                         ob = Instantiate<GameObject>(goal, levelTransform);
                     else
                         ob = Instantiate<GameObject>(goal);
+
                     ob.transform.position = exit.position - new Vector3(0, 0,0);
                     ob.transform.rotation = Quaternion.Euler(0, exit.rotation.eulerAngles.y + 90, 0);
                     pathGenerator.ClearPathGenerator();

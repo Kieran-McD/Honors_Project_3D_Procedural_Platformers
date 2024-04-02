@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5456959222639151217}
-  - component: {fileID: 7911370011305952552}
   m_Layer: 0
   m_Name: GoalObecjt
   m_TagString: Untagged
@@ -33,22 +32,6 @@ Transform:
   - {fileID: 2589611561733858079}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7911370011305952552
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8338110430513759078}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21b1f7c0517f0644c908c99c31f5bda2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  collectable: {fileID: 2589611561733858079}
-  func:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &8708005273411746456
 GameObject:
   m_ObjectHideFlags: 0
@@ -61,6 +44,7 @@ GameObject:
   - component: {fileID: 822123088297018584}
   - component: {fileID: 7920238560635846008}
   - component: {fileID: 4183232118962909551}
+  - component: {fileID: 310209553435909297}
   m_Layer: 7
   m_Name: GoalObject
   m_TagString: Untagged
@@ -154,3 +138,19 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &310209553435909297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8708005273411746456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21b1f7c0517f0644c908c99c31f5bda2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collectable: {fileID: 2589611561733858079}
+  func:
+    m_PersistentCalls:
+      m_Calls: []

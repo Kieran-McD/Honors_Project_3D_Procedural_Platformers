@@ -25,14 +25,14 @@ public class VoronoiDiagram : MonoBehaviour
 
     private void Awake()
     {
-        if(points.Count > 0)
-        {
-            CreateDiagram();
-        }
-        else
-        {
-            CreateRandomizeDiagram();
-        }
+        //if(points.Count > 0)
+        //{
+        //    CreateDiagram();
+        //}
+        //else
+        //{
+        //    CreateRandomizeDiagram();
+        //}
       
     }
 
