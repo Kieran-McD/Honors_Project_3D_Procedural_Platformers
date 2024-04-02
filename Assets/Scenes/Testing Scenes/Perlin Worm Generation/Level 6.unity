@@ -890,6 +890,7 @@ MonoBehaviour:
   totalPointsForPath: 20
   levelTransform: {fileID: 510818433}
   reset: 0
+  seed: 2
 --- !u!4 &513894492
 Transform:
   m_ObjectHideFlags: 0
