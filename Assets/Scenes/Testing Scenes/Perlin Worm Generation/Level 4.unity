@@ -2360,11 +2360,11 @@ MonoBehaviour:
   obstacles: {fileID: 11400000, guid: f3fcbd892b9b7a242bb9c1ea50e81a86, type: 2}
   Split: {fileID: 2355356669488975801, guid: e5f841df3d603394ab70cdab78f43f28, type: 3}
   goal: {fileID: 3655032058997271801, guid: 96360d4c03185434690cef085508824f, type: 3}
-  totalPaths: 5
-  totalPointsForPath: 20
+  totalPaths: 3
+  totalPointsForPath: 15
   levelTransform: {fileID: 1398556635}
   reset: 0
-  seed: 0
+  seed: 6
 --- !u!4 &1271803242
 Transform:
   m_ObjectHideFlags: 0
@@ -4409,7 +4409,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.2264151, g: 0.022214305, b: 0.071891576, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

@@ -12,6 +12,7 @@ public class VoronoiDiagram : MonoBehaviour
     [Range(0, 15)]
     public int floydRelaxationIterations = 5; 
 
+    private bool testing = false;
 
     // This is where we will store the resulting data
     private Dictionary<Vector2, Site> sites;
@@ -64,7 +65,7 @@ public class VoronoiDiagram : MonoBehaviour
         // but like that it allows you to run the delaunay library outside of unity (which mean also in another tread)
         Rectf bounds = new Rectf(0, 0, 512, 512);
 
-        
+        voronoi = null;
         // There is a two ways you can create the voronoi diagram: with or without the lloyd relaxation
         // Here I used it with 2 iterations of the lloyd relaxation
         voronoi = new Voronoi(TranslateVector2(points), bounds, floydRelaxationIterations);
@@ -72,7 +73,7 @@ public class VoronoiDiagram : MonoBehaviour
         // But you could also create it without lloyd relaxtion and call that function later if you want
         //Voronoi voronoi = new Voronoi(points,bounds);
         //voronoi.LloydRelaxation(5);
-
+        testing = true;
         sites = new Dictionary<Vector2, Site>();
         edges = new List<Edge>();
         pointsForPath = new List<Site>();
@@ -83,7 +84,7 @@ public class VoronoiDiagram : MonoBehaviour
         edges = voronoi.Edges;
         pointsForPath = PathFindingAStar(voronoi);
 
-        //DisplayVoronoiDiagram();
+        DisplayVoronoiDiagram();
 
     }
 
@@ -128,6 +129,7 @@ public class VoronoiDiagram : MonoBehaviour
             points.Add(new UnityEngine.Vector2(Random.Range(0, 512), Random.Range(0, 512)));
         }
 
+
         return points;
     }
     // Here is a very simple way to display the result using a simple bresenham line algorithm
@@ -135,6 +137,7 @@ public class VoronoiDiagram : MonoBehaviour
     private void DisplayVoronoiDiagram()
     {
         Texture2D tx = new Texture2D(512, 512);
+        Debug.Log("Total Sites: " + sites.Count);
         foreach (KeyValuePair<Vector2, Site> kv in sites)
         {
             tx.SetPixel((int)kv.Key.X, (int)kv.Key.Y, Color.red);

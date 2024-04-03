@@ -887,10 +887,10 @@ MonoBehaviour:
   Split: {fileID: 2355356669488975801, guid: e5f841df3d603394ab70cdab78f43f28, type: 3}
   goal: {fileID: 3655032058997271801, guid: 96360d4c03185434690cef085508824f, type: 3}
   totalPaths: 5
-  totalPointsForPath: 20
+  totalPointsForPath: 15
   levelTransform: {fileID: 510818433}
   reset: 0
-  seed: 2
+  seed: 10
 --- !u!4 &513894492
 Transform:
   m_ObjectHideFlags: 0

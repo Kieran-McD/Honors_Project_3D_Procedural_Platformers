@@ -5161,11 +5161,11 @@ MonoBehaviour:
   obstacles: {fileID: 11400000, guid: f3fcbd892b9b7a242bb9c1ea50e81a86, type: 2}
   Split: {fileID: 2355356669488975801, guid: e5f841df3d603394ab70cdab78f43f28, type: 3}
   goal: {fileID: 3655032058997271801, guid: 96360d4c03185434690cef085508824f, type: 3}
-  totalPaths: 5
-  totalPointsForPath: 20
+  totalPaths: 4
+  totalPointsForPath: 15
   levelTransform: {fileID: 180682542}
   reset: 0
-  seed: 1
+  seed: 6
 --- !u!4 &2100728475
 Transform:
   m_ObjectHideFlags: 0
