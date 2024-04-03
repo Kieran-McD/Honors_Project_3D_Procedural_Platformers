@@ -129,7 +129,7 @@ public class VoronoiDiagram : MonoBehaviour
         //    points.Add(new UnityEngine.Vector2(Random.Range(0, 512), Random.Range(0, 512)));
         //}
 
-        points = PoissonDiscSampling.GeneratePoints(16f, new UnityEngine.Vector2(512, 512), 30);
+        points = PoissonDiscSampling.GeneratePoints(14f, new UnityEngine.Vector2(512, 512), 30);
         return points;
     }
     // Here is a very simple way to display the result using a simple bresenham line algorithm
