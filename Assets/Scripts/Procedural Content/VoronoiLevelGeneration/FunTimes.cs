@@ -124,12 +124,12 @@ public class VoronoiDiagram : MonoBehaviour
         // Use Vector2f, instead of Vector2
         // Vector2f is pretty much the same than Vector2, but like you could run Voronoi in another thread
         List<UnityEngine.Vector2> points = new List<UnityEngine.Vector2>();
-        for (int i = 0; i < polygonNumber; i++)
-        {
-            points.Add(new UnityEngine.Vector2(Random.Range(0, 512), Random.Range(0, 512)));
-        }
+        //for (int i = 0; i < polygonNumber; i++)
+        //{
+        //    points.Add(new UnityEngine.Vector2(Random.Range(0, 512), Random.Range(0, 512)));
+        //}
 
-
+        points = PoissonDiscSampling.GeneratePoints(16f, new UnityEngine.Vector2(512, 512), 30);
         return points;
     }
     // Here is a very simple way to display the result using a simple bresenham line algorithm
