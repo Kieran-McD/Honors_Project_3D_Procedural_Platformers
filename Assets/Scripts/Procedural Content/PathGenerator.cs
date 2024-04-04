@@ -321,14 +321,8 @@ public class PathGenerator : MonoBehaviour
 
     public void ClearPathGenerator()
     {
-        bool skipFirst = false;
         foreach (Transform child in transform)
         {
-            if (!skipFirst)
-            {
-                skipFirst = true;
-                continue;
-            }
             Destroy(child.gameObject);
         }
         if (currentWorm) Destroy(currentWorm.gameObject);

@@ -900,21 +900,20 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Used to seperate each of the regions that are used for the pitfall
         List<List<Vector3>> vertices = new List<List<Vector3>>();
 
-        float LavaDepth = -2f;
-
+        float LavaDepth = 1.5f;
         //Create Lava Vertices
         for(int i = 0; i < sitePos.Count; i++)
         {
             List<Vector2> regionPoints = voronoiDiagram.voronoi.Region(new Vector2(sitePos[i].x*scaling, sitePos[i].z*scaling));
             vertices.Add(new List<Vector3>());
-            vertices[i].Add(new Vector3(sitePos[i].x, LavaDepth, sitePos[i].z));
-            points.Add(new Vector3(sitePos[i].x, LavaDepth, sitePos[i].z));
+            vertices[i].Add(new Vector3(sitePos[i].x, perlinTexture.perlinTexture.GetPixel((int)sitePos[i].x * (int)scaling, (int)sitePos[i].z * (int)scaling).r * perlinScaling - LavaDepth, sitePos[i].z));
+            points.Add(new Vector3(sitePos[i].x, perlinTexture.perlinTexture.GetPixel((int)sitePos[i].x * (int)scaling, (int)sitePos[i].z * (int)scaling).r * perlinScaling - LavaDepth, sitePos[i].z));
 
             UVCord.Add(new UnityEngine.Vector2(sitePos[i].x * scaling, sitePos[i].z * scaling) / 512f);
             for (int j = 0; j < regionPoints.Count; j++)
             {
-                vertices[i].Add(new Vector3(regionPoints[j].X / scaling, LavaDepth, regionPoints[j].Y / scaling));
-                points.Add(new Vector3(regionPoints[j].X / scaling, LavaDepth, regionPoints[j].Y / scaling));
+                vertices[i].Add(new Vector3(regionPoints[j].X / scaling, perlinTexture.perlinTexture.GetPixel((int)regionPoints[j].X, (int)regionPoints[j].Y).r * perlinScaling - LavaDepth, regionPoints[j].Y / scaling));
+                points.Add(new Vector3(regionPoints[j].X / scaling, perlinTexture.perlinTexture.GetPixel((int)regionPoints[j].X, (int)regionPoints[j].Y).r * perlinScaling - LavaDepth, regionPoints[j].Y / scaling));
                 UVCord.Add(new UnityEngine.Vector2(regionPoints[j].X, regionPoints[j].Y) / 512f);
             }
         }
