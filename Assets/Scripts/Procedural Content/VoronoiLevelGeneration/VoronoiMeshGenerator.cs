@@ -143,7 +143,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
     //Sets up voronoi noise and perlin noise
     public void RandomizeNoise()
     {
-        currentLevelPreset = levelPresets[Random.Range(0, levelPresets.Count)];
+        //currentLevelPreset = levelPresets[Random.Range(0, levelPresets.Count)];
 
         //Randomizes the perlin texture for terrain transformation
         perlinTexture.RandomizePerlinTexture();
