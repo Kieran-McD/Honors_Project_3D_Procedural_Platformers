@@ -17,8 +17,6 @@ public class PathFinding : MonoBehaviour
     List<PathNode> openList;
     List<PathNode> closedList;
 
-
-
     private void Start()
     {
         
@@ -34,6 +32,18 @@ public class PathFinding : MonoBehaviour
             currentPath = FindPath();
             grid.TransformScalePathNodes(4f);
         }  
+    }
+
+    public void Generate(int totalPoints)
+    {
+        currentPath.Clear();
+        currentPath = null;
+        while (currentPath == null)
+        {
+            grid.GenerateGrid(diagram.voronoi.SiteCoords(), diagram.voronoi);
+            currentPath = FindPath(totalPoints);
+            grid.TransformScalePathNodes(4f);
+        }
     }
 
     public PathFinding(VoronoiDiagram d)
@@ -113,12 +123,67 @@ public class PathFinding : MonoBehaviour
         return null;
     }
 
+    private List<PathNode> FindPath(int totalPaths)
+    {
+
+        PathNode startNode = grid.gridObects[Random.Range(0, grid.gridObects.Count)];
+        while (startNode.isBorder) startNode = grid.gridObects[Random.Range(0, grid.gridObects.Count)];
+
+        startNode.isStart = true;
+        startNode.isLevel = true;
+
+        for (int i = 0; i < grid.gridObects.Count; i++)
+        {
+            PathNode pathNode = grid.gridObects[i];
+            pathNode.cameFromNode = null;
+        }
+
+        PathNode currentNode = startNode;
+        int currentPathPoint = 0;
+        while(currentPathPoint < totalPaths)
+        {
+
+            List<PathNode> availableNodes = new List<PathNode>();
+            for(int i = 0; i < currentNode.ConnectedNodes.Count; i++)
+            {
+                PathNode temp = currentNode.ConnectedNodes[i];
+             
+                if (!temp.isBorder && !temp.isLevel)
+                {
+                    availableNodes.Add(temp);
+                }
+                temp.isBorder = true;
+            }
+
+            if (availableNodes.Count == 0) break;
+
+            currentNode.isLevel = true;
+
+            PathNode nextNode = availableNodes[Random.Range(0, availableNodes.Count)];
+            nextNode.cameFromNode = currentNode;
+            currentPathPoint++;
+
+
+
+            currentNode = nextNode;
+        }
+
+        if (currentPathPoint >= totalPaths-1)
+        {
+            return CalculatePath(currentNode);
+        }
+        //Out of nodes in open list
+        return null;
+    }
+
+
     private List<PathNode> CalculatePath(PathNode endNode)
     {
 
         List<PathNode> path = new List<PathNode>();
         path.Add(endNode);
         PathNode currentNode = endNode;
+        endNode.isGoal = true;
         while(currentNode.cameFromNode != null) {
             currentNode.isLevel = true;
             path.Add(currentNode.cameFromNode);

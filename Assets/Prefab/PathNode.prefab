@@ -43,7 +43,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6487082539711551649}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -120,6 +120,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NextNode: {fileID: 0}
+  ConnectedNodes: []
+  isLevel: 0
+  isObstacle: 0
+  isGoal: 0
+  isStart: 0
+  isPitfall: 0
+  isBorder: 0
+  x: 0
+  y: 0
+  gCost: 0
+  hCost: 0
+  fCost: 0
+  cameFromNode: {fileID: 0}
 --- !u!54 &8891045122559138862
 Rigidbody:
   m_ObjectHideFlags: 0

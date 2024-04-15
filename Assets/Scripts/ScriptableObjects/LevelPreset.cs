@@ -17,6 +17,7 @@ public class LevelPreset : ScriptableObject
 
     public Material LevelMat;
     public Material WaterMat;
+    public Material PlatformMat;
     //public List<GameObject> Objects;
     public List<DiscObject> Objects;
     

@@ -101,7 +101,8 @@ public class LevelGenerator : MonoBehaviour
                     pathGenerator.ClearPathGenerator();
                     return;
                 }
-                //Gets a random obstacle to spawn
+                //Gets a random
+                //to spawn
                 ob = obstacles.GetRandomObstacle();
 
                 if (ob == null)

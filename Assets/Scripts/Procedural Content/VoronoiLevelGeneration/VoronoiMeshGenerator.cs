@@ -44,7 +44,8 @@ public class VoronoiMeshGenerator : MonoBehaviour
     float scaling = 1f;
     [SerializeField]
     int seed = 0;
-
+    [SerializeField]
+    bool RandomizePreset = false;
     private float perlinScaling = 10f;
     //float[] speed;
 
@@ -143,7 +144,10 @@ public class VoronoiMeshGenerator : MonoBehaviour
     //Sets up voronoi noise and perlin noise
     public void RandomizeNoise()
     {
-        //currentLevelPreset = levelPresets[Random.Range(0, levelPresets.Count)];
+        if (RandomizePreset)
+        {
+            currentLevelPreset = levelPresets[Random.Range(0, levelPresets.Count)];
+        }   
 
         //Randomizes the perlin texture for terrain transformation
         perlinTexture.RandomizePerlinTexture();
@@ -606,7 +610,8 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
         for(int i = 0; i < regionsConnected.Count; i++)
         {
-            CreatePitFall(regionsConnected[i], connectedPitfallSitePos[i]);
+            PitFall pitfall = CreatePitFall(regionsConnected[i], connectedPitfallSitePos[i]);
+            pitfall.platform.GetComponent<MeshRenderer>().material.SetFloat("_LerpValue", 1f - (float)i / (float)((float)regionsConnected.Count - 1f));
         }
 
         for (var i = removePoints.Count - 1; i >= 0; i--)
@@ -775,7 +780,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
     }
 
     //Used to create a pitfall combining multiple regions
-    void CreatePitFall(List<Vector3> sitePos, List<Vector3> connectedPitfallSites = null)
+    PitFall CreatePitFall(List<Vector3> sitePos, List<Vector3> connectedPitfallSites = null)
     {
         List<Vector3> points = new List<Vector3>();
         List<UnityEngine.Vector2> UVCord = new List<UnityEngine.Vector2>();
@@ -943,8 +948,11 @@ public class VoronoiMeshGenerator : MonoBehaviour
         mesh.uv = UVCord.ToArray();
         pitFall.lava.GetComponent<MeshCollider>().sharedMesh = mesh;
         pitFall.lava.GetComponent<MeshRenderer>().sharedMaterial = currentLevelPreset.WaterMat;
-        pitFall.platform.transform.localPosition = new Vector3(sitePos[0].x, perlinTexture.perlinTexture.GetPixel((int)(sitePos[0].x * scaling), (int)(sitePos[0].z * scaling)).r * perlinScaling, sitePos[0].z);
 
+        pitFall.platform.transform.localPosition = new Vector3(sitePos[0].x, perlinTexture.perlinTexture.GetPixel((int)(sitePos[0].x * scaling), (int)(sitePos[0].z * scaling)).r * perlinScaling, sitePos[0].z);
+        pitFall.platform.GetComponent<MeshRenderer>().sharedMaterial = currentLevelPreset.PlatformMat;
+
+        return pitFall;
     }
 
     void CreatePitFall(Vector3 currentNode)

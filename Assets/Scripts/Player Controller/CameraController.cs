@@ -38,9 +38,20 @@ namespace GaRo
         Vector3 lookAt = Vector3.zero;
 
         Vector3 tester;
+
+        public void Start()
+        {
+            Sensitivity = PlayerPrefs.GetFloat("Sensitivity", 20f);
+            if (Sensitivity == 0)
+            {
+                Sensitivity = 1f;
+            }
+           
+        }
+
 #if ENABLE_INPUT_SYSTEM
         public void SetInput(UnityEngine.InputSystem.InputAction.CallbackContext context)
-        {
+        {           
             CameraInput = context.ReadValue<Vector2>();
         }
 #endif
@@ -60,6 +71,11 @@ namespace GaRo
 			{
                 HardFollow();
 			}
+        }
+
+        public void ChangeSensitibity(float sensitibity)
+        {
+            Sensitivity = sensitibity;
         }
 
         void LakituCam()

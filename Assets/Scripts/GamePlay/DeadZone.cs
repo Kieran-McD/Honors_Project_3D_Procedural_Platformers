@@ -11,15 +11,16 @@ public class DeadZone : MonoBehaviour
         if (!playerSpawn) playerSpawn = FindAnyObjectByType<SpawnPlayer>().transform;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.transform.root.tag != "Player")
-        {
-            return;
-        }
 
-        other.GetComponent<CharacterController>().velocity.Set(0, 0, 0);
-        other.transform.root.position = playerSpawn.position;
+        Debug.Log("Did anything collide");
+
+        if (collision.transform.tag == "Player")
+        {
+            Debug.Log("Player Collided");
+            FindAnyObjectByType<SpawnPlayer>().Spawn();
+        }
     }
 
 }

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LevelMat: {fileID: 2100000, guid: f2850cfa625590d40bd79c17b67806b4, type: 2}
   WaterMat: {fileID: 2100000, guid: 080c5a79887b2184d8ff8cefd95c5f80, type: 2}
+  PlatformMat: {fileID: 2100000, guid: 3102c66518f0a214eb7569ac8085270e, type: 2}
   Objects:
   - Object: {fileID: 1323490661454885267, guid: e140ffe4aa61d3b4998ec67e932500a9, type: 3}
     Radius: 84

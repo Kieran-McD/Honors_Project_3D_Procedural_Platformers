@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Events;
-using UnityEditor.SearchService;
 using UnityEngine.SceneManagement;
 
 public class Goal : MonoBehaviour
