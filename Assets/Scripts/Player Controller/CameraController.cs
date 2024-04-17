@@ -44,7 +44,7 @@ namespace GaRo
             Sensitivity = PlayerPrefs.GetFloat("Sensitivity", 20f);
             if (Sensitivity == 0)
             {
-                Sensitivity = 1f;
+                Sensitivity = 20f;
             }
            
         }
