@@ -1200,7 +1200,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Please Do survey part A, Click continue o go onto the next levels
+  m_text: 'Please Do survey part A, Click continue to go onto the next levels
 
 '
   m_isRightToLeft: 0
