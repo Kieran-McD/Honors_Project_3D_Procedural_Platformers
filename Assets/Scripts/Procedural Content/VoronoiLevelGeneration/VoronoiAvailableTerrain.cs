@@ -32,21 +32,14 @@ public class VoronoiAvailableTerrain : MonoBehaviour
         //Direction vector for the triangle
         List<Vector2> vectorOne = new List<Vector2>();
         List<Vector2> vectorTwo = new List<Vector2>();
-        //Stores each of the boundaries of the triangles
+        //Stores each of the boundaries for all the triangles
         List<int> minXList = new List<int>();
         List<int> minYList = new List<int>();
         List<int> maxXList = new List<int>();
         List<int> maxYList = new List<int>();
-        
-        //int minX = width, minY = height, maxX = 0, maxY = 0;
 
         for(int i = 0; i < sites.Count; i++)
         {
-            ////Checks for the max and min boundary for the level
-            //if (sites[i].X < minX) minX = (int)sites[i].X;
-            //if (sites[i].X > maxX) maxX = (int)sites[i].X;
-            //if (sites[i].Y < minY) minY = (int)sites[i].Y;
-            //if (sites[i].Y > maxY) maxY = (int)sites[i].Y;
 
             center.Add(sites[i]);
             for (int j = 0; j < voronoi.voronoi.Region(center[i]).Count; j++)
@@ -135,25 +128,23 @@ public class VoronoiAvailableTerrain : MonoBehaviour
         #endregion
 
 
-        //New Version so much better
+        //New Version
         int currentTotal = 0;
         for (int i = 0; i < center.Count; i++)
         {
             for (int j = 0; j < voronoi.voronoi.Region(center[i]).Count; j++)
             {
-
+                //Loops throough all the points between the min and max x and y values for each of the triangles
                 for (int x = minXList[j + currentTotal]; x <= maxXList[j + currentTotal]; x++)
                 {
                     for (int y = minYList[j + currentTotal]; y <= maxYList[j + currentTotal]; y++)
                     {
 
                         Vector2 point = new Vector2(x, y);
-                       
+                        //Sets the colour of the pixel to black if within the triangle
                         if (CheckPointInTriangle(point, center[i], vectorOne[j + currentTotal], vectorTwo[j + currentTotal]))
                         {
-                            texture.SetPixel(x, y, new Color(0, 0, 0));
-                            //pointInTriangle = true;
-                            //break;
+                            texture.SetPixel(x, y, new Color(0, 0, 0));                          
                         }
                     }
                    
@@ -168,6 +159,8 @@ public class VoronoiAvailableTerrain : MonoBehaviour
         return texture;
     }
 
+
+    //https://mathworld.wolfram.com/TriangleInterior.html#:~:text=The%20simplest%20way%20to%20determine,it%20lies%20outside%20the%20triangle.
     //Checks if a point is within the triangle
     public bool CheckPointInTriangle(Vector2 point, Vector2 trianglePoint ,Vector2 vectorOne, Vector2 vectorTwo)
     {

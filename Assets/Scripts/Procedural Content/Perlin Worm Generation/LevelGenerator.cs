@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -67,6 +65,13 @@ public class LevelGenerator : MonoBehaviour
         GenerateLevel();
     }
 
+    public void GenerateRandomSeed()
+    {
+        seed = UnityEngine.Random.Range(0, 100000);
+        UnityEngine.Random.InitState(seed);
+        Restart();
+    }
+
     void GenerateLevel()
     {      
         if (isFinished == true) return;
@@ -101,14 +106,15 @@ public class LevelGenerator : MonoBehaviour
                     pathGenerator.ClearPathGenerator();
                     return;
                 }
-                //Gets a random
+                //Gets a random object
                 //to spawn
                 ob = obstacles.GetRandomObstacle();
 
+                //If no available object start the new path
                 if (ob == null)
                 {
                     pathGenerator.StartPathGenerator(exit.position, exit.rotation, totalPointsForPath);
-                    return;
+                    continue;
                 }
                 //Checks for a level object to store the obstacle
                 if (levelTransform != null)
@@ -168,23 +174,14 @@ public class LevelGeneratorEditor : Editor
     {
         if (Application.isPlaying)
         {
-            GUILayout.TextField("Dont Press Button To Much Bad Idea");
-
             LevelGenerator colliderCreator = (LevelGenerator)target;
-            if (GUILayout.Button("Generate New Level"))
+            if (GUILayout.Button("Generate current seed Level"))
             {
                 colliderCreator.Restart(); // how do i call this?
             }
-        }
-        else
-        {
-            GUILayout.TextField("Dont Press Button To Much Bad Idea");
-
-            LevelGenerator colliderCreator = (LevelGenerator)target;
-
-            if (GUILayout.Button("Generate New Level"))
+            if(GUILayout.Button("Generate New Seed Level"))
             {
-                colliderCreator.Restart(); // how do i call this?
+                colliderCreator.GenerateRandomSeed();
             }
         }
        

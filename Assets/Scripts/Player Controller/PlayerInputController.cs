@@ -16,6 +16,10 @@ namespace GaRo
     {
         PlatformPlayerController Player;
         public SpawnPlayer spawn;
+        public GameObject PlayerCamera;
+        public GameObject WorldCamera;
+
+
         private void Awake()
         {
             Player = GetComponent<PlatformPlayerController>();
@@ -53,6 +57,26 @@ namespace GaRo
                 spawn.Spawn();
                 //SceneManager.LoadScene(SceneManager.GetActiveScene().ToString());
             }
+        }
+
+        public void OnInputSwitchCamera(InputAction.CallbackContext context)
+        {
+            SwitchCamera();
+        }
+
+        public void SwitchCamera()
+        {
+            if (PlayerCamera.activeSelf)
+            {
+                PlayerCamera.SetActive(false);
+                WorldCamera.SetActive(true);
+            }
+            else
+            {
+                PlayerCamera.SetActive(true);
+                WorldCamera.SetActive(false);
+            }
+
         }
 #else
         void Update(){

@@ -249,17 +249,17 @@ public class VoronoiMeshGenerator : MonoBehaviour
         mesh.RecalculateNormals();
     }
 
+    //Generates the walls to keep the player within the play area
     private void GenerateWalls()
     {
         Mesh mesh = new Mesh();
         Walls.GetComponent<MeshFilter>().mesh = mesh;
         mesh.Clear();
-        List<Vector3> vertices = GenerateWallVertices();
 
+        List<Vector3> vertices = GenerateWallVertices();
         mesh.vertices = vertices.ToArray();
 
         List<Vector3> normals = new List<Vector3>();
-
         
         for (int i = 0; i < vertices.Count; i++)
         {
@@ -272,33 +272,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
         Walls.GetComponent<MeshCollider>().sharedMesh = mesh;
         mesh.RecalculateNormals();
     }
-
-    //void UpdateVertices()
-    //{
-    //    Vector3[] vertices =  Floor.GetComponent<MeshFilter>().mesh.vertices;
-    
-    //    for(int i = 0; i < vertices.Length; i++)
-    //    {
-    //        if (speed[i] == 0f)
-    //        {
-    //            speed[i] = 5f;
-    //        }
-
-    //        if (speed[i] >0f && vertices[i].y > 10f)
-    //        {
-    //            speed[i] = -5f;
-    //        }
-    //        else if (speed[i] < 0f && vertices[i].y < 0f)
-    //        {
-    //            speed[i] = 5f;
-    //        }
-    //        vertices[i] = new Vector3(vertices[i].x, vertices[i].y + Time.deltaTime * speed[i], vertices[i].z);
-    //    }
-
-    //    Floor.GetComponent<MeshCollider>().sharedMesh = Floor.GetComponent<MeshFilter>().mesh;
-    //    Floor.GetComponent<MeshFilter>().mesh.vertices = vertices;
-    //    Floor.GetComponent<MeshFilter>().mesh.RecalculateNormals();
-    //}
 
     List<List<Vector3>> GenerateVertices(Voronoi voronoi)
     {    
@@ -332,15 +305,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     }
 
-    List<Vector3> GenerateNormals()
-    {
-        List<Vector3> normals = new List<Vector3>();
-
-
-
-        return normals;
-    }
-
     //If Vertices generation changes, change triangle generation
     List<int> GenerateTriangles(List<List<Vector3>> vertices)
     {
@@ -370,19 +334,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
             }
 
             totalPointsSoFar += points.Count;
-            //Debug.Log("Total Points So Far: " + totalPointsSoFar);
-
-            ////Generate the first triangle
-            //triangles.Add(i);
-            //triangles.Add(0);
-            //if(i == vertices.Count-1)
-            //{
-            //    triangles.Add(1);
-            //}
-            //else
-            //{
-            //    triangles.Add(i + 1);
-            //}
         }
 
         //Debug.Log("Total Triangles: " + triangles.Count);
@@ -426,58 +377,6 @@ public class VoronoiMeshGenerator : MonoBehaviour
         }
         return colourRegions;
     }
-
-    //public void SpawnPathNodes(List<Site> sites)
-    //{
-    //    for (var i = PathNodeStorage.transform.childCount - 1; i >= 0; i--)
-    //    {
-    //        Destroy(PathNodeStorage.transform.GetChild(i).gameObject);
-    //    }
-
-    //    pathNodeObjects = new List<PathNode>();
-    //    //Spawns in the first node
-    //    PathNode previousNode = Instantiate(pathNode, PathNodeStorage.transform).GetComponent<PathNode>();
-    //    //Set the position for the node
-    //    previousNode.transform.localPosition = new Vector3(sites[sites.Count - 1].Coord.X / scaling, perlinTexture.perlinTexture.GetPixel((int)sites[sites.Count - 1].Coord.X, (int)sites[sites.Count - 1].Coord.Y).r * 10f, sites[sites.Count - 1].Coord.Y / scaling);
-    //    previousNode.x = (int)sites[sites.Count - 1].Coord.X;
-    //    previousNode.y = (int)sites[sites.Count - 1].Coord.Y;
-    //    //Add node to list of nodes
-    //    pathNodeObjects.Add(previousNode);
-
-    //    previousNode.isGoal = true;
-
-    //    Instantiate<GameObject>(goalPrefab, PathNodeStorage.transform).transform.localPosition = previousNode.transform.localPosition; 
-
-    //    //Spawn rest of the nodes
-    //    for (int i = sites.Count-2; i > 0; i--)
-    //    {
-
-    //        if(i%3 == 0) previousNode.isPitfall = true;
-
-            
-
-    //        //Spawns the next node
-    //        PathNode nextNode = Instantiate(pathNode, PathNodeStorage.transform).GetComponent<PathNode>();
-    //        //Sets position of node
-    //        nextNode.transform.localPosition = new Vector3(sites[i].Coord.X / scaling, perlinTexture.perlinTexture.GetPixel((int)sites[i].Coord.X, (int)sites[i].Coord.Y).r * 10f, sites[i].Coord.Y / scaling);
-    //        //Store node
-    //        pathNodeObjects.Add(nextNode);
-    //        //Sets up the rotation of the node
-    //        nextNode.transform.rotation = Quaternion.LookRotation(previousNode.transform.position - nextNode.transform.position, Vector3.up);
-    //        //Sets the next node to connect to the previous node
-    //        nextNode.NextNode = previousNode;
-    //        //use the next node as the previous node
-    //        previousNode = nextNode;
-    //        previousNode.x = (int)sites[sites.Count - 1].Coord.X;
-    //        previousNode.y = (int)sites[sites.Count - 1].Coord.Y;
-    //    }
-
-    //    //Move the player spawner
-    //    PlayerSpawner.transform.position = previousNode.transform.position;
-    //    //Spawn the player
-    //    PlayerSpawner.GetComponentInChildren<SpawnPlayer>().Spawn();
-
-    //}
 
     //This is for fun used to move vertices seperatley from each other
     public List<List<Vector3>> MoveVertices(List<List<Vector3>> vertces)

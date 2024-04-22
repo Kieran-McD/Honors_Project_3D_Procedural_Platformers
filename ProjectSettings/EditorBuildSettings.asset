@@ -6,43 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Testing Scenes/MainMenu.unity
-    guid: afe2255b283649544b9d3e5d3087c449
-  - enabled: 1
-    path: Assets/Scenes/Testing Scenes/Voronoi Level Mesh/Level 1.unity
-    guid: 134e77d9975215241aa370802ef36cae
-  - enabled: 1
-    path: Assets/Scenes/Testing Scenes/Voronoi Level Mesh/Level 2.unity
-    guid: 2c148a9d1b7ea2840980593ba10689af
-  - enabled: 1
-    path: Assets/Scenes/Testing Scenes/Voronoi Level Mesh/Level 3.unity
-    guid: 703b247078cf8544683b44c75efcbdd2
-  - enabled: 1
-    path: Assets/Scenes/Testing Scenes/Voronoi Level Mesh/SurveyVornoi.unity
-    guid: 5a1d31252e11bbd45b49078b3d8e5deb
-  - enabled: 1
-    path: Assets/Scenes/Testing Scenes/Perlin Worm Generation/Level 4.unity
-    guid: 092c4860dad8bfc4ea977107a756ab21
-  - enabled: 1
-    path: Assets/Scenes/Testing Scenes/Perlin Worm Generation/Level 5.unity
-    guid: 6505d1eb08374f948bfae230cf1aa7cf
-  - enabled: 1
-    path: Assets/Scenes/Testing Scenes/Perlin Worm Generation/Level 6.unity
-    guid: 896a1c35e5221ca4dbac167da64a2ff2
-  - enabled: 1
-    path: Assets/Scenes/Testing Scenes/Perlin Worm Generation/SurveyPerlinWorm.unity
-    guid: ce0da6cee7fdf88428ab7cdf427e5107
-  - enabled: 1
-    path: Assets/Scenes/Testing Scenes/Hand Made Levels/Level 7.unity
-    guid: 8ec3bd13808acf5469f45aecea722de6
-  - enabled: 1
-    path: Assets/Scenes/Testing Scenes/Hand Made Levels/Level 8.unity
-    guid: 70807055e4aaf9242a1c3b2c40c2a98b
-  - enabled: 1
-    path: Assets/Scenes/Testing Scenes/Hand Made Levels/Level 9.unity
-    guid: a810387948823bf41a9072959b45dfeb
-  - enabled: 1
-    path: Assets/Scenes/Testing Scenes/Hand Made Levels/SurveyHandMade.unity
-    guid: 9f3fc3d115aa46a49b262d29405d1c53
+    path: Assets/Scenes/ExampleGeneratorScenes/PerlinWormExample.unity
+    guid: be59c186b9fd75c48b417b20e496b08b
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

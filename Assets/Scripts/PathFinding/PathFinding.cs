@@ -21,7 +21,7 @@ public class PathFinding : MonoBehaviour
     {
         
     }
-
+    //Generates Grid and Path for A* Algoritm
     public void Generate()
     {
         currentPath.Clear();
@@ -34,6 +34,7 @@ public class PathFinding : MonoBehaviour
         }  
     }
 
+    //Generates Grid and Path random movement
     public void Generate(int totalPoints)
     {
         currentPath.Clear();
@@ -55,7 +56,7 @@ public class PathFinding : MonoBehaviour
             
         }
     }
-
+    //Find Path For A* Algorithm
     private List<PathNode> FindPath()
     {
         
@@ -123,6 +124,7 @@ public class PathFinding : MonoBehaviour
         return null;
     }
 
+    //Finds Path for random movement
     private List<PathNode> FindPath(int totalPaths)
     {
 
