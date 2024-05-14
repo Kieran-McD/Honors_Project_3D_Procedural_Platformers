@@ -59,6 +59,11 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //if(moveVertices)UpdateVertices();
     }
 
+    public void SetLevelPreset(int preset)
+    {
+        currentLevelPreset = levelPresets[preset];
+    }
+
     public void GeneratePlane()
     {
 
@@ -147,8 +152,8 @@ public class VoronoiMeshGenerator : MonoBehaviour
         if (RandomizePreset)
         {
             currentLevelPreset = levelPresets[Random.Range(0, levelPresets.Count)];
-        }   
-
+            Debug.Log(currentLevelPreset.name);
+        }
         //Randomizes the perlin texture for terrain transformation
         perlinTexture.RandomizePerlinTexture();
         //Sets up the voronoi diagram to be used
