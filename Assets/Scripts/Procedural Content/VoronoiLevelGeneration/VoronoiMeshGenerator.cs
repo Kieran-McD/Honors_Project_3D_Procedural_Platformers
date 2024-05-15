@@ -127,7 +127,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
 
     public void GenerateRandomLevel()
     {
-        seed = Random.Range(0, 10000);
+        seed = (int)System.DateTime.Now.Ticks;
         UnityEngine.Random.InitState(seed);
 
         GenerateLevel();
