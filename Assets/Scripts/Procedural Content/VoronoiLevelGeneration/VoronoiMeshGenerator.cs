@@ -123,6 +123,7 @@ public class VoronoiMeshGenerator : MonoBehaviour
         //Generates the different meshes for the level
         GenerateLevelMesh();
 
+        PlayerSpawner.GetComponentInChildren<SpawnPlayer>().Spawn();
     }
 
     public void GenerateRandomLevel()

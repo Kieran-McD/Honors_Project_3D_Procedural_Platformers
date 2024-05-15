@@ -11,6 +11,7 @@ public class Grid : MonoBehaviour
 {
     public List<PathNode> gridObects = new List<PathNode>();
     public GameObject pathNodePrefab;
+
     public void GenerateGrid(List<Vector2> pathNodes, Voronoi voronoi)
     {
         ClearGrid();

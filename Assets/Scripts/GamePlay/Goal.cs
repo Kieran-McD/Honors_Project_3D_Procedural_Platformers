@@ -17,8 +17,14 @@ public class Goal : MonoBehaviour
     public Transform collectable;
     public UnityEvent func;
 
+    public VoronoiMeshGenerator voronoiGenerator;
+    public LevelGenerator levelGenerator;
+    bool generator;
     private void Start()
     {
+        generator = false;
+        voronoiGenerator = FindAnyObjectByType<VoronoiMeshGenerator>();
+        levelGenerator = FindAnyObjectByType<LevelGenerator>();
         startPos = collectable.localPosition;
         text = FindFirstObjectByType<YouWinText>().GetComponent<TextMeshProUGUI>();
         text.color = text.color - new Color(0, 0, 0, 1f);
@@ -53,6 +59,12 @@ public class Goal : MonoBehaviour
     void Update()
     {
         AnimateGoal();
+        if (generator)
+        {
+            if(voronoiGenerator) voronoiGenerator.GenerateRandomLevel();
+            if (levelGenerator) levelGenerator.GenerateRandomSeed();
+            generator = false;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -62,9 +74,12 @@ public class Goal : MonoBehaviour
             return;
         }
 
-        GetComponent<MeshRenderer>().enabled = false;
-        StartCoroutine(DisplayText());
-        SceneLoader.Instance.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
+        //GetComponent<MeshRenderer>().enabled = false;
+        //StartCoroutine(DisplayText());
+        //SceneLoader.Instance.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
+
+        generator = true;
+
         //func.Invoke();      
     }
 }

@@ -70,6 +70,7 @@ public class LevelGenerator : MonoBehaviour
         seed = UnityEngine.Random.Range(0, 100000);
         UnityEngine.Random.InitState(seed);
         Restart();
+        FindAnyObjectByType<SpawnPlayer>().Spawn();
     }
 
     void GenerateLevel()
